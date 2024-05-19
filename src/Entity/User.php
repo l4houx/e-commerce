@@ -7,35 +7,32 @@ use App\Entity\Traits\HasRoles;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use function Symfony\Component\String\u;
+use App\Entity\Traits\HasRegistrationDetailsTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
+    use HasRegistrationDetailsTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[Assert\Length(min: 4, max: 20)]
-    #[Assert\NotBlank(groups: ['user:create'])]
-    #[Assert\Regex(
-        pattern: "/^(?:[\u00c0-\u01ffa-zA-Z'-]){2,}(?:\s[\u00c0-\u01ffa-zA-Z'-]{2,})+$/i",
-        message: 'Invalid first name',
-    )]
+    #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 20)]
     private string $firstname = '';
 
     #[Assert\Length(min: 4, max: 20)]
-    #[Assert\NotBlank(groups: ['user:create'])]
-    #[Assert\Regex(
-        pattern: "/^(?:[\u00c0-\u01ffa-zA-Z'-]){2,}(?:\s[\u00c0-\u01ffa-zA-Z'-]{2,})+$/i",
-        message: 'Invalid last name',
-    )]
+    #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 20)]
     private string $lastname = '';
 
@@ -70,6 +67,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
      */
     #[ORM\Column(type: Types::STRING)]
     private ?string $password = null;
+
+    public function __construct()
+    {
+        $this->isVerified = false;
+    }
 
     public function __toString(): string
     {
@@ -251,11 +253,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         // guarantee every user at least has ROLE_USER
         $roles[] = HasRoles::DEFAULT;
 
-        /*
         if ($this->isVerified) {
             $roles[] = HasRoles::VERIFIED;
         }
-        */
 
         return array_values(array_unique($roles));
     }
