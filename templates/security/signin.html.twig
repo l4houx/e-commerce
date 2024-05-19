@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Sign in'|trans %}
+{% block title pagetitle %}
+
+{% block body %}
+    <form class="row justify-content-center needs-validation" method="post">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="h3 mb-3 fw-bold text-center">{{ pagetitle }}</h1>
+                    {% if error %}
+                        {% include "global/message.html.twig" with { message: (error.messageKey|trans(error.messageData, 'security')), type: "danger", icon: "bi bi-exclamation-circle" } %}
+                    {% endif %}
+                    <div class="form-floating mb-3">
+                        <input type="text" id="text" class="form-control" name="username" placeholder="{{ 'Email address here'|trans }}" value="{{ last_username }}"  autocomplete="username" required autofocus>
+                        <label for="text" class="form-label required">{{ 'User name or email'|trans }}</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" id="password" class="form-control" name="password" placeholder="**************" autocomplete="current-password" required>
+                        <label for="password" class="form-label required">{{ 'Password'|trans }}</label>
+                    </div>
+                    <div class="checkbox mb-3">
+                        <label>
+                            <input type="checkbox" class="form-check-input" id="rememberme" name="_remember_me" checked>&nbsp;
+                            {{ 'Remember me'|trans }}
+                        </label>
+                    </div>
+                    <input type="hidden" id="csrf_token" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">{{ pagetitle }}</button>
+                    <p class="mt-3 mb-3 text-muted">
+                        {{ 'You do not have an account?'|trans }}&nbsp;
+                        <a class="text-decoration-none" href="{{ path('signup') }}">
+                            {{ 'Sign up'|trans }}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

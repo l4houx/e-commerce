@@ -3,21 +3,20 @@
 namespace App\Form;
 
 use App\Entity\User;
-
 use Symfony\Component\Form\AbstractType;
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
+
+use function Symfony\Component\Translation\t;
 
 class RegistrationFormType extends AbstractType
 {
@@ -27,30 +26,30 @@ class RegistrationFormType extends AbstractType
         $builder
             // Profil
             ->add('username', TextType::class, [
-                'label' => t("User name :"),
-                //'purify_html' => true,
+                'label' => t('User name'),
+                // 'purify_html' => true,
                 'required' => true,
                 'empty_data' => '',
-                'attr' => ['placeholder' => t("User name")],
+                'attr' => ['placeholder' => t('User name')],
             ])
             ->add('firstname', TextType::class, [
-                'label' => t('First name :'),
-                //'purify_html' => true,
+                'label' => t('First name'),
+                // 'purify_html' => true,
                 'required' => true,
                 'empty_data' => '',
                 'attr' => ['placeholder' => t('First name')],
             ])
             ->add('lastname', TextType::class, [
-                'label' => t('Last name :'),
-                //'purify_html' => true,
+                'label' => t('Last name'),
+                // 'purify_html' => true,
                 'required' => true,
                 'empty_data' => '',
                 'attr' => ['placeholder' => t('Last name')],
             ])
             // Contact
             ->add('email', EmailType::class, [
-                'label' => t('Email address :'),
-                //'purify_html' => true,
+                'label' => t('Email address'),
+                // 'purify_html' => true,
                 'required' => true,
                 'attr' => ['placeholder' => t('Email address here')],
             ])
@@ -58,15 +57,15 @@ class RegistrationFormType extends AbstractType
                 'mapped' => true,
                 'constraints' => [
                     new IsTrue([
-                        'message' => t("You must accept the conditions of use of your personal data."),
+                        'message' => t('You must accept the conditions of use of your personal data.'),
                     ]),
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'options' => [
-                    //'purify_html' => true,
-                    //'toggle' => true,
+                    // 'purify_html' => true,
+                    'toggle' => true,
                     'translation_domain' => 'messages',
                     'attr' => [
                         'placeholder' => t('Password'),
@@ -74,8 +73,8 @@ class RegistrationFormType extends AbstractType
                     ],
                 ],
                 'label_attr' => ['class' => 'form-label'],
-                'first_options' => ['label' => t('Password :'), 'attr' => [...$passwordAttrs, ...['placeholder' => "**************"]]],
-                'second_options' => ['label' => t('Confirm password :'), 'attr' => [...$passwordAttrs, ...['placeholder' => "**************"]]],
+                'first_options' => ['label' => t('Password'), 'attr' => [...$passwordAttrs, ...['placeholder' => '**************']]],
+                'second_options' => ['label' => t('Confirm password'), 'attr' => [...$passwordAttrs, ...['placeholder' => '**************']]],
                 'invalid_message' => t('Password fields must correspond.'),
                 'mapped' => false,
                 'required' => true,
@@ -90,7 +89,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                     new PasswordStrength(
                         minScore: PasswordStrength::STRENGTH_STRONG
-                    )
+                    ),
                 ],
             ])
         ;

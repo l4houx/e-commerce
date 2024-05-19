@@ -25,4 +25,35 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    '@fortawesome/fontawesome-free/css/all.css' => [
+        'version' => '6.5.2',
+        'type' => 'css',
+    ],
+    'bootstrap-icons/font/bootstrap-icons.css' => [
+        'version' => '1.11.3',
+        'type' => 'css',
+    ],
+    'bootstrap' => [
+        'version' => '5.3.3',
+    ],
+    '@popperjs/core' => [
+        'version' => '2.11.8',
+    ],
+    'bootstrap/dist/css/bootstrap.min.css' => [
+        'version' => '5.3.3',
+        'type' => 'css',
+    ],
+    'htmx.org' => [
+        'version' => '1.9.12',
+    ],
+    'tom-select' => [
+        'version' => '2.3.1',
+    ],
+    'tom-select/dist/css/tom-select.bootstrap5.css' => [
+        'version' => '2.3.1',
+        'type' => 'css',
+    ],
+    '@symfony/ux-live-component' => [
+        'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
+    ],
 ];

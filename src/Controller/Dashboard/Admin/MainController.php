@@ -13,6 +13,6 @@ class MainController extends AdminBaseController
     #[Route(path: '/%website_dashboard_path%/admin', name: 'dashboard_admin_index', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('%website_dashboard_path%/admin/index.html.twig');
+        return $this->render('dashboard/admin/index.html.twig');
     }
 }

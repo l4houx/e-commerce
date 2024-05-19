@@ -17,8 +17,8 @@ security:
             provider: app_user_provider
             custom_authenticator: App\Security\Authenticator
             logout:
-                path: logout
-                # where to redirect after logout
+                path: signout
+                # where to redirect after signout
                 target: home
             remember_me:
                 secret: '%kernel.secret%'
@@ -35,7 +35,6 @@ security:
         - { path: ^(.*?)/signup, roles: PUBLIC_ACCESS }
         - { path: ^(.*?)/%website_dashboard_path%/admin, roles: ROLE_TEAM }
         - { path: ^(.*?)/%website_dashboard_path%/user, roles: ROLE_USER }
-        # - { path: ^/profile, roles: ROLE_USER }
 
     role_hierarchy:
         ROLE_MODERATOR: [ROLE_TEAM, ROLE_USER]

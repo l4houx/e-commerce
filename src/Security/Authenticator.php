@@ -22,7 +22,7 @@ class Authenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    final public const LOGIN_ROUTE = 'login';
+    final public const LOGIN_ROUTE = 'signin';
     private ?Passport $lastPassport = null;
 
     public function __construct(
@@ -66,7 +66,7 @@ class Authenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+        return new RedirectResponse($this->urlGenerator->generate('dashboard_main'));
     }
 
     protected function getLoginUrl(Request $request): string

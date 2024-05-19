@@ -33,8 +33,8 @@ class RegistrationController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/signup', name: 'register', methods: ['GET', 'POST'])]
-    public function register(Request $request): Response
+    #[Route(path: '/signup', name: 'signup', methods: ['GET', 'POST'])]
+    public function signup(Request $request): Response
     {
         if ($this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('Already logged in'));
@@ -71,7 +71,7 @@ class RegistrationController extends AbstractController
                     ))
                     ->to($user->getEmail())
                     ->subject($this->translator->trans('Please Confirm your Email'))
-                    ->htmlTemplate('mails/registration.html.twig')
+                    ->htmlTemplate('mails/signup.html.twig')
             );
 
             return $this->userAuthenticator->authenticateUser(
@@ -88,7 +88,7 @@ class RegistrationController extends AbstractController
             }
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('registration/signup.html.twig', [
             'errors' => $appErrors,
             'user' => $user,
             'registrationForm' => $registrationForm,

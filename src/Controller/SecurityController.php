@@ -15,8 +15,8 @@ class SecurityController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/signin', name: 'login', methods: ['GET', 'POST'])]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route(path: '/signin', name: 'signin', methods: ['GET', 'POST'])]
+    public function signin(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('Already logged in'));
@@ -29,10 +29,10 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/signin.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route(path: '/signout', name: 'logout', methods: ['GET', 'POST'])]
+    #[Route(path: '/signout', name: 'signout', methods: ['GET', 'POST'])]
     /** @codeCoverageIgnore */
     public function logout(): void
     {

@@ -1,0 +1,124 @@
+<div>
+    <nav class="bg-body-tertiary navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a href="{{ path('home') }}" class="fw-bold text-primary navbar-brand">{{ website_name }}</a>
+            <button aria-controls="navbar" class="navbar-toggler collapsed" data-bs-target="#navbar" data-bs-toggle="collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="me-auto navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Projets
+                        </a>
+                        <ul class="dropdown-menu">
+                            {#  
+                            {% if app.user.selectedProject is not null %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('project_show', { key: app.user.selectedProject.key }) }}">{{ app.user.selectedProject }}</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            #}
+                            <li><a class="dropdown-item" href="">Voir tous les projets</a></li>
+                            <li>
+                                <a class="dropdown-item" data-bs-target="#modalCreateProject" data-bs-toggle="modal" href="#">
+                                    Créer un projet
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {#  
+                    {% if app.user.selectedProject is not null %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Équipe
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" data-bs-target="#modalAddPeople" data-bs-toggle="modal" href="#">Inviter des membres</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('team_index') }}">Mon équipe</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('issue_index') }}">Tickets</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                data-bs-target="#modalCreateIssue"
+                                data-bs-toggle="modal"
+                                hx-get="{{ path('issue_create') }}"
+                                hx-target="#modalCreateIssue"
+                            >
+                                Créer
+                            </button>
+                        </li>
+                    {% endif %}
+                    #}
+                </ul>
+                <div class="d-flex gap-2" role="search">
+                    <div class="dropdown">
+                        <input aria-label="Rechercher"
+                            autocomplete="off"
+                            class="form-control dropdown-toggle me-2"
+                            data-bs-toggle="dropdown"
+                            hx-get="{# {{ path('search_index') }} #}"
+                            hx-target="#searchDropdownMenu"
+                            name="query"
+                            placeholder="Rechercher"
+                            type="text"
+                        >
+                        <div class="dropdown-menu" id="searchDropdownMenu" style="top: 50px; width: 460px;"></div>
+                    </div>
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ app.user }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('dashboard_main') }}">
+                                        {% if is_granted("ROLE_TEAM") %}
+                                            {{ 'Dashboard'|trans }}
+                                        {% else %}
+                                            {{ 'My dashboard'|trans }}
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="">
+                                        {{ 'My profile'|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('signout') }}">{{ 'Sign out'|trans }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ 'Account'|trans }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('signin', {redirect: app.request.pathInfo}) }}">
+                                        {{ 'Sign in'|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('signup') }}">
+                                        {{ 'Sign up'|trans }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
