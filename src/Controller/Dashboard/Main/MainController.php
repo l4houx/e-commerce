@@ -13,12 +13,16 @@ class MainController extends BaseController
     #[Route(path: '/%website_dashboard_path%', name: 'dashboard_main', methods: ['GET'])]
     public function main(AuthorizationCheckerInterface $authChecker): Response
     {
-        if ($authChecker->isGranted(HasRoles::TEAM)) {
-            return $this->redirectToRoute('dashboard_admin_index');;
+        if ($authChecker->isGranted(HasRoles::ADMIN)) {
+            return $this->redirectToRoute('dashboard_admin_index');
+        } elseif ($authChecker->isGranted(HasRoles::EDITOR)) {
+            return $this->redirectToRoute('dashboard_editor_index');
+        } elseif ($authChecker->isGranted(HasRoles::TEAM)) {
+            return $this->redirectToRoute('dashboard_team_index');
         } elseif ($authChecker->isGranted(HasRoles::DEFAULT)) {
             return $this->redirectToRoute('dashboard_user_index');
         }
 
-        return $this->redirectToRoute('login');
+        return $this->redirectToRoute('signin');
     }
 }

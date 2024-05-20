@@ -19,6 +19,9 @@ final class HasRoles
     // Role Admin
     public const ADMIN = 'ROLE_ADMIN';
 
+    // Role Editor product
+    public const EDITOR = 'ROLE_EDITOR';
+
     // Role Team
     public const TEAM = 'ROLE_TEAM';
 

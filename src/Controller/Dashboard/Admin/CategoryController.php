@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(HasRoles::ADMINAPPLICATION)]
+#[IsGranted(HasRoles::ADMIN)]
 #[Route('/%website_dashboard_path%/admin/manage-products', name: 'dashboard_admin_product_category_')]
 class CategoryController extends AdminBaseController
 {
@@ -55,9 +55,21 @@ class CategoryController extends AdminBaseController
                 $this->em->persist($category);
                 $this->em->flush();
                 if (!$id) {
-                    $this->addFlash('success', $this->translator->trans('Content was created successfully.'));
+                    $this->addFlash(
+                        'success',
+                        sprintf(
+                            $this->translator->trans('Content %s was created successfully.'),
+                            $category->getName()
+                        )
+                    );
                 } else {
-                    $this->addFlash('info', $this->translator->trans('Content was edited successfully.'));
+                    $this->addFlash(
+                        'info',
+                        sprintf(
+                            $this->translator->trans('Content %s was edited successfully.'),
+                            $category->getName()
+                        )
+                    );
                 }
 
                 return $this->redirectToRoute('dashboard_admin_product_category_index', [], Response::HTTP_SEE_OTHER);
@@ -76,7 +88,13 @@ class CategoryController extends AdminBaseController
             $this->em->remove($category);
             $this->em->flush();
 
-            $this->addFlash('danger', $this->translator->trans('Content was deleted successfully.'));
+            $this->addFlash(
+                'danger',
+                sprintf(
+                    $this->translator->trans('Content %s was deleted successfully.'),
+                    $category->getName()
+                )
+            );
         }
 
         return $this->redirectToRoute('dashboard_admin_product_category_index', [], Response::HTTP_SEE_OTHER);

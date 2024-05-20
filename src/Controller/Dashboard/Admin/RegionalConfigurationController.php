@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Dashboard\Admin;
 
 use App\DataTransferObject\RegionalConfigurationDto;
+use App\Entity\Traits\HasRoles;
 use App\Form\Filter\RegionalConfigurationFilter;
 use App\Service\RegionalConfigurationService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class RegionalConfigurationController extends AbstractController
+#[IsGranted(HasRoles::ADMINAPPLICATION)]
+#[Route('/%website_dashboard_path%/admin/manage-settings', name: 'dashboard_admin_setting_')]
+class RegionalConfigurationController extends AdminBaseController
 {
     public function __construct(
         private readonly RegionalConfigurationService $regionalConfigurationService,
@@ -19,8 +22,8 @@ class RegionalConfigurationController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/regional-settings', name: 'regional_settings', methods: ['GET', 'POST'])]
-    public function configure(Request $request): Response
+    #[Route(path: '', name: 'regional', methods: ['GET', 'POST'])]
+    public function regional(Request $request): Response
     {
         $regionalConfigurationDto = new RegionalConfigurationDto();
         $regionalConfigurationFilter = $this->createForm(RegionalConfigurationFilter::class, $regionalConfigurationDto)->handleRequest($request);
@@ -30,9 +33,9 @@ class RegionalConfigurationController extends AbstractController
                 regionalConfigurationDto: $regionalConfigurationDto
             );
 
-            return $this->redirectToRoute('regional_settings');
+            return $this->redirectToRoute('dashboard_admin_setting_regional', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('regional/configuration.html.twig', compact('regionalConfigurationFilter'));
+        return $this->render('dashboard/admin/setting/regional.html.twig', compact('regionalConfigurationFilter'));
     }
 }

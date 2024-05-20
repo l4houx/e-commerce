@@ -36,7 +36,9 @@ security:
     access_control:
         - { path: ^(.*?)/signin, roles: PUBLIC_ACCESS }
         - { path: ^(.*?)/signup, roles: PUBLIC_ACCESS }
-        - { path: ^(.*?)/%website_dashboard_path%/admin, roles: ROLE_TEAM }
+        - { path: ^(.*?)/%website_dashboard_path%/admin, roles: ROLE_ADMIN }
+        - { path: ^(.*?)/%website_dashboard_path%/editor, roles: ROLE_EDITOR }
+        - { path: ^(.*?)/%website_dashboard_path%/team, roles: ROLE_TEAM }
         - { path: ^(.*?)/%website_dashboard_path%/user, roles: ROLE_USER }
 
     role_hierarchy:
