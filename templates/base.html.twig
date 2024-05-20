@@ -6,7 +6,7 @@
         <title>{% block title website_name %} | {{ website_name }}</title>
         <meta name="csrf-token" content="">
         <meta name="robots" content="noindex, nofollow">
-        <meta name="turbo-visit-control" content="reload">
+        {# <meta name="turbo-visit-control" content="reload"> #}
 
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
@@ -20,15 +20,16 @@
         {% block header %}
             {% include "global/_header.html.twig" %}
         {% endblock %}
-        <main class="container mt-3">
+        <div class="container mt-3">
             {% block cover '' %}
             {% block pageheader '' %}
             {% block breadcrumb '' %}
             {% block body '' %}
-        </main>
+        </div>
         {% block footer %}
             {% include "global/_footer.html.twig" %}
         {% endblock %}
-        {% include "global/flash.html.twig" %}
+        {{ component('flash_messages') }}
+        {# {% include "global/flash.html.twig" %} #}
     </body>
 </html>

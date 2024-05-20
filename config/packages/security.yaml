@@ -15,6 +15,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            #entry_point: App\Security\AuthenticationEntryPoint
+            #user_checker: App\Security\UserChecker
             custom_authenticator: App\Security\Authenticator
             logout:
                 path: signout
@@ -27,6 +29,7 @@ security:
                 always_remember_me: true
 
             switch_user: true
+            #access_denied_handler: App\Security\AccessDeniedHandler
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

@@ -4,10 +4,6 @@
 {% block title pagetitle %}
 
 {% block body %}
-    {% for flash_error in app.flashes('danger') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
     {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate', 'class': 'row justify-content-center needs-validation '} }) }}
         <div class="col-md-6 col-sm-12 mb-3">
             <div class="card">
