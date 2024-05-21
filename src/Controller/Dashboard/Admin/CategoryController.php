@@ -28,9 +28,9 @@ class CategoryController extends AdminBaseController
     #[Route(path: '/categories', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $rows = $this->categoryRepository->findAll();
-
-        return $this->render('dashboard/admin/products/category/index.html.twig', compact('rows'));
+        return $this->render('dashboard/admin/products/category/index.html.twig', [
+            'rows' => $this->categoryRepository->findAll(),
+        ]);
     }
 
     #[Route(path: '/categories/new', name: 'new', methods: ['GET', 'POST'])]
@@ -84,7 +84,7 @@ class CategoryController extends AdminBaseController
     #[Route(path: '/categories/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
     public function delete(Request $request, Category $category): Response
     {
-        if ($this->isCsrfTokenValid('category_deletion_'.$category->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('category_deletion_'.$category->getId(), $request->getPayload()->get('_token'))) {
             $this->em->remove($category);
             $this->em->flush();
 

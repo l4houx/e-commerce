@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Traits\HasIdTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CategoryRepository;
@@ -23,6 +25,17 @@ class Category
     )]
     private string $name = '';
 
+    /**
+     * @var Collection<int, SubCategory>
+     */
+    #[ORM\OneToMany(targetEntity: SubCategory::class, mappedBy: 'category', orphanRemoval: true)]
+    private Collection $subCategories;
+
+    public function __construct()
+    {
+        $this->subCategories = new ArrayCollection();
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -31,6 +44,36 @@ class Category
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubCategory>
+     */
+    public function getSubCategories(): Collection
+    {
+        return $this->subCategories;
+    }
+
+    public function addSubCategory(SubCategory $subCategory): static
+    {
+        if (!$this->subCategories->contains($subCategory)) {
+            $this->subCategories->add($subCategory);
+            $subCategory->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubCategory(SubCategory $subCategory): static
+    {
+        if ($this->subCategories->removeElement($subCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($subCategory->getCategory() === $this) {
+                $subCategory->setCategory(null);
+            }
+        }
 
         return $this;
     }

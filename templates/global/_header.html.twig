@@ -96,6 +96,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_sub_category_index" or routename == "dashboard_admin_product_sub_category_new" or routename == "dashboard_admin_product_sub_category_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_sub_category_index') }}">
+                                        {{ 'Sub Categories'|trans }}
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_product_category_index') }}">
                                         {{ "Products"|trans }}
                                     </a>
