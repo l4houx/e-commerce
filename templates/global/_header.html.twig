@@ -1,4 +1,7 @@
-<div>
+{% set routename = app.request.get('_route') %}
+{# {% set random = setting.generateReference(5) %} #}
+
+<header class="sticky-top">
     <nav class="bg-body-tertiary navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a href="{{ path('home') }}" class="fw-bold text-primary navbar-brand">{{ website_name }}</a>
@@ -6,7 +9,13 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse" id="navbar">
-                <ul class="me-auto navbar-nav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Projets
@@ -58,6 +67,95 @@
                         </li>
                     {% endif %}
                     #}
+                    {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if routename == "dashboard_admin_index" or routename == "dashboard_editor_index" or routename == "dashboard_team_index" or routename == "dashboard_user_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
+                                {% if is_granted("ROLE_ADMIN") %}
+                                    {{ 'Dashboard'|trans }}
+                                {% elseif is_granted('ROLE_EDITOR')  %}
+                                    {{ 'Product list'|trans }}
+                                {% elseif is_granted("ROLE_TEAM") %}
+                                    {{ 'Dashboard'|trans }}
+                                {% else %}
+                                    {{ 'My Dashboard'|trans }}
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {{ 'Administration'|trans }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_category_index" or routename == "dashboard_admin_product_category_new" or routename == "dashboard_admin_product_category_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_category_index') }}">
+                                        {{ 'Categories'|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('dashboard_admin_product_category_index') }}">
+                                        {{ "Products"|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('dashboard_admin_user_index') }}">
+                                        {{ "Users"|trans }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% elseif is_granted('ROLE_EDITOR') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Editor
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    {% elseif is_granted('ROLE_TEAM') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Team
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    {% elseif is_granted('ROLE_USER') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Client
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
                 <div class="d-flex gap-2" role="search">
                     <div class="dropdown">
@@ -121,4 +219,4 @@
             </div>
         </div>
     </nav>
-</div>
+</header>

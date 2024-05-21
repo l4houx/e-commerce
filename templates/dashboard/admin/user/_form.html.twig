@@ -2,8 +2,8 @@
     <div class="card-header">
         <h4 class="mb-0">
             {{ pagetitle }} 
-            {% if app.request.attributes.get('_route') == 'dashboard_admin_product_category_edit' %}
-                "{{ category.name }}"
+            {% if app.request.attributes.get('_route') == 'dashboard_admin_user_edit' %}
+                "{{ user.getFullName | lower | capitalize }}"
             {% endif %}
         </h4>
     </div>
@@ -13,11 +13,6 @@
                 {% include "global/message.html.twig" with { type: "info", icon: "fas fa-exclamation", message: ("The fields preceded with a red * are mandatory"|trans) } %}
             </div>
             {{ form_widget(form) }}
-            <div class="col-12 pt-2">
-                <button type="submit" class="{% if category.id %}btn btn-warning{% else %}btn btn-primary{% endif %} me-4">
-                    {% if category.id %}{{ 'Update'|trans }}{% else %}{{ 'Save'|trans }}{% endif %}
-                </button>
-            </div>
         </div>
     {{ form_end(form) }}
 </div>

@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\HasIsTeamTrait;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Traits\HasRoles;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use function Symfony\Component\String\u;
 use App\Entity\Traits\HasRegistrationDetailsTrait;
+use App\Entity\Traits\HasTimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -20,6 +22,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     use HasRegistrationDetailsTrait;
+    use HasIsTeamTrait;
+    use HasTimestampableTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -198,30 +202,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
 
     public function getRole(): string
     {
-        if ($this->hasRole(HasRoles::DEFAULT)) {
-            return '<span class="badge me-2 bg-success-soft">User</span>';
-        } elseif ($this->hasRole(HasRoles::SUPERADMIN) || $this->hasRole(HasRoles::ADMINAPPLICATION)) {
-            return '<span class="badge me-2 bg-danger-soft">Administrator</span>';
+        if ($this->hasRole(HasRoles::SUPERADMIN) || $this->hasRole(HasRoles::ADMINAPPLICATION)) {
+            return '<span class="badge me-2 bg-danger">Administrator</span>';
         } elseif ($this->hasRole(HasRoles::ADMIN)) {
-            return '<span class="badge me-2 bg-dark-soft">Admin</span>';
+            return '<span class="badge me-2 bg-dark">Admin</span>';
         } elseif ($this->hasRole(HasRoles::MODERATOR)) {
-            return '<span class="badge me-2 bg-warning-soft">Moderator</span>';
+            return '<span class="badge me-2 bg-warning">Moderator</span>';
         } elseif ($this->hasRole(HasRoles::TEAM)) {
-            return '<span class="badge me-2 bg-primary-soft">Team</span>';
+            return '<span class="badge me-2 bg-primary">Team</span>';
+        } elseif ($this->hasRole(HasRoles::EDITOR)) {
+            return '<span class="badge me-2 bg-secondary">Editor</span>';
+        } elseif ($this->hasRole(HasRoles::DEFAULT)) {
+            return '<span class="badge me-2 bg-success">User</span>';
         } else {
-            return '<span class="badge me-2 bg-warning-soft">N/A</span>';
+            return '<span class="badge me-2 bg-warning">N/A</span>';
         }
     }
 
     public function getCrossRoleName(): string
     {
-        if ($this->hasRole(HasRoles::DEFAULT)) {
-            return $this->getFullName();
-        } elseif ($this->hasRole(HasRoles::ADMIN)) {
+        if ($this->hasRole(HasRoles::ADMIN)) {
             return $this->getFullName();
         } elseif ($this->hasRole(HasRoles::MODERATOR)) {
             return $this->getFullName();
         } elseif ($this->hasRole(HasRoles::TEAM)) {
+            return $this->getFullName();
+        } elseif ($this->hasRole(HasRoles::EDITOR)) {
+            return $this->getFullName();
+        } elseif ($this->hasRole(HasRoles::DEFAULT)) {
             return $this->getFullName();
         } else {
             return 'N/A';

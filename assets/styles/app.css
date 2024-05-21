@@ -148,3 +148,246 @@ label.required:after {
     --bs-btn-active-bg: var(--bs-btn-ghost-bg);
     --bs-btn-active-border-color: var(--bs-btn-ghost-bg)
 }
+
+.avatar {
+    display: inline-block;
+    height: 3rem;
+    position: relative;
+    width: 3rem
+}
+
+.avatar-xs {
+    height: 1.5rem;
+    width: 1.5rem
+}
+
+.avatar-sm {
+    height: 2rem;
+    width: 2rem
+}
+
+.avatar-md {
+    height: 2.5rem;
+    width: 2.5rem
+}
+
+.avatar-lg {
+    height: 3.5rem;
+    width: 3.5rem
+}
+
+.avatar-xl {
+    height: 5rem;
+    width: 5rem
+}
+
+.avatar-xxl {
+    height: 7.5rem;
+    width: 7.5rem
+}
+
+.avatar img {
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+    width: 100%
+}
+
+.avatar-offline:before {
+    background-color: var(--bs-gray-400)
+}
+
+.avatar-online:before {
+    background-color: var(--bs-success)
+}
+
+.avatar-away:before {
+    background-color: var(--bs-warning)
+}
+
+.avatar-busy:before {
+    background-color: var(--bs-danger)
+}
+
+.avatar-info:before {
+    background-color: var(--bs-info)
+}
+
+.avatar-indicators:before {
+    border: 2px solid var(--bs-white);
+    border-radius: 50%;
+    bottom: 0;
+    content: "";
+    display: table;
+    height: 30%;
+    position: absolute;
+    right: 5%;
+    width: 30%
+}
+
+.avatar-initials {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    pointer-events: none;
+    text-transform: uppercase;
+    width: 100%
+}
+
+.avatar-primary .avatar-initials {
+    background-color: var(--bs-primary);
+    color: var(--bs-white)
+}
+
+.avatar-secondary .avatar-initials {
+    background-color: var(--bs-secondary);
+    color: var(--bs-white)
+}
+
+.avatar-success .avatar-initials {
+    background-color: var(--bs-success);
+    color: var(--bs-white)
+}
+
+.avatar-warning .avatar-initials {
+    background-color: var(--bs-warning);
+    color: var(--bs-white)
+}
+
+.avatar-info .avatar-initials {
+    background-color: var(--bs-info);
+    color: var(--bs-white)
+}
+
+.avatar-danger .avatar-initials {
+    background-color: var(--bs-danger);
+    color: var(--bs-white)
+}
+
+.avatar-light .avatar-initials {
+    background-color: var(--bs-light);
+    color: var(--bs-white)
+}
+
+.avatar-dark .avatar-initials {
+    background-color: var(--bs-dark);
+    color: var(--bs-white)
+}
+
+.avatar-primary-soft .avatar-initials {
+    background-color: #ede9fe;
+    color: var(--bs-primary)
+}
+
+.avatar-secondary-soft .avatar-initials {
+    background-color: var(--bs-secondary);
+    color: var(--bs-white)
+}
+
+.avatar-success-soft .avatar-initials {
+    background-color: var(--bs-light-success);
+    color: var(--bs-success)
+}
+
+.avatar-warning-soft .avatar-initials {
+    background-color: var(--bs-light-warning);
+    color: var(--bs-warning)
+}
+
+.avatar-info-soft .avatar-initials {
+    background-color: var(--bs-light-info);
+    color: var(--bs-info)
+}
+
+.avatar-danger-soft .avatar-initials {
+    background-color: var(--bs-light-danger);
+    color: var(--bs-danger)
+}
+
+.avatar-dark-soft .avatar-initials {
+    background-color: var(--bs-light-dark);
+    color: var(--bs-white)
+}
+
+.avatar-light-soft .avatar-initials {
+    background-color: var(--bs-light);
+    color: var(--bs-dark)
+}
+
+.avatar-group .avatar+.avatar {
+    margin-left: -1.2rem
+}
+
+.avatar-group .avatar:hover {
+    z-index: 2
+}
+
+.avatar-group .avatar .avatar-initials,
+.avatar-group img {
+    border: 3px solid var(--bs-white)
+}
+
+.img-4by3-xxl {
+    width: 9rem
+}
+
+.img-4by3-xl {
+    width: 7.75rem
+}
+
+.img-4by3-lg {
+    width: 6.5rem
+}
+
+.img-4by3-md {
+    width: 5.25rem
+}
+
+.img-4by3-sm {
+    width: 4rem
+}
+
+.img-4by3-xs {
+    width: 2.75rem
+}
+
+.img-4by3-xxs {
+    width: 1.5625rem;
+    height: 1.5625rem
+}
+
+.img-200-200 {
+    max-height: 200px;
+    max-width: 200px
+}
+
+.img-100-100 {
+    max-height: 100px;
+    max-width: 100px
+}
+
+.img-80-80 {
+    max-height: 80px;
+    max-width: 80px
+}
+
+.img-50-50 {
+    max-height: 50px;
+    max-width: 50px
+}
+
+.img-30-30 {
+    max-height: 30px;
+    max-width: 30px
+}
+
+.img-20-20 {
+    max-height: 20px;
+    max-width: 20px
+}
+
+.img-15-15 {
+    max-height: 15px;
+    max-width: 15px
+}
