@@ -68,6 +68,9 @@ parameters:
     #google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     #google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
 
+    absolute_image_directory: '/uploads/images'
+    image_directory: '%kernel.project_dir%/public/uploads/images'
+
 services:
     # default configuration for services in *this* file
     _defaults:

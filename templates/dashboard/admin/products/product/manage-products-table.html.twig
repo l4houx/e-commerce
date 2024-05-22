@@ -14,13 +14,16 @@
 				<tr>
 					<td>{{ product.id }}</td>
 					<td>
-						<a href="{{ link }}" class="text-inherit">
+						<a href="{{ link }}" class="text-inherit" target="_blank">
 							<div class="d-flex align-items-center">
 								<div>
-									<img src="{{ product.imageName ? asset(product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.name }}" class="img-4by3-lg rounded">
+                                    <img src="{{ product.imageName ? asset(product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.name }}" class="img-4by3-lg rounded">
 								</div>
 								<div class="ms-3">
-									<h4 class="mb-1 text-primary-hover">{{ product.name }}</h4>
+									<h4 class="mb-1 text-primary-hover">
+                                        {{ product.name }}
+                                        {# <span class="small text-muted ms-1">#{{ product.reference }}</span> #}
+                                    </h4>
 									<span>
 										{{ 'Published the'|trans }}
 										{{ product.createdAt | format_date('long') }}

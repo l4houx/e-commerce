@@ -61,11 +61,11 @@
                                 </tr>
                                 <tr>
                                     <td width="30%">{{ 'Creation date'|trans }}</th>
-                                    <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                                    <td>{{ product.createdAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) }}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%">{{ 'Update date'|trans }}</th>
-                                    <td>{{ product.updatedAt ? product.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                                    <td>{{ product.updatedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -77,7 +77,7 @@
                             <thead>
                                 <tr>
                                     <th colspan="2">
-                                        <i class="bi bi-image text-muted"></i>
+                                        <i class="fas fa-file-image text-muted"></i>
                                         {{ "Images"|trans }}
                                     </th>
                                 </tr>

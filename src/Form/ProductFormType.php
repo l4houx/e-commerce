@@ -36,17 +36,21 @@ class ProductFormType extends AbstractType
                 'label' => t('Main product image'),
                 'help' => t('Choose the right image to represent your product (We recommend using at least a 1200x600px (2:1 ratio) image )'),
                 'translation_domain' => 'messages',
+                'attr' => ['class' => 'mb-3'],
             ])
             ->add('images', CollectionType::class, [
                 'label' => t('Images gallery'),
                 'entry_type' => ProductImageFormType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'prototype' => true,
+                //'prototype' => true,
                 'required' => false,
                 'by_reference' => false,
+                'entry_options' => ['label' => false],
                 'attr' => [
-                    'class' => 'form-collection',
+                    #'data-controller' => 'form-collection',
+                    'data-form-collection-add-label-value' => t('Add an image'),
+                    'data-form-collection-delete-label-value' => t('Remove an image')
                 ],
                 'help' => t('Add other images that represent your product to be displayed as a gallery'),
                 'error_bubbling' => false,
@@ -57,6 +61,14 @@ class ProductFormType extends AbstractType
                 // 'purify_html' => true,
                 'empty_data' => '',
             ])
+            /*
+            ->add('slug', TextType::class, [
+                'label' => t('Slug'),
+                'empty_data' => '',
+                'required' => false,
+                'help' => t('Field must contain an unique value.'),
+            ])
+            */
             ->add('content', TextareaType::class, [
                 'label' => t('Content'),
                 'required' => false,
@@ -78,6 +90,7 @@ class ProductFormType extends AbstractType
             ])
             ->add('subCategories', SubCategoriesAutocompleteField::class)
             ->add('brand', BrandAutocompleteField::class)
+            //->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
     }

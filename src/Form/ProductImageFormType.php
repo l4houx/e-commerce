@@ -3,16 +3,22 @@
 namespace App\Form;
 
 use App\Entity\ProductImage;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
-use function Symfony\Component\Translation\t;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ProductImageFormType extends AbstractType
 {
+    public function __construct(private FormListenerFactory $formListenerFactory)
+    {
+        // code...
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -31,6 +37,7 @@ class ProductImageFormType extends AbstractType
                     'class' => 'form-collection-position',
                 ],
             ])
+            ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
     }
 

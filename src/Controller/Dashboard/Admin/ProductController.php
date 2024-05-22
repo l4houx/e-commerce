@@ -43,7 +43,7 @@ class ProductController extends AbstractController
     {
         if (!$id) {
             $product = new Product();
-            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['create', 'Default']])->handleRequest($request);
+            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['create', 'Default']]);
         } else {
             /** @var Product $product */
             $product = $this->productRepository->find(['id' => $id]);
@@ -53,17 +53,16 @@ class ProductController extends AbstractController
                 return $this->redirectToRoute('dashboard_admin_product_index', [], Response::HTTP_SEE_OTHER);
             }
 
-            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['update', 'Default']])->handleRequest($request);
+            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['update', 'Default']]);
         }
 
+        $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 foreach ($product->getImages() as $image) {
                     $image->setProduct($product);
                 }
 
-                $this->em->persist($product);
-                $this->em->flush();
                 if (!$id) {
                     $this->addFlash(
                         'success',
@@ -81,6 +80,9 @@ class ProductController extends AbstractController
                         )
                     );
                 }
+
+                $this->em->persist($product);
+                $this->em->flush();
 
                 return $this->redirectToRoute('dashboard_admin_product_index', [], Response::HTTP_SEE_OTHER);
             } else {
