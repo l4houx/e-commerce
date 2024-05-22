@@ -101,16 +101,38 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ path('dashboard_admin_product_category_index') }}">
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_index" or routename == "dashboard_admin_product_new" or routename == "dashboard_admin_product_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_index') }}">
                                         {{ "Products"|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="">
+                                        {{ "Brand"|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="">
+                                        {{ "Color"|trans }}
+                                    </a>
+                                </li>                                <li>
+                                    <a class="dropdown-item" href="">
+                                        {{ "Size"|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ path('dashboard_admin_user_index') }}">
+                                    <a class="dropdown-item  {% if routename == "dashboard_admin_user_index" or routename == "dashboard_admin_user_new" or routename == "dashboard_admin_user_suspended" or routename == "dashboard_admin_user_verified" or routename == "dashboard_admin_user_information" %}active{% endif %}" href="{{ path('dashboard_admin_user_index') }}">
                                         {{ "Users"|trans }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('dashboard_admin_setting_regional') }}">
+                                        {{ "Regional Configuration"|trans }}
                                     </a>
                                 </li>
                             </ul>
@@ -164,14 +186,14 @@
                 </ul>
                 <div class="d-flex gap-2" role="search">
                     <div class="dropdown">
-                        <input aria-label="Rechercher"
+                        <input aria-label="{{ "Search"|trans }}"
                             autocomplete="off"
                             class="form-control dropdown-toggle me-2"
                             data-bs-toggle="dropdown"
-                            hx-get="{# {{ path('search_index') }} #}"
+                            hx-get="{{ path('search_index') }}"
                             hx-target="#searchDropdownMenu"
-                            name="query"
-                            placeholder="Rechercher"
+                            name="keyword"
+                            placeholder="{{ "Search"|trans }}"
                             type="text"
                         >
                         <div class="dropdown-menu" id="searchDropdownMenu" style="top: 50px; width: 460px;"></div>

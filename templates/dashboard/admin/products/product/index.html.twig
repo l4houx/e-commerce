@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Manage products'|trans %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
+                {% set breadcrumb = [{ "dashboard_main": ('Dashboard' | trans), "current":(pagetitle) }] %}
+                {% include "global/dashboard-breadcrumb.html.twig" with breadcrumb %}
+                <div>
+                    {% if is_granted('ROLE_VERIFIED') %}
+                        <a href="{{ path('dashboard_admin_product_new') }}" class="btn btn-primary me-2">{{ 'Create'|trans }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-1">
+                        {{ "%resultsCount% result(s) found"|trans({'%resultsCount%': rows|length}) }}
+                    </h4>
+                    <p class="mb-0"></p>
+                </div>
+                {% if rows|length > 0 %}
+                    {% include "dashboard/admin/products/product/manage-products-table.html.twig" with {rows: rows} %}
+                {% else %}
+                    <div class="card-footer">
+                        {% include "global/message.html.twig" with { type: "dark", message: ('No products found'|trans), icon: "fas fa-exclamation", class: "my-2" } %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

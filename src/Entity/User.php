@@ -30,12 +30,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Length(min: 4, max: 20)]
+    #[Assert\Length(min: 2, max: 20)]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 20)]
     private string $firstname = '';
 
-    #[Assert\Length(min: 4, max: 20)]
+    #[Assert\Length(min: 2, max: 20)]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 20)]
     private string $lastname = '';

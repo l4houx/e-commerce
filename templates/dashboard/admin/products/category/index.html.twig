@@ -31,9 +31,6 @@
                 </div>
                 {% if rows|length > 0 %}
                     {% include "dashboard/admin/products/category/manage-categories-table.html.twig" with {rows: rows} %}
-                    <div class="card-footer">
-                        {# {{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }} #}
-                    </div>
                 {% else %}
                     <div class="card-footer">
                         {% include "global/message.html.twig" with { type: "dark", message: ('No categories found'|trans), icon: "fas fa-exclamation", class: "my-2" } %}

@@ -59,6 +59,7 @@ class RegistrationController extends AbstractController
             $avatar = $this->avatarService->createAvatar($user->getEmail());
             $user->setAvatar($avatar);
             $user->setLastLoginIp($request->getClientIp());
+            //$user->setCreatedAt(new \DateTimeImmutable());
 
             $this->em->persist($user);
             $this->em->flush();

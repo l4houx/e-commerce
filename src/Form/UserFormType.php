@@ -2,28 +2,34 @@
 
 namespace App\Form;
 
-use App\Entity\Traits\HasRoles;
 use App\Entity\User;
+use App\Entity\Traits\HasRoles;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 class UserFormType extends AbstractType
 {
+    public function __construct(private FormListenerFactory $formListenerFactory)
+    {
+        # code...
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $passwordAttrs = ['minlength' => 16];
@@ -131,6 +137,7 @@ class UserFormType extends AbstractType
                 'label' => t('Verified'),
                 'required' => false,
             ])
+            ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
             ->add('save', SubmitType::class, [
                 'label' => t('Save'),
                 'attr' => ['class' => 'btn btn-primary'],
