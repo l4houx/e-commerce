@@ -43,6 +43,7 @@ class ProductController extends AbstractController
     {
         if (!$id) {
             $product = new Product();
+            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['create', 'Default']])->handleRequest($request);
         } else {
             /** @var Product $product */
             $product = $this->productRepository->find(['id' => $id]);
@@ -51,13 +52,16 @@ class ProductController extends AbstractController
 
                 return $this->redirectToRoute('dashboard_admin_product_index', [], Response::HTTP_SEE_OTHER);
             }
+
+            $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['update', 'Default']])->handleRequest($request);
         }
 
-        $form = $this->createForm(ProductFormType::class, $product)->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                //$product->setCreatedAt(new \DateTimeImmutable());
-                //$product->setUpdatedAt(new \DateTimeImmutable());
+                foreach ($product->getImages() as $image) {
+                    $image->setProduct($product);
+                }
+
                 $this->em->persist($product);
                 $this->em->flush();
                 if (!$id) {

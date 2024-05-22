@@ -17,7 +17,7 @@
 						<a href="{{ link }}" class="text-inherit">
 							<div class="d-flex align-items-center">
 								<div>
-									<img src="" alt="{{ product.name }}" class="img-4by3-lg rounded">
+									<img src="{{ product.imageName ? asset(product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.name }}" class="img-4by3-lg rounded">
 								</div>
 								<div class="ms-3">
 									<h4 class="mb-1 text-primary-hover">{{ product.name }}</h4>
