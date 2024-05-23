@@ -8,9 +8,11 @@ use App\Entity\Traits\HasTimestampableTrait;
 use App\Repository\ColorRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ColorRepository::class)]
+#[UniqueEntity('name')]
 class Color
 {
     use HasIdNameTrait;
@@ -18,17 +20,17 @@ class Color
     use HasTimestampableTrait;
 
     #[ORM\Column(type: Types::STRING, length: 128)]
-    #[Assert\NotBlank(message: "Please don't leave your name blank!")]
+    #[Assert\NotBlank(message: "Please don't leave your hex blank!")]
     #[Assert\Length(
         min: 4,
         max: 128,
-        minMessage: 'The name is too short ({{ limit }} characters minimum)',
-        maxMessage: 'The name is too long ({ limit } characters maximum)'
+        minMessage: 'The hex is too short ({{ limit }} characters minimum)',
+        maxMessage: 'The hex is too long ({ limit } characters maximum)'
     )]
     private string $hex = '';
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $display_in_search = null;
+    private ?int $displayInSearch = null;
 
     public function getHex(): string
     {
@@ -44,12 +46,12 @@ class Color
 
     public function getDisplayInSearch(): ?int
     {
-        return $this->display_in_search;
+        return $this->displayInSearch;
     }
 
-    public function setDisplayInSearch(int $display_in_search): static
+    public function setDisplayInSearch(int $displayInSearch): static
     {
-        $this->display_in_search = $display_in_search;
+        $this->displayInSearch = $displayInSearch;
 
         return $this;
     }

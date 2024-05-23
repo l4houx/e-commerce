@@ -26,7 +26,7 @@
                                     </h4>
 									<span>
 										{{ 'Published the'|trans }}
-										{{ product.createdAt | format_date('long') }}
+										{{ product.createdAt ? product.createdAt | format_date('long') : '' }}
 									</span>
 								</div>
 							</div>

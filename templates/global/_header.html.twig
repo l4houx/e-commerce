@@ -106,16 +106,17 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="">
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_brand_index" or routename == "dashboard_admin_product_brand_new" or routename == "dashboard_admin_product_brand_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_brand_index') }}">
                                         {{ "Brand"|trans }}
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="">
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_color_index" or routename == "dashboard_admin_product_color_new" or routename == "dashboard_admin_product_color_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_color_index') }}">
                                         {{ "Color"|trans }}
                                     </a>
-                                </li>                                <li>
-                                    <a class="dropdown-item" href="">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item {% if routename == "dashboard_admin_product_size_index" or routename == "dashboard_admin_product_size_new" or routename == "dashboard_admin_product_size_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_size_index') }}">
                                         {{ "Size"|trans }}
                                     </a>
                                 </li>

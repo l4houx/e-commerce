@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\HasMetaTrait;
 use App\Entity\Traits\HasViewsTrait;
+use App\Entity\Traits\HasActiveTrait;
 use App\Entity\Traits\HasIdNameTrait;
 use App\Repository\ProductRepository;
 use App\Entity\Traits\HasIsOnlineTrait;
@@ -17,14 +19,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[UniqueEntity('name')]
 #[Vich\Uploadable]
 class Product
 {
     use HasIdNameTrait;
-    //use HasIsOnlineTrait;
-    //use HasViewsTrait;
+    use HasMetaTrait;
+    //use HasActiveTrait;
+    // use HasIsOnlineTrait;
+    use HasViewsTrait;
     //use HasReferenceTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;

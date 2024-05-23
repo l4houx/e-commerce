@@ -2,18 +2,19 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Traits\HasIdTrait;
-use App\Entity\Traits\HasMetaTrait;
-use App\Repository\BrandRepository;
 use App\Entity\Traits\HasActiveTrait;
-use App\Entity\Traits\HasIdNameTrait;
 use App\Entity\Traits\HasDeletedAtTrait;
+use App\Entity\Traits\HasIdNameTrait;
+use App\Entity\Traits\HasMetaTrait;
 use App\Entity\Traits\HasTimestampableTrait;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\BrandRepository;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[UniqueEntity('name')]
+//#[Vich\Uploadable]
 class Brand
 {
     use HasIdNameTrait;
@@ -22,6 +23,7 @@ class Brand
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
 
+    /*
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $order = null;
 
@@ -36,4 +38,5 @@ class Brand
 
         return $this;
     }
+    */
 }

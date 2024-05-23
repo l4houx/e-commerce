@@ -90,6 +90,29 @@ class ProductFormType extends AbstractType
             ])
             ->add('subCategories', SubCategoriesAutocompleteField::class)
             ->add('brand', BrandAutocompleteField::class)
+            ->add('metaTitle', TextType::class, [
+                'label' => t('Meta title'),
+                'required' => false,
+                // 'purify_html' => true,
+                'empty_data' => '',
+            ])
+            ->add('metaDescription', TextareaType::class, [
+                'label' => t('Meta description'),
+                'required' => false,
+                'empty_data' => '',
+                'attr' => ['placeholder' => '', 'rows' => 6],
+                'help' => t(''),
+            ])
+            /*
+            ->add('isActive', ChoiceType::class, [
+                'label' => t('Active'),
+                'required' => false,
+                'multiple' => false,
+                'expanded' => true,
+                'choices' => ['Enable' => true, 'Disable' => false],
+                'label_attr' => ['class' => 'radio-custom radio-inline'],
+            ])
+            */
             //->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;

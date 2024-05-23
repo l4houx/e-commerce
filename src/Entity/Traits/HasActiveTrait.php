@@ -10,16 +10,16 @@ trait HasActiveTrait
 {
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 1])]
     #[Assert\NotNull]
-    private int $is_active;
+    private int $isActive;
 
     public function getIsActive(): int
     {
-        return $this->is_active;
+        return $this->isActive;
     }
 
-    public function setIsActive(int $is_active): static
+    public function setIsActive(int $isActive): static
     {
-        $this->is_active = $is_active;
+        $this->isActive = $isActive;
 
         return $this;
     }

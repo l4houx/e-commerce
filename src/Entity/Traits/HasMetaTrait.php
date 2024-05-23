@@ -8,31 +8,31 @@ use Doctrine\ORM\Mapping as ORM;
 trait HasMetaTrait
 {
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $meta_title = null;
+    private ?string $metaTitle = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $meta_description = null;
+    private ?string $metaDescription = null;
 
     public function getMetaTitle(): ?string
     {
-        return $this->meta_title;
+        return $this->metaTitle;
     }
 
-    public function setMetaTitle(?string $meta_title): static
+    public function setMetaTitle(?string $metaTitle): static
     {
-        $this->meta_title = $meta_title;
+        $this->metaTitle = $metaTitle;
 
         return $this;
     }
 
     public function getMetaDescription(): ?string
     {
-        return $this->meta_description;
+        return $this->metaDescription;
     }
 
-    public function setMetaDescription(?string $meta_description): static
+    public function setMetaDescription(?string $metaDescription): static
     {
-        $this->meta_description = $meta_description;
+        $this->metaDescription = $metaDescription;
 
         return $this;
     }

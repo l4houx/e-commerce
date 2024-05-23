@@ -6,6 +6,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+//#[UniqueEntity('name', message: 'That name already exists.')]
+//#[UniqueEntity('slug', message: 'This slug already exists.')]
+
 trait HasIdNameSlugTrait
 {
     #[ORM\Id]
@@ -13,7 +16,7 @@ trait HasIdNameSlugTrait
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 128)]
+    #[ORM\Column(type: Types::STRING, length: 128, unique: true)]
     #[Assert\NotBlank(message: "Please don't leave your name blank!")]
     #[Assert\Length(
         min: 4,

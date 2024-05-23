@@ -2,28 +2,18 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\HasIdTrait;
+use App\Entity\Traits\HasIdNameTrait;
 use App\Repository\SubCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: SubCategoryRepository::class)]
+#[UniqueEntity('name')]
 class SubCategory
 {
-    use HasIdTrait;
-
-    #[ORM\Column(type: Types::STRING, length: 128)]
-    #[Assert\NotBlank(message: "Please don't leave your name blank!")]
-    #[Assert\Length(
-        min: 4,
-        max: 128,
-        minMessage: 'The name is too short ({{ limit }} characters minimum)',
-        maxMessage: 'The name is too long ({ limit } characters maximum)'
-    )]
-    private string $name = '';
+    use HasIdNameTrait;
 
     #[ORM\ManyToOne(inversedBy: 'subCategories')]
     #[ORM\JoinColumn(nullable: false)]
@@ -38,18 +28,6 @@ class SubCategory
     public function __construct()
     {
         $this->products = new ArrayCollection();
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getCategory(): ?Category
