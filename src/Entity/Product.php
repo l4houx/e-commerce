@@ -28,10 +28,10 @@ class Product
 {
     use HasIdNameTrait;
     use HasMetaTrait;
-    //use HasActiveTrait;
+    // use HasActiveTrait;
     // use HasIsOnlineTrait;
     use HasViewsTrait;
-    //use HasReferenceTrait;
+    // use HasReferenceTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
 
@@ -86,10 +86,17 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $images;
 
+    /**
+     * @var Collection<int, AddProductHistory>
+     */
+    #[ORM\OneToMany(targetEntity: AddProductHistory::class, mappedBy: 'product')]
+    private Collection $addProductHistories;
+
     public function __construct()
     {
         $this->subCategories = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->addProductHistories = new ArrayCollection();
     }
 
     /**
@@ -285,6 +292,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($image->getProduct() === $this) {
                 $image->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AddProductHistory>
+     */
+    public function getAddProductHistories(): Collection
+    {
+        return $this->addProductHistories;
+    }
+
+    public function addAddProductHistory(AddProductHistory $addProductHistory): static
+    {
+        if (!$this->addProductHistories->contains($addProductHistory)) {
+            $this->addProductHistories->add($addProductHistory);
+            $addProductHistory->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddProductHistory(AddProductHistory $addProductHistory): static
+    {
+        if ($this->addProductHistories->removeElement($addProductHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($addProductHistory->getProduct() === $this) {
+                $addProductHistory->setProduct(null);
             }
         }
 

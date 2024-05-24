@@ -81,6 +81,12 @@ class CategoryController extends AdminBaseController
         return $this->render('dashboard/admin/products/category/new-edit.html.twig', compact('form', 'category'));
     }
 
+    #[Route(path: '/categories/{id}', name: 'show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    public function show(Category $category): Response
+    {
+        return $this->render('dashboard/admin/products/category/show.html.twig', compact('category'));
+    }
+
     #[Route(path: '/categories/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
     public function delete(Request $request, Category $category): Response
     {

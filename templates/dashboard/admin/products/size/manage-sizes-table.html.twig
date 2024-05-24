@@ -16,19 +16,19 @@
 				<tr>
 					<td>{{ size.id }}</td>
 					<td>
-						<a href="{{ link }}" class="text-inherit" target="_blank">
-							<div class="d-flex align-items-center">
-								<div>
-									<h4 class="mb-1">
-                                        {{ size.name }}
-                                    </h4>
-									<span>
-										{{ 'Published the'|trans }}
-										{{ size.createdAt ? size.createdAt | format_date('long') : '' }}
-									</span>
-								</div>
+						<div class="d-flex align-items-center">
+							<div>
+								<h6 class="mb-1">
+									<a href="{{ link }}" target="_blank">
+										{{ size.name }}
+									</a>
+								</h6>
+								<p class="heading-color fw-normal small mb-2">
+									{{ 'Published the'|trans }}: 
+									<span class="text-primary">{{ size.createdAt ? size.createdAt | format_date('long') : '' }}</span>
+								</p>
 							</div>
-						</a>
+						</div>
 					</td>
                     <td>{{ size.displayInSearch }}</td>
                     <td>{{ size.updatedAt ? size.updatedAt | format_date('long') : '' }}</td>
@@ -75,7 +75,7 @@
 			{% endfor %}
 		</tbody>
 	</table>
-	<div class="card-footer">
+	<div class="card-footer bg-transparent text-end p-0">
 		{# {{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }} #}
 	</div>
 </div>

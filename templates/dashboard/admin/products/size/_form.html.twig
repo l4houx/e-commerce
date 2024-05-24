@@ -1,14 +1,14 @@
-<div class="card border-0 mb-4">
-    <div class="card-header">
-        <h4 class="mb-0">
+<div class="card bg-transparent p-0">
+    <div class="card-header bg-transparent border-bottom p-0 pb-3">
+        <h6 class="mb-0">
             {{ pagetitle }} 
             {% if app.request.attributes.get('_route') == 'dashboard_admin_product_size_edit' %}
                 "{{ size.name }}"
             {% endif %}
-        </h4>
+        </h6>
     </div>
     {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'} }) }}
-        <div class="card-body">
+        <div class="card-body px-0">
             <div>
                 {% include "global/message.html.twig" with { type: "info", icon: "fas fa-exclamation", message: ("The fields preceded with a red * are mandatory"|trans) } %}
             </div>

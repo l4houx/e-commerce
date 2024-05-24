@@ -18,23 +18,27 @@
 				<tr>
 					<td>{{ user.id }}</td>
 					<td>
-						<a href="{# {{ link }} #}" class="text-inherit" target="_blank">
-							<div class="d-flex align-items-center">
-								<div>
-                                    {% include "global/user-avatar.html.twig" with { user: user, type: "xl" } %}
-								</div>
-								<div class="ms-3">
-									<h4 class="mb-1 text-primary-hover">{{ user.getCrossRoleName | lower | capitalize }}</h4>
-									<span>
-										{{ 'Joined the'|trans }}
-                                        {{ user.createdAt | format_date('long') }}
-									</span>
-								</div>
+						<div class="d-flex align-items-center">
+							<div>
+								{% include "global/user-avatar.html.twig" with { user: user, type: "xl" } %}
 							</div>
-						</a>
+							<div class="ms-3">
+								<h6 class="mb-1">
+									<a href="{# {{ link }} #}" target="_blank">
+										{{ user.getCrossRoleName | lower | capitalize }}
+									</a>
+								</h6>
+								<p class="heading-color fw-normal small mb-2">
+									{{ 'Published the'|trans }}: 
+									<span class="text-primary">{{ user.createdAt ? user.createdAt | format_date('long') : '' }}</span>
+								</p>
+							</div>
+						</div>
 					</td>
 					<td>
-						{{ user.username }} / {{ user.email }}
+						{{ user.username }}
+						<br>
+						{{ user.email }}
 					</td>
 					<td>
 						{% if user.lastLogin %}
@@ -124,7 +128,7 @@
 			{% endfor %}
 		</tbody>
 	</table>
-    <div class="card-footer">
+    <div class="card-footer bg-transparent text-end p-0">
         {# {{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }} #}
     </div>
 </div>
