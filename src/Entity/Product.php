@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
+use App\Entity\Traits\HasLimit;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\HasMetaTrait;
 use App\Entity\Traits\HasViewsTrait;
@@ -14,6 +15,7 @@ use App\Entity\Traits\HasDeletedAtTrait;
 use App\Entity\Traits\HasReferenceTrait;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\HasTimestampableTrait;
+use App\Entity\Traits\HasSocialNetworksTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -23,6 +25,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[UniqueEntity('name')]
+//#[UniqueEntity('slug')]
 #[Vich\Uploadable]
 class Product
 {
@@ -31,9 +34,12 @@ class Product
     // use HasActiveTrait;
     // use HasIsOnlineTrait;
     use HasViewsTrait;
+    use HasSocialNetworksTrait;
     // use HasReferenceTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
+
+    public const PRODUCT_LIMIT = HasLimit::PRODUCT_LIMIT;
 
     // NOTE: This is not a mapped field of entity metadata, just a simple property.
     #[Vich\UploadableField(mapping: 'product_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'imageMimeType', originalName: 'imageOriginalName', dimensions: 'imageDimensions')]
@@ -70,6 +76,10 @@ class Product
     #[Assert\PositiveOrZero(message: 'Stock cannot be negative')]
     private ?int $stock = null;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[Assert\NotNull(groups: ['create', 'update'])]
+    private bool $enablereviews = true;
+
     /**
      * @var Collection<int, SubCategory>
      */
@@ -97,6 +107,16 @@ class Product
         $this->subCategories = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->addProductHistories = new ArrayCollection();
+    }
+
+    public function hasContactAndSocialMedia(): bool
+    {
+        return $this->externallink
+            || $this->phone || $this->email
+            || $this->youtubeurl || $this->twitterurl
+            || $this->instagramurl || $this->facebookurl
+            || $this->googleplusurl || $this->linkedinurl
+        ;
     }
 
     /**
@@ -228,6 +248,23 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function isEnablereviews(): bool
+    {
+        return $this->enablereviews;
+    }
+
+    public function getEnablereviews(): bool
+    {
+        return $this->enablereviews;
+    }
+
+    public function setEnablereviews(bool $enablereviews): static
+    {
+        $this->enablereviews = $enablereviews;
 
         return $this;
     }

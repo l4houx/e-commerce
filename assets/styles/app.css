@@ -10571,7 +10571,7 @@ fieldset:disabled .btn {
     backface-visibility: hidden;
 }
 
-.icon-link>.bi {
+.icon-link>.fas {
     -ms-flex-negative: 0;
     flex-shrink: 0;
     width: auto;
@@ -10582,14 +10582,14 @@ fieldset:disabled .btn {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .icon-link>.bi {
+    .icon-link>.fas {
         -webkit-transition: none;
         transition: none;
     }
 }
 
-.icon-link-hover:hover>.bi,
-.icon-link-hover:focus-visible>.bi {
+.icon-link-hover:hover>.fas,
+.icon-link-hover:focus-visible>.fas {
     -webkit-transform: var(--bs-icon-link-transform, translate3d(0.25em, 0, 0));
     transform: var(--bs-icon-link-transform, translate3d(0.25em, 0, 0));
 }

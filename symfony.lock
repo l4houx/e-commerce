@@ -38,6 +38,12 @@
             "migrations/.gitignore"
         ]
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.3.0"
+    },
+    "knplabs/knp-time-bundle": {
+        "version": "v2.2.0"
+    },
     "liip/imagine-bundle": {
         "version": "2.12",
         "recipe": {

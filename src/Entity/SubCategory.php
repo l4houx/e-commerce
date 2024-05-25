@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\HasBackgroundColorTrait;
 use App\Entity\Traits\HasIdNameTrait;
 use App\Repository\SubCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class SubCategory
 {
     use HasIdNameTrait;
+    use HasBackgroundColorTrait;
 
     #[ORM\ManyToOne(inversedBy: 'subCategories')]
     #[ORM\JoinColumn(nullable: false)]

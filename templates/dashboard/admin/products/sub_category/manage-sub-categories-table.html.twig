@@ -4,6 +4,7 @@
 			<tr>
 				<th>#</th>
 				<th>{{ 'Name'|trans }}</th>
+				<th>{{ 'Color'|trans }}</th>
                 <th>{{ 'Parent'|trans }}</th>
 				<th></th>
 			</tr>
@@ -15,6 +16,9 @@
 					<td>{{ subCategory.id }}</td>
 					<td>
 						<span class="text-decoration-none">{{ subCategory.name }}</span>
+					</td>
+					<td>
+						<span class="badge text-bg-{{ subCategory.color }}">{{ subCategory.color }}</span>
 					</td>
 					<td>
 						<span class="text-decoration-none">{{ subCategory.category.name }}</span>

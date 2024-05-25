@@ -1,42 +1,76 @@
 {% set routename = app.request.get('_route') %}
 {# {% set random = setting.generateReference(5) %} #}
 
-<header class="sticky-top">
-    <nav class="bg-body-tertiary navbar navbar-expand-lg navbar-light">
+<header class="header-sticky header-absolute">
+    <nav class="navbar navbar-expand-xl">
         <div class="container">
-            <a href="{{ path('home') }}" class="fw-bold text-primary navbar-brand">{{ website_name }}</a>
+            <a href="{{ path('home') }}" class="navbar-brand me-5">{{ website_name }}</a>
             <button aria-controls="navbar" class="navbar-toggler collapsed" data-bs-target="#navbar" data-bs-toggle="collapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse" id="navbar">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav navbar-nav-scroll dropdown-hover me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if routename == "products" or routename == "product" %}active{% endif %}" href="{{ path('products') }}">{{ 'Browse Products'|trans }}</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Link</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Projets
-                        </a>
-                        <ul class="dropdown-menu">
-                            {#  
-                            {% if app.user.selectedProject is not null %}
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('project_show', { key: app.user.selectedProject.key }) }}">{{ app.user.selectedProject }}</a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                            {% endif %}
-                            #}
-                            <li><a class="dropdown-item" href="">Voir tous les projets</a></li>
-                            <li>
-                                <a class="dropdown-item" data-bs-target="#modalCreateProject" data-bs-toggle="modal" href="#">
-                                    Créer un projet
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    {#  
+                    {% if categories is defined %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                                {{ 'Explore'|trans }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for category in categories %}
+                                    <li class="dropdown dropend">
+                                        <a class="nav-link dropdown-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                            {{ category.name }}
+                                        </a>
+                                        {% for subCategory in category.subCategories %}
+                                            <ul class="dropdown-menu" data-bs-popper="none">
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ path('subcategory_filter', { id : subCategory.id}) }}">
+                                                        {{ subCategory.name }}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        {% endfor %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    #}
+
+
+                    {% if categories()|length > 0 %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                                {{ 'Explore'|trans }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for category in categories() %}
+                                    <li class="dropdown dropend">
+                                        <a class="nav-link dropdown-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                            {{ category.name }}
+                                        </a>
+                                        {% for subCategory in category.subCategories %}
+                                            <ul class="dropdown-menu" data-bs-popper="none">
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ path('subcategory_filter', { id : subCategory.id}) }}">
+                                                        {{ subCategory.name }}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        {% endfor %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {#  
                     {% if app.user.selectedProject is not null %}
                         <li class="nav-item dropdown">

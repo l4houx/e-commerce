@@ -38,6 +38,12 @@
                             <td>{{ subCategory.name }}</td>
                         </tr>
                         <tr>
+                            <td width="30%">{{ 'Color'|trans }}</th>
+                            <td>
+                                <span class="badge text-bg-{{ subCategory.color }}">{{ subCategory.color }}</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td width="30%">{{ 'Parent'|trans }}</th>
                             <td>{{ subCategory.category.name }}</td>
                         </tr>
