@@ -35,11 +35,12 @@ class ProductController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/product/index.html.twig', [
-            'rows' => $this->productRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->productRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/product/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]

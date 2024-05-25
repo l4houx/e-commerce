@@ -14,7 +14,15 @@ final class HasLimit
 
     public const PRODUCT_LIMIT = 9;
 
+    public const SUBCATEGORY_LIMIT = 10;
+
     public const CATEGORY_LIMIT = 10;
+
+    public const BRAND_LIMIT = 10;
+
+    public const COLOR_LIMIT = 10;
+
+    public const SIZE_LIMIT = 10;
 
     public const POST_LIMIT = 10;
 

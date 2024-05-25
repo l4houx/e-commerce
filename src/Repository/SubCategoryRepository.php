@@ -3,41 +3,42 @@
 namespace App\Repository;
 
 use App\Entity\SubCategory;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<SubCategory>
  */
 class SubCategoryRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly PaginatorInterface $paginator
+    ) {
         parent::__construct($registry, SubCategory::class);
     }
 
-    //    /**
-    //     * @return SubCategory[] Returns an array of SubCategory objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findForPagination(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('s')
+            ->orderBy('s.id', 'DESC')
+            //->setParameter('now', new \DateTimeImmutable())
+            //->where('s.updatedAt <= :now')
+            //->orWhere('s.isOnline = true')
+        ;
 
-    //    public function findOneBySomeField($value): ?SubCategory
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::SUBCATEGORY_LIMIT,
+            ['wrap-queries' => true],
+            [
+                'distinct' => false,
+                'sortFieldAllowList' => ['s.id', 's.name'],
+            ]
+        );
+    }
 }

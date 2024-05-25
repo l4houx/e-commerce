@@ -28,9 +28,10 @@ class CategoryController extends AdminBaseController
     #[Route(path: '/categories', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/category/index.html.twig', [
-            'rows' => $this->categoryRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->categoryRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/category/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/categories/new', name: 'new', methods: ['GET', 'POST'])]

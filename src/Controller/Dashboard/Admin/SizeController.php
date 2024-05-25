@@ -27,11 +27,12 @@ class SizeController extends AbstractController
     }
 
     #[Route(path: '/size', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/size/index.html.twig', [
-            'rows' => $this->sizeRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->sizeRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/size/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/size/new', name: 'new', methods: ['GET', 'POST'])]

@@ -4,81 +4,76 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-12">
-            <div class="border-bottom-0 pb-3 mb-3 d-md-flex align-items-center justify-content-between">
-                {% set breadcrumb = [{ "dashboard_main": ('Dashboard' | trans), "dashboard_admin_product_size_index": 'Manage sizes'|trans, "current":(pagetitle) }] %}
-                {% include "global/dashboard-breadcrumb.html.twig" with breadcrumb %}
-                <div>
-                    <a href="{{ path('dashboard_admin_product_size_index') }}" class="btn btn-outline-secondary me-2">
-                        {{ 'Return to list'|trans }}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+	{% set breadcrumb = [{ "dashboard_main": ('Dashboard' | trans), "dashboard_admin_product_size_index": 'Manage sizes'|trans, "current":(pagetitle) }] %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-12">
-            <div class="table-responsive overflow-y-hidden">
-                <table class="table table-borderless table-striped table-hover table-sm">
-                    <thead class="">
-                        <tr>
-                            <th colspan="2">
-                                <i class="fas fa-file text-muted"></i>
-                                {{ "General information"|trans }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td width="30%">#</th>
-                            <td>{{ size.id }}</td>
-                        </tr>
-                        <tr>
-                            <td width="30%">{{ 'Size'|trans }}</th>
-                            <td>{{ size.name }}</td>
-                        </tr>
-                        <tr>
-                            <td width="30%">{{ 'Display in search'|trans }}</th>
-                            <td>{{ size.displayInSearch }}</td>
-                        </tr>
-                        <tr>
-                            <td width="30%">{{ 'Status'|trans }}</th>
-                            <td>
-                                {% if size.isActive == false %}
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-eye-slash"></i>
-                                        {{ "Offline"|trans }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-eye"></i>
-                                        {{ "Online"|trans }}
-                                    </span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="30%">{{ 'Creation date'|trans }}</th>
-                            <td>{{ size.createdAt ? size.createdAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
-                        </tr>
-                        <tr>
-                            <td width="30%">{{ 'Update date'|trans }}</th>
-                            <td>{{ size.updatedAt ? size.updatedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="d-flex pb-3 my-3">
-                <a href="{{ path('dashboard_admin_product_size_edit', {'id': size.id}) }}" class="btn btn-primary btn-sm me-2">
-                    <i class="fas fa-pencil fa-fw"></i>
-                    {{ 'Edit'|trans }}
-                </a>
-                {{ include('dashboard/admin/products/size/_delete_form.html.twig') }}
+    <section class="pt-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive overflow-y-hidden">
+                        <table class="table table-borderless table-striped table-hover table-sm">
+                            <thead class="">
+                                <tr>
+                                    <th colspan="2">
+                                        <i class="fas fa-file text-muted"></i>
+                                        {{ "General information"|trans }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td width="30%">#</th>
+                                    <td>{{ size.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">{{ 'Size'|trans }}</th>
+                                    <td>{{ size.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">{{ 'Display in search'|trans }}</th>
+                                    <td>{{ size.displayInSearch }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">{{ 'Status'|trans }}</th>
+                                    <td>
+                                        {% if size.isActive == false %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-eye-slash"></i>
+                                                {{ "Offline"|trans }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-eye"></i>
+                                                {{ "Online"|trans }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">{{ 'Creation date'|trans }}</th>
+                                    <td>{{ size.createdAt ? size.createdAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">{{ 'Update date'|trans }}</th>
+                                    <td>{{ size.updatedAt ? size.updatedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex pb-3 my-3">
+                        <a href="{{ path('dashboard_admin_product_size_index') }}" class="btn btn-sm btn-dark me-2">
+                            <i class="fas fa-list fa-fw"></i>
+                        </a>
+                        <a href="{{ path('dashboard_admin_product_size_edit', {'id': size.id}) }}" class="btn btn-primary btn-sm me-2">
+                            <i class="fas fa-pencil fa-fw"></i>
+                        </a>
+                        {{ include('dashboard/admin/products/size/_delete_form.html.twig') }}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}

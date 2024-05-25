@@ -27,11 +27,12 @@ class BrandController extends AbstractController
     }
 
     #[Route(path: '/brand', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/brand/index.html.twig', [
-            'rows' => $this->brandRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->brandRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/brand/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/brand/new', name: 'new', methods: ['GET', 'POST'])]

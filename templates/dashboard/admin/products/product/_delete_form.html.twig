@@ -2,6 +2,5 @@
     <input type="hidden" name="_token" value="{{ csrf_token('product_deletion_' ~ product.id) }}">
     <button class="btn btn-danger btn-sm">
         <i class="fas fa-trash fa-fw"></i>
-        {{ "Delete"|trans }}
     </button>
 </form>

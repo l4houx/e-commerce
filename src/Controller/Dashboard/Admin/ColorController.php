@@ -27,11 +27,12 @@ class ColorController extends AbstractController
     }
 
     #[Route(path: '/color', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/color/index.html.twig', [
-            'rows' => $this->colorRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->colorRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/color/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/color/new', name: 'new', methods: ['GET', 'POST'])]

@@ -3,41 +3,42 @@
 namespace App\Repository;
 
 use App\Entity\Brand;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Brand>
  */
 class BrandRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly PaginatorInterface $paginator
+    ) {
         parent::__construct($registry, Brand::class);
     }
 
-    //    /**
-    //     * @return Brand[] Returns an array of Brand objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findForPagination(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('b')
+            ->orderBy('b.updatedAt', 'DESC')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->where('b.updatedAt <= :now')
+            ->orWhere('b.isActive = true')
+        ;
 
-    //    public function findOneBySomeField($value): ?Brand
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::BRAND_LIMIT,
+            ['wrap-queries' => true],
+            [
+                'distinct' => false,
+                'sortFieldAllowList' => ['b.id', 'b.name'],
+            ]
+        );
+    }
 }

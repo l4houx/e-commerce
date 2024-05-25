@@ -27,11 +27,12 @@ class SubCategoryController extends AbstractController
     }
 
     #[Route(path: '/sub-category', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->render('dashboard/admin/products/sub_category/index.html.twig', [
-            'rows' => $this->subCategoryRepository->findAll(),
-        ]);
+        $page = $request->query->getInt('page', 1);
+        $rows = $this->subCategoryRepository->findForPagination($page);
+
+        return $this->render('dashboard/admin/products/sub_category/index.html.twig', compact('rows'));
     }
 
     #[Route(path: '/sub-category/new', name: 'new', methods: ['GET', 'POST'])]

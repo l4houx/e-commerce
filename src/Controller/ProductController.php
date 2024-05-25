@@ -29,15 +29,8 @@ class ProductController extends AbstractController
     #[Route(path: '/products', name: 'products', methods: ['GET'])]
     public function products(Request $request): Response
     {
-        $query = $this->productRepository->findBy([], ['createdAt' => 'DESC']);
         $page = $request->query->getInt('page', 1);
-
-        $products = $this->paginator->paginate(
-            $query,
-            $page,
-            HasLimit::PRODUCT_LIMIT,
-            ['wrap-queries' => true]
-        );
+        $products = $this->productRepository->findForPagination($page);
 
         //$products = $this->productRepository->findAll();
         //$categories = $this->categoryRepository->findAll();

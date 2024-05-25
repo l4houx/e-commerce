@@ -3,41 +3,42 @@
 namespace App\Repository;
 
 use App\Entity\Color;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Color>
  */
 class ColorRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly PaginatorInterface $paginator
+    ) {
         parent::__construct($registry, Color::class);
     }
 
-    //    /**
-    //     * @return Color[] Returns an array of Color objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findForPagination(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('c')
+            ->orderBy('c.updatedAt', 'DESC')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->where('c.updatedAt <= :now')
+            ->orWhere('c.isActive = true')
+        ;
 
-    //    public function findOneBySomeField($value): ?Color
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::COLOR_LIMIT,
+            ['wrap-queries' => true],
+            [
+                'distinct' => false,
+                'sortFieldAllowList' => ['c.id', 'c.name'],
+            ]
+        );
+    }
 }

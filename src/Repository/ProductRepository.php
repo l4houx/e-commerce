@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\ORM\QueryBuilder;
+use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -12,9 +15,32 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly PaginatorInterface $paginator
+    ) {
         parent::__construct($registry, Product::class);
+    }
+
+    public function findForPagination(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('p')
+            ->orderBy('p.updatedAt', 'DESC')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->where('p.updatedAt <= :now')
+            //->orWhere('p.isOnline = true')
+        ;
+
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::PRODUCT_LIMIT,
+            ['wrap-queries' => true],
+            [
+                'distinct' => false,
+                'sortFieldAllowList' => ['p.id', 'p.name'],
+            ]
+        );
     }
 
     public function findByKeyword(string $keyword): array
