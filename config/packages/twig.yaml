@@ -25,6 +25,7 @@ twig:
         website_name: '%env(WEBSITE_NAME)%'
         website_url: '%env(WEBSITE_URL)%'
 
+        code: '%env(WEBSITE_FLAGS)%'
         name: '%env(WEBSITE_CONTACT_NAME)%'
         email: '%env(WEBSITE_CONTACT_EMAIL)%'
         address: '%env(WEBSITE_CONTACT_ADDRESS)%'
@@ -42,6 +43,7 @@ twig:
         youtube_url: '%env(WEBSITE_YOUTUBE_URL)%'
         twitter_url: '%env(WEBSITE_TWITTER_URL)%'
         github_url: '%env(WEBSITE_GITHUB_URL)%'
+        linkedin_url: '%env(WEBSITE_LINKEDIN_URL)%'
 
     date:
         format: "%date_format%"

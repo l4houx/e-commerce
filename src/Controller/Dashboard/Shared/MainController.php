@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-/** My Profile User */
+/** My Profile Client (User) */
 #[IsGranted(HasRoles::DEFAULT)]
 class MainController extends BaseController
 {

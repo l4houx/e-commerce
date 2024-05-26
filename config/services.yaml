@@ -38,12 +38,14 @@ parameters:
     website_youtube_url:     '%env(WEBSITE_YOUTUBE_URL)%'
     website_twitter_url:     '%env(WEBSITE_TWITTER_URL)%'
     website_github_url:      '%env(WEBSITE_GITHUB_URL)%'
+    website_linkedin_url:    '%env(WEBSITE_LINKEDIN_URL)%'
 
     # Company
     website_company:         '%env(WEBSITE_COMPANY)%'
     website_siret:           '%env(WEBSITE_SIRET)%'
     website_ape:             '%env(WEBSITE_APE)%'
     website_vat:             '%env(WEBSITE_VAT)%'
+    website_code:            '%env(WEBSITE_FLAGS)%'
 
     # Date and time
     date_format:           '%env(DATE_FORMAT)%'

@@ -2,6 +2,7 @@
 {# {% set random = setting.generateReference(5) %} #}
 
 <header class="header-sticky header-absolute">
+    {% include "global/user-isverified.html.twig" with { user: app.user } %}
     <nav class="navbar navbar-expand-xl">
         <div class="container">
             <a href="{{ path('home') }}" class="navbar-brand me-5">{{ website_name }}</a>
@@ -11,10 +12,7 @@
             <div class="navbar-collapse collapse" id="navbar">
                 <ul class="navbar-nav navbar-nav-scroll dropdown-hover me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if routename == "products" or routename == "product" %}active{% endif %}" href="{{ path('products') }}">{{ 'Browse Products'|trans }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link {% if routename == "products" or routename == "product" %}active{% endif %}" href="{{ path('products') }}">{{ 'Products'|trans }}</a>
                     </li>
                     {#  
                     {% if categories is defined %}
@@ -44,7 +42,6 @@
                     {% endif %}
                     #}
 
-
                     {% if categories()|length > 0 %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
@@ -70,37 +67,136 @@
                             </ul>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if routename == "contact" %}active{% endif %}" href="{{ path('contact') }}">
+                            {{ 'Contact'|trans }}
+                        </a>
+                    </li>
+                    {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if routename == "dashboard_admin_index" or routename == "dashboard_editor_index" or routename == "dashboard_team_index" or routename == "dashboard_user_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
+                                {% if is_granted("ROLE_ADMIN") %}
+                                    {{ 'Dashboard'|trans }}
+                                {% elseif is_granted('ROLE_EDITOR')  %}
+                                    {{ 'Product list'|trans }}
+                                {% elseif is_granted("ROLE_TEAM") %}
+                                    {{ 'Dashboard'|trans }}
+                                {% else %}
+                                    {{ 'My Dashboard'|trans }}
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% if is_granted('ROLE_TEAM') %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle {% if routename == "dashboard_admin_product_category_index" or routename == "dashboard_admin_product_category_new" or routename == "dashboard_admin_product_category_edit" or routename == "dashboard_admin_product_sub_category_index" or routename == "dashboard_admin_product_sub_category_new" or routename == "dashboard_admin_product_sub_category_edit" or routename == "dashboard_admin_product_index" or routename == "dashboard_admin_product_new" or routename == "dashboard_admin_product_edit" or routename == "dashboard_admin_product_brand_index" or routename == "dashboard_admin_product_brand_new" or routename == "dashboard_admin_product_brand_edit" or routename == "dashboard_admin_product_color_index" or routename == "dashboard_admin_product_color_new" or routename == "dashboard_admin_product_color_edit" or routename == "dashboard_admin_product_size_index" or routename == "dashboard_admin_product_size_new" or routename == "dashboard_admin_product_size_edit" or routename == "dashboard_admin_user_index" or routename == "dashboard_admin_user_new" or routename == "dashboard_admin_user_suspended" or routename == "dashboard_admin_user_verified" or routename == "dashboard_admin_user_information" or routename == "dashboard_admin_setting_regional" %}active{% endif %}" href="#" data-bs-auto-close="outside"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{ 'Admin'|trans }}
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-size-lg p-3">
+                                        <div class="row pt-2">
+                                            <div class="col-sm-6">
+                                                <ul class="list-unstyled">
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_category_index" or routename == "dashboard_admin_product_category_new" or routename == "dashboard_admin_product_category_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_category_index') }}">
+                                                            {{ 'Categories'|trans }}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_sub_category_index" or routename == "dashboard_admin_product_sub_category_new" or routename == "dashboard_admin_product_sub_category_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_sub_category_index') }}">
+                                                            {{ 'Sub Categories'|trans }}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_index" or routename == "dashboard_admin_product_new" or routename == "dashboard_admin_product_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_index') }}">
+                                                            {{ "Products"|trans }}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_brand_index" or routename == "dashboard_admin_product_brand_new" or routename == "dashboard_admin_product_brand_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_brand_index') }}">
+                                                            {{ "Brand"|trans }}
+                                                            <span class="badge text-bg-success ms-2">{{ "New"|trans }}</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_color_index" or routename == "dashboard_admin_product_color_new" or routename == "dashboard_admin_product_color_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_color_index') }}">
+                                                            {{ "Color"|trans }}
+                                                            <span class="badge text-bg-success ms-2">{{ "New"|trans }}</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_product_size_index" or routename == "dashboard_admin_product_size_new" or routename == "dashboard_admin_product_size_edit" %}active{% endif %}" href="{{ path('dashboard_admin_product_size_index') }}">
+                                                            {{ "Size"|trans }}
+                                                            <span class="badge text-bg-success ms-2">{{ "New"|trans }}</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <ul class="list-unstyled">
+                                                    <li>
+                                                        <a class="dropdown-item  {% if routename == "dashboard_admin_user_index" or routename == "dashboard_admin_user_new" or routename == "dashboard_admin_user_suspended" or routename == "dashboard_admin_user_verified" or routename == "dashboard_admin_user_information" %}active{% endif %}" href="{{ path('dashboard_admin_user_index') }}">
+                                                            {{ "Users"|trans }}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item {% if routename == "dashboard_admin_setting_regional" %}active{% endif %}" href="{{ path('dashboard_admin_setting_regional') }}">
+                                                            {{ "Regional Configuration"|trans }}
+                                                            <span class="badge text-bg-success ms-2">{{ "New"|trans }}</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-12">
+                                                <hr class="mt-2">
+                                                <div class="d-sm-flex justify-content-between align-items-center px-2">
+                                                    <div class="me-3 mb-2 mb-sm-0">
+                                                        <h6 class="mb-2 mb-sm-0">Ready to get started?</h6>
+                                                        <small class="mb-0">Take your documents to the next level with
+                                                            Mizzle</small>
+                                                    </div>
+                                                    <a href="#" class="btn btn-sm btn-primary">Get in touch</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% if is_granted('ROLE_EDITOR') %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                        data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                                        {{ 'Editor'|trans }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown dropend">
+                                            <a class="nav-link dropdown-link dropdown-toggle" data-bs-toggle="dropdown"
+                                                href="#">About</a>
+                                            <ul class="dropdown-menu" data-bs-popper="none">
+                                                <li> <a class="dropdown-item" href="about-v1.html">About v.1</a></li>
+                                                <li> <a class="dropdown-item" href="about-v2.html">About v.2</a></li>
+                                                <li> <a class="dropdown-item" href="about-v3.html">About v.3</a></li>
+                                                <li> <a class="dropdown-item" href="team.html">Team</a></li>
+                                                <li> <a class="dropdown-item" href="services-v1.html">Services v.1</a></li>
+                                                <li> <a class="dropdown-item" href="services-v2.html">Services v.2</a></li>
+                                                <li> <a class="dropdown-item" href="service-single.html">Service Single</a></li>
+                                                <li> <a class="dropdown-item" href="customer-stories.html">Customer Stories</a></li>
+                                                <li> <a class="dropdown-item" href="customer-story-single.html">Customer Story
+                                                        Single</a></li>
+                                                <li> <a class="dropdown-item" href="career.html">Career <span
+                                                            class="badge text-bg-primary ms-2">2 Job</span></a></li>
+                                                <li> <a class="dropdown-item" href="career-single.html">Career Single</a></li>
+                                            </ul>
+                                        </li>
+                                        <li> <a class="dropdown-item" href="contact-v1.html">Contact v.1</a></li>
+                                        <li> <a class="dropdown-item" href="contact-v2.html">Contact v.2</a></li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
 
                     {#  
-                    {% if app.user.selectedProject is not null %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Équipe
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" data-bs-target="#modalAddPeople" data-bs-toggle="modal" href="#">Inviter des membres</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('team_index') }}">Mon équipe</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('issue_index') }}">Tickets</a>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link"
-                                data-bs-target="#modalCreateIssue"
-                                data-bs-toggle="modal"
-                                hx-get="{{ path('issue_create') }}"
-                                hx-target="#modalCreateIssue"
-                            >
-                                Créer
-                            </button>
-                        </li>
-                    {% endif %}
-                    #}
                     {% if is_granted('ROLE_USER') %}
                         <li class="nav-item">
                             <a class="nav-link {% if routename == "dashboard_admin_index" or routename == "dashboard_editor_index" or routename == "dashboard_team_index" or routename == "dashboard_user_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
@@ -116,7 +212,6 @@
                             </a>
                         </li>
                     {% endif %}
-
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -218,6 +313,7 @@
                             </ul>
                         </li>
                     {% endif %}
+                    #}
                 </ul>
                 <div class="d-flex gap-2" role="search">
                     <div class="dropdown">
@@ -249,7 +345,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="">
+                                    <a class="dropdown-item" href="{{ path('dashboard_user_client_index') }}">
                                         {{ 'My profile'|trans }}
                                     </a>
                                 </li>
