@@ -56,4 +56,7 @@ return [
     '@symfony/ux-live-component' => [
         'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
     ],
+    '@yaireo/tagify' => [
+        'version' => '4.26.5',
+    ],
 ];

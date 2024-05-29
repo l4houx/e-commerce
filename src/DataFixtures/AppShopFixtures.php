@@ -2,12 +2,13 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Size;
 use App\Entity\Brand;
+use App\Entity\Color;
 use App\Entity\Product;
 use App\Entity\Category;
-use App\Entity\Color;
+use App\Entity\SubCategory;
 use App\Entity\ProductImage;
-use App\Entity\Size;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -24,6 +25,10 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        /** @var array<SubCategory> $subCategories */
+        $subCategories = $manager->getRepository(SubCategory::class)->findAll();
+
+
         // Create 20 Brands
         /*
         $brands = [];
@@ -411,15 +416,27 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($this->faker()->unique()->word())
                 //->setSlug($slug)
                 ->setContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
-                ->setPrice($this->faker()->numberBetween(10, 2500))
-                ->setStock($this->faker()->numberBetween(0, 250))
+                ->setPrice(rand(100, 100000))
+                ->setTax(0.2)
+                ->setStock(rand(0, 200))
                 ->setViews(rand(10, 160))
                 ->setMetaTitle($product->getName())
                 ->setMetaDescription($this->faker()->realText(100))
+                ->setExternallink(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setWebsite(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setEmail(1 === mt_rand(0, 1) ? $this->faker()->email() : null)
+                ->setPhone(1 === mt_rand(0, 1) ? $this->faker()->phoneNumber() : null)
+                ->setYoutubeurl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setTwitterUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setInstagramUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setFacebookUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setGoogleplusUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
+                ->setLinkedinUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 //->setIsOnline($this->faker()->numberBetween(0, 1))
                 //->setIsActive($this->faker()->numberBetween(0, 1))
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
                 ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->addSubCategory($this->faker()->randomElement($subCategories))
             ;
 
             $this->addReference('product-'.$i, $product);

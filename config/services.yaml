@@ -88,7 +88,8 @@ services:
             # Website patch
             $dashboardPath: '%website_dashboard_path%'
 
-
+            # Website email
+            string $emailSender: '%website_no_reply_email%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -108,3 +109,11 @@ services:
 
     # Logout
     Symfony\Component\Security\Http\Logout\LogoutUrlGenerator: '@security.logout_url_generator'
+
+    # Setting
+    #app.setting:
+        #alias: App\Service\SettingService
+
+    # Notification Comment
+    App\EventSubscriber\NotificationCommentsSubscriber:
+        $sender: '%website_no_reply_email%'

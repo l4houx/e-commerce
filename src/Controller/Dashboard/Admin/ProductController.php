@@ -3,7 +3,6 @@
 namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\Product;
-use App\Form\ProductType;
 use App\Form\ProductFormType;
 use App\Entity\Traits\HasRoles;
 use App\Service\ProductService;
@@ -21,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[IsGranted(HasRoles::ADMIN)]
+#[IsGranted(HasRoles::EDITOR)]
 #[Route('/%website_dashboard_path%/admin/manage-products', name: 'dashboard_admin_product_')]
 class ProductController extends AbstractController
 {
@@ -50,9 +49,11 @@ class ProductController extends AbstractController
         if (!$id) {
             $product = new Product();
             $form = $this->createForm(ProductFormType::class, $product, ['validation_groups' => ['create', 'Default']]);
+            $this->denyAccessUnlessGranted(HasRoles::ADMIN);
         } else {
             /** @var Product $product */
             $product = $this->productRepository->find(['id' => $id]);
+            $this->denyAccessUnlessGranted('EDIT', $product);
             if (!$product) {
                 $this->addFlash('danger', $this->translator->trans('The product can not be found'));
 
@@ -122,6 +123,8 @@ class ProductController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
     public function delete(Request $request, Product $product): Response
     {
+        $this->denyAccessUnlessGranted(HasRoles::ADMIN);
+
         if ($this->isCsrfTokenValid('product_deletion_'.$product->getId(), $request->getPayload()->get('_token'))) {
             $this->em->remove($product);
             $this->em->flush();

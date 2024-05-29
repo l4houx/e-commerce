@@ -4386,6 +4386,12 @@ progress {
     color: var(--bs-gray-500);
 }
 
+.col-form-label.required:after,
+label.required:after {
+    content: "*";
+    color: var(--bs-danger);
+}
+
 .col-form-label {
     padding-top: calc(0.5rem + 1px);
     padding-bottom: calc(0.5rem + 1px);
@@ -26942,6 +26948,29 @@ button.text-primary-hover:hover {
 
 .flag-zw {
     background-image: url("../../../images/svg/flags/zw.svg");
+}
+
+.input-spinner .button-minus,
+.input-spinner .button-plus {
+    background-color: transparent;
+    border-color: var(--bs-gray-200);
+    height: 2rem;
+    width: 1.8rem
+}
+
+.input-spinner .button-minus:hover,
+.input-spinner .button-plus:hover {
+    background-color: var(--bs-gray-200);
+    border-color: var(--bs-gray-200)
+}
+
+.input-spinner .form-input {
+    background: 0 0;
+    border: 1px solid var(--bs-gray-200);
+    height: 100%;
+    min-height: 2rem;
+    text-align: center;
+    width: 2rem !important
 }
 
 /*User CSS*/

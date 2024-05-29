@@ -12,13 +12,13 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 /** My Profile Client (User) */
 #[IsGranted(HasRoles::DEFAULT)]
-class MainController extends BaseController
+class DashboardController extends BaseController
 {
-    #[Route(path: '/%website_dashboard_path%/user', name: 'dashboard_user_index', methods: ['GET'])]
-    public function index(#[CurrentUser] ?User $user): Response
+    #[Route(path: '/%website_dashboard_path%/user/my-dashboard', name: 'dashboard_user_my_dashboard', methods: ['GET'])]
+    public function dashboard(#[CurrentUser] ?User $user): Response
     {
         $user = $this->getUserOrThrow();
 
-        return $this->render('dashboard/shared/index.html.twig', compact('user'));
+        return $this->render('dashboard/shared/dashboard.html.twig', compact('user'));
     }
 }

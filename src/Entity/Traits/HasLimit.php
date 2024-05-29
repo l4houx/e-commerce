@@ -24,7 +24,13 @@ final class HasLimit
 
     public const SIZE_LIMIT = 10;
 
+    public const SHIPPING_LIMIT = 10;
+
+    public const ORDER_LIMIT = 10;
+
     public const POST_LIMIT = 10;
+
+    public const POST_TYPE_LIMIT = 10;
 
     public const POSTCATEGORY_LIMIT = 10;
 

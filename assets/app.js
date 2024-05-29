@@ -9,6 +9,14 @@ if (toasts) {
     });
 }
 
+import Tagify from '@yaireo/tagify';
+var input = document.querySelector('input[name=tags]');
+new Tagify(input,
+    {
+        originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+    }
+)
+
 //import 'bootstrap';
 import 'htmx.org';
 
@@ -57,10 +65,10 @@ import './styles/app.css';
 var e = {
     init: function () {
         e.preLoader(),
-        e.stickyHeader(),
-        e.toolTipFunc(),
-        e.popOverFunc(),
-        e.backTotop()
+            e.stickyHeader(),
+            e.toolTipFunc(),
+            e.popOverFunc(),
+            e.backTotop()
     },
     isVariableDefined: function (el) {
         return typeof !!el && (el) != 'undefined' && el != null;
@@ -167,7 +175,7 @@ var e = {
         }
     },
     toggleAllClass: function (selectors, className) {
-        if (e.isVariableDefined(selectors)  && (selectors instanceof HTMLElement)) {
+        if (e.isVariableDefined(selectors) && (selectors instanceof HTMLElement)) {
             document.querySelectorAll(selectors).forEach((element) => {
                 element.toggleClass(className);
             });
@@ -195,7 +203,7 @@ var e = {
             var preloader = e.select('.preloader');
             if (e.isVariableDefined(preloader)) {
                 preloader.className += ' animate__animated animate__fadeOut';
-                setTimeout(function(){
+                setTimeout(function () {
                     preloader.style.display = 'none';
                 }, 200);
             }
@@ -230,20 +238,20 @@ var e = {
 
     // START: 03 Sticky Header
     stickyHeader: function () {
-      if (window.matchMedia('(min-width: 992px)').matches) {
-          var stickyNav = e.select('.header-sticky');
-          if (e.isVariableDefined(stickyNav)) {
-              document.addEventListener('scroll', function (event) {
-                  var scTop = window.pageYOffset || document.documentElement.scrollTop;
-                  if (scTop >= 400) {
-                      stickyNav.addClass('header-sticky-on');
-                  } else {
-                      stickyNav.removeClass("header-sticky-on");
-                  }
-              });
-          }
-      }
-    },  
+        if (window.matchMedia('(min-width: 992px)').matches) {
+            var stickyNav = e.select('.header-sticky');
+            if (e.isVariableDefined(stickyNav)) {
+                document.addEventListener('scroll', function (event) {
+                    var scTop = window.pageYOffset || document.documentElement.scrollTop;
+                    if (scTop >= 400) {
+                        stickyNav.addClass('header-sticky-on');
+                    } else {
+                        stickyNav.removeClass("header-sticky-on");
+                    }
+                });
+            }
+        }
+    },
     // END: Sticky Header
 
     // START: 05 Tooltip

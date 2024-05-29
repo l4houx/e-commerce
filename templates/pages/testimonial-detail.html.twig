@@ -1,0 +1,30 @@
+{% extends 'page.html.twig' %}
+
+{% set pagetitle = 'Testimonials'|trans %}
+{% block title pagetitle %}
+
+{% block content %}
+    <section class="py-7 py-lg-8 bg-gray-100">
+        <div class="container my-lg-8">
+            <div class="row mb-8 justify-content-center">
+                <div class="col-lg-6 col-md-12 col-12 text-center">
+                    <span class="text-primary mb-3 d-block text-uppercase fw-semibold ls-xl">{{ pagetitle }}</span>
+                    <h2 class="mb-2 display-4 fw-bold">{{ 'What our users are saying'|trans }}</h2>
+                    {% set testimonialscount = setting.getTestimonials({"count": true}).getQuery().getSingleScalarResult() %}
+                    <p class="lead">{{ testimonialscount }} {{"Testimonial(s)"|trans|lower}}</p>
+                </div>
+            </div>
+            {% if testimonials | length > 0 %}
+                <div class="row">
+                    {% for testimonial in testimonials %}
+                        {% if testimonial.enabletestimonials %}
+                            {% include "global/testimonial-card.html.twig" with {testimonial: testimonial, showuser: 1, index: loop.index} %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% include "global/message.html.twig" with { type: "info", message: ('No testimonials found'|trans), icon: "bi bi-exclamation-circle" } %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

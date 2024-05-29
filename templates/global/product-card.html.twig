@@ -9,6 +9,9 @@
 			<span class="badge text-bg-{{ product.subCategories[0].color }}">
                 {{ product.subCategories[0].name }}
             </span>
+			{% if product.tax %}
+				<span class="badge text-bg-danger ms-2">{{ product.tax * 100 }}% {{ 'off'|trans }}</span>
+			{% endif %}
 		</div>
 		<div class="card-header bg-light rounded m-2">
 			<img src="/{{ product.imageName ? (product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.name }}">
@@ -36,10 +39,21 @@
 			</ul>
 		</div>
 		<div class="card-footer border-0 bg-transparent d-flex justify-content-between align-items-center pt-0">
-			<p class="fw-bold text-success mb-0">${{ product.price / 100 }}</p>
-			<a href="#" class="btn btn-dark mb-0 z-index-2">
-				<i class="fas fa-cart-shopping"></i>
-			</a>
+			<div class="d-flex align-items-center gap-2 justify-content-center">
+				{% if product.discount > 0 %}
+					<p class="fw-bold text-success mb-0">${{ product.formattedSalePrice }}</p>
+					<small class="text-decoration-line-through">${{ product.formattedPrice }}</small>
+				{% else %}
+					<p class="fw-bold text-success mb-0">${{ product.formattedPrice }}</p>
+				{% endif %}
+			</div>
+			{% if product.stock > 0 %}
+				<a href="{{ path('cart_add', { id : product.id }) }}" class="btn btn-dark mb-0 z-index-2">
+					<i class="fas fa-cart-shopping"></i>
+				</a>
+			{% else %}
+				<p class="fw-bold text-danger mb-0">{{ 'Temporarily out of stock'|trans }}</p>
+			{% endif %}
 		</div>
 	</div>
 </div>

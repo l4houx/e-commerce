@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\HasIsTeamTrait;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Traits\HasRoles;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Entity\Traits\HasIsTeamTrait;
 use function Symfony\Component\String\u;
-use App\Entity\Traits\HasRegistrationDetailsTrait;
+use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\HasTimestampableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Traits\HasRegistrationDetailsTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -72,9 +74,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\Column(type: Types::STRING)]
     private ?string $password = null;
 
+    /**
+     * @var collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'addedtofavoritesby', fetch: 'LAZY', cascade: ['remove'])]
+    private Collection $favorites;
+
+    /**
+     * @var collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $comments;
+
+    /**
+     * //@var //collection<int, Post>
+     */
+    //#[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
+    //private Collection $posts;
+
     public function __construct()
     {
         $this->isVerified = false;
+        $this->favorites = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        //$this->posts = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -333,4 +356,91 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
             ] = $data;
         }
     }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Product $favorite): static
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->addAddedtofavoritesby($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Product $favorite): static
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            $favorite->removeAddedtofavoritesby($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * //@return Collection<int, Post>
+     */
+    /*public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+            $post->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): static
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getAuthor() === $this) {
+                $post->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }*/
 }

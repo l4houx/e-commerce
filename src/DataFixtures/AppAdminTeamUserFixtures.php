@@ -25,8 +25,8 @@ class AppAdminTeamUserFixtures extends Fixture
     {
         // User Super Admin Application
         /** @var User $superadmin */
-        $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
         $superadmin = (new User());
+        $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
         $superadmin
             ->setId(1)
             ->setAvatar($avatar)
@@ -56,8 +56,8 @@ class AppAdminTeamUserFixtures extends Fixture
 
         // User Admin
         /** @var User $admin */
-        $avatar = $this->avatarService->createAvatar($admin->getEmail());
         $admin = (new User());
+        $avatar = $this->avatarService->createAvatar($admin->getEmail());
         $admin
             ->setId(2)
             ->setAvatar($avatar)
@@ -87,8 +87,8 @@ class AppAdminTeamUserFixtures extends Fixture
 
         // User Moderator
         /** @var User $moderator */
-        $avatar = $this->avatarService->createAvatar($moderator->getEmail());
         $moderator = (new User());
+        $avatar = $this->avatarService->createAvatar($moderator->getEmail());
         $moderator
             ->setId(3)
             ->setAvatar($moderator)
@@ -118,8 +118,8 @@ class AppAdminTeamUserFixtures extends Fixture
 
         // User Editor
         /** @var User $editor */
-        $avatar = $this->avatarService->createAvatar($editor->getEmail());
         $editor = (new User());
+        $avatar = $this->avatarService->createAvatar($editor->getEmail());
         $editor
             ->setId(4)
             ->setAvatar($editor)
@@ -152,8 +152,8 @@ class AppAdminTeamUserFixtures extends Fixture
         $genre = $this->faker()->randomElement($genres);
         for ($i = 0; $i <= 10; ++$i) {
             /** @var User $user */
-            $avatar = $this->avatarService->createAvatar($user->getEmail());
             $user = (new User());
+            $avatar = $this->avatarService->createAvatar($user->getEmail());
             $user
                 ->setAvatar($avatar)
                 ->setLastname($this->faker()->lastName)

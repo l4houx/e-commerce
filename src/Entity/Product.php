@@ -69,12 +69,51 @@ class Product
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $price = null;
+    //#[ORM\Column(type: Types::INTEGER)]
+    //private ?int $price = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\GreaterThan(0)]
+    private ?float $discount = null;
+
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $discountType = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\Positive()]
+    #[Assert\LessThan(1001)]
+    private ?float $price = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\GreaterThan(0)]
+    private ?float $salePrice = null;
+
+    #[ORM\Column(type: Types::FLOAT, precision: 5, scale: 4)]
+    #[Assert\GreaterThan(0)]
+    private float $tax;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\PositiveOrZero(message: 'Stock cannot be negative')]
     private ?int $stock = null;
+
+    #[ORM\Column(type: Types::DECIMAL, options: ['default' => 0])]
+    private string $sold = '';
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[Assert\NotNull]
+    private bool $isOnSale = true;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull]
+    private bool $isFeaturedProduct = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull]
+    private bool $isBestSelling = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull]
+    private bool $isNewArrival = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
     #[Assert\NotNull(groups: ['create', 'update'])]
@@ -102,11 +141,24 @@ class Product
     #[ORM\OneToMany(targetEntity: AddProductHistory::class, mappedBy: 'product')]
     private Collection $addProductHistories;
 
+    #[ORM\ManyToOne(inversedBy: 'products', cascade: ['persist'])]
+    private ?HomepageHeroSetting $isonhomepageslider = null;
+
+    /**
+     * @var collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favorites', cascade: ['persist', 'remove'])]
+    #[ORM\JoinTable(name: 'favorites')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private Collection $addedtofavoritesby;
+
     public function __construct()
     {
         $this->subCategories = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->addProductHistories = new ArrayCollection();
+        $this->addedtofavoritesby = new ArrayCollection();
     }
 
     public function hasContactAndSocialMedia(): bool
@@ -228,6 +280,18 @@ class Product
         return $this;
     }
 
+    public function getFormattedPrice(): string
+    {
+        //return number_format(($this->price / 100), 2, '.', ',');
+        return number_format(($this->price / 100), 0, '', ' ');
+    }
+
+    public function getFormattedSalePrice(): string
+    {
+        return number_format(($this->salePrice / 100), 0, '', ' ');
+    }
+
+    /*
     public function getPrice(): ?int
     {
         return $this->price;
@@ -236,6 +300,67 @@ class Product
     public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+    */
+
+    public function getDiscount(): ?float
+    {
+        return $this->discount;
+    }
+
+    public function setDiscount(float $discount): static
+    {
+        $this->discount = $discount;
+
+        return $this;
+    }
+
+    public function getDiscountType(): ?string
+    {
+        return $this->discountType;
+    }
+
+    public function setDiscountType(?string $discountType): static
+    {
+        $this->discountType = $discountType;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(float $price): static
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getSalePrice(): ?float
+    {
+        return $this->salePrice;
+    }
+
+    public function setSalePrice(float $salePrice): static
+    {
+        $this->salePrice = $salePrice;
+
+        return $this;
+    }
+
+    public function getTax(): ?float
+    {
+        return $this->tax;
+    }
+
+    public function setTax(float $tax): static
+    {
+        $this->tax = $tax;
 
         return $this;
     }
@@ -248,6 +373,86 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function getSold(): ?string
+    {
+        return $this->sold;
+    }
+
+    public function setSold(string $sold): static
+    {
+        $this->sold = $sold;
+
+        return $this;
+    }
+
+    public function isOnSale(): bool
+    {
+        return $this->isOnSale;
+    }
+
+    public function getIsOnSale(): bool
+    {
+        return $this->isOnSale;
+    }
+
+    public function setIsOnSale(bool $isOnSale): static
+    {
+        $this->isOnSale = $isOnSale;
+
+        return $this;
+    }
+
+    public function isFeaturedProduct(): bool
+    {
+        return $this->isFeaturedProduct;
+    }
+
+    public function getIsFeaturedProduct(): bool
+    {
+        return $this->isFeaturedProduct;
+    }
+
+    public function setIsFeaturedProduct(bool $isFeaturedProduct): static
+    {
+        $this->isFeaturedProduct = $isFeaturedProduct;
+
+        return $this;
+    }
+
+    public function isBestSelling(): bool
+    {
+        return $this->isBestSelling;
+    }
+
+    public function getIsBestSelling(): bool
+    {
+        return $this->isBestSelling;
+    }
+
+    public function setIsBestSelling(bool $isBestSelling): static
+    {
+        $this->isBestSelling = $isBestSelling;
+
+        return $this;
+    }
+
+    public function isNewArrival(): bool
+    {
+        return $this->isNewArrival;
+    }
+
+    public function getIsNewArrival(): bool
+    {
+        return $this->isNewArrival;
+    }
+
+    public function setIsNewArrival(bool $isNewArrival): static
+    {
+        $this->isNewArrival = $isNewArrival;
 
         return $this;
     }
@@ -363,5 +568,46 @@ class Product
         }
 
         return $this;
+    }
+
+    public function getIsonhomepageslider(): ?HomepageHeroSetting
+    {
+        return $this->isonhomepageslider;
+    }
+
+    public function setIsonhomepageslider(?HomepageHeroSetting $isonhomepageslider): static
+    {
+        $this->isonhomepageslider = $isonhomepageslider;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getAddedtofavoritesby(): Collection
+    {
+        return $this->addedtofavoritesby;
+    }
+
+    public function addAddedtofavoritesby(User $addedtofavoritesby): static
+    {
+        if (!$this->addedtofavoritesby->contains($addedtofavoritesby)) {
+            $this->addedtofavoritesby->add($addedtofavoritesby);
+        }
+
+        return $this;
+    }
+
+    public function removeAddedtofavoritesby(User $addedtofavoritesby): static
+    {
+        $this->addedtofavoritesby->removeElement($addedtofavoritesby);
+
+        return $this;
+    }
+
+    public function isAddedToFavoritesBy(User $user): bool
+    {
+        return $this->addedtofavoritesby->contains($user);
     }
 }

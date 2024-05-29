@@ -43,6 +43,25 @@ class ProductRepository extends ServiceEntityRepository
         );
     }
 
+    public function findForUserPagination(int $page, ?int $userId): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('p')->leftJoin('p.subCategories', 'c')->select('p', 's');
+
+        if ($userId) {
+            $builder = $builder->andWhere('p.author = :user')->setParameter('user', $userId);
+        }
+
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::PRODUCT_LIMIT,
+            [
+                'distinct' => false,
+                'sortFieldAllowList' => ['p.id', 'p.name', 'p.subCategories'],
+            ]
+        );
+    }
+
     public function findByKeyword(string $keyword): array
     {
         $qb = $this
@@ -106,28 +125,25 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getProducts($id, $sort, $order, $limit, $count): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('p');
 
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($count) {
+            $qb->select('COUNT(p)');
+        } else {
+            $qb->select('p');
+        }
+
+        if ('all' !== $id) {
+            $qb->andWhere('p.id = :id')->setParameter('id', $id);
+        }
+
+        $qb->orderBy($sort, $order);
+        if ('all' !== $limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb;
+    }
 }

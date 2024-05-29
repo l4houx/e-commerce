@@ -34,6 +34,7 @@ class ClientAccountController extends BaseController
                 $this->em->persist($this->getUser());
                 $this->em->flush();
                 $this->addFlash('info', $this->translator->trans('Content was edited successfully.'));
+
                 return $this->redirectToRoute('dashboard_user_index', [], Response::HTTP_SEE_OTHER);
             } else {
                 $this->addFlash('danger', $this->translator->trans('The form contains invalid data'));
