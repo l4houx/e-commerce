@@ -8,11 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 trait HasReferenceTrait
 {
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
-    private string $reference;
+    private string $ref;
 
     public function generateReference(int $length): string
     {
-        $reference = implode('', [
+        $ref = implode('', [
             bin2hex(random_bytes(2)),
             bin2hex(random_bytes(2)),
             bin2hex(\chr((\ord(random_bytes(1)) & 0x0F) | 0x40)) . bin2hex(random_bytes(1)),
@@ -20,17 +20,17 @@ trait HasReferenceTrait
             bin2hex(random_bytes(2)),
         ]);
 
-        return mb_strlen($reference) > $length ? mb_substr($reference, 0, $length) : $reference;
+        return mb_strlen($ref) > $length ? mb_substr($ref, 0, $length) : $ref;
     }
 
-    public function getReference(): ?string
+    public function getRef(): ?string
     {
-        return $this->reference;
+        return $this->ref;
     }
 
-    public function setReference(string $reference): static
+    public function setRef(string $ref): static
     {
-        $this->reference = $reference;
+        $this->ref = $ref;
 
         return $this;
     }

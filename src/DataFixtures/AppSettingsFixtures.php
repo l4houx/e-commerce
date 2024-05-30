@@ -2,21 +2,21 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Setting;
-use App\Entity\Currency;
 use App\Entity\AppLayoutSetting;
+use App\Entity\Currency;
 use App\Entity\HomepageHeroSetting;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Setting;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppSettingsFixtures extends Fixture
 {
@@ -28,7 +28,6 @@ class AppSettingsFixtures extends Fixture
         protected readonly ParameterBagInterface $parameter,
         private readonly SluggerInterface $slugger
     ) {
-
     }
 
     public function load(ObjectManager $manager): void
@@ -255,8 +254,8 @@ class AppSettingsFixtures extends Fixture
                 ->setCustomBlockTwoName($value['custom_block_two_name'])
                 ->setCustomBlockThreeName($value['custom_block_three_name'])
                 ->setShowSearchBox((bool) $value['show_search_box'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $manager->persist($homepage);
@@ -279,8 +278,8 @@ class AppSettingsFixtures extends Fixture
                 ->setLogoName($value['logo_name'])
                 ->setFaviconName($value['favicon_name'])
                 ->setOgImageName($value['og_image_name'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $manager->persist($layout);

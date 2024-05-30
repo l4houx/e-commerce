@@ -3,8 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\PostType;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppPostTypeFixtures extends Fixture
@@ -39,12 +39,12 @@ class AppPostTypeFixtures extends Fixture
             ->setName($name)
             ->setSlug($this->slugger->slug($type->getName())->lower())
             ->setIsOnline($isOnline)
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
         $manager->persist($type);
 
-        $this->addReference('type-' . $this->counter, $type);
+        $this->addReference('type-'.$this->counter, $type);
         ++$this->counter;
 
         return $type;

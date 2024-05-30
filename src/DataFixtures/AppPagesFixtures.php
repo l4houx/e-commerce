@@ -3,8 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\Page;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 
 class AppPagesFixtures extends Fixture
 {
@@ -110,8 +110,8 @@ class AppPagesFixtures extends Fixture
                 ->setViews($value['views'])
                 ->setMetaTitle($value['meta-title'])
                 ->setMetaDescription($value['meta-description'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $manager->persist($page);

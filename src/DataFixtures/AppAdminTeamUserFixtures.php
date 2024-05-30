@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use App\Entity\Traits\HasRoles;
 use App\Entity\User;
-use App\Service\AvatarService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,7 +15,6 @@ class AppAdminTeamUserFixtures extends Fixture
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly AvatarService $avatarService,
         private readonly SluggerInterface $slugger
     ) {
     }
@@ -26,10 +24,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Super Admin Application
         /** @var User $superadmin */
         $superadmin = (new User());
-        $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
+        // $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
         $superadmin
             ->setId(1)
-            ->setAvatar($avatar)
+            // ->setAvatar($avatar)
             // ->setTeamName('superadmin.jpg')
             ->setRoles([HasRoles::ADMINAPPLICATION])
             ->setLastname('Cameron')
@@ -39,13 +37,14 @@ class AppAdminTeamUserFixtures extends Fixture
             ->setEmail('superadmin@yourdomain.com')
             // ->setPhone($this->faker()->phoneNumber())
             ->setIsTeam(true)
+            ->setIsAgreeTerms(true)
             ->setIsVerified(true)
             ->setAbout($this->faker()->realText(254))
             ->setDesignation('Super Admin Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
         $manager->persist(
@@ -57,10 +56,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Admin
         /** @var User $admin */
         $admin = (new User());
-        $avatar = $this->avatarService->createAvatar($admin->getEmail());
+        // $avatar = $this->avatarService->createAvatar($admin->getEmail());
         $admin
             ->setId(2)
-            ->setAvatar($avatar)
+            // ->setAvatar($avatar)
             // ->setTeamName('admin.jpg')
             ->setRoles([HasRoles::ADMIN])
             ->setLastname('Wade')
@@ -70,13 +69,14 @@ class AppAdminTeamUserFixtures extends Fixture
             ->setEmail('admin@yourdomain.com')
             // ->setPhone($this->faker()->phoneNumber())
             ->setIsTeam(true)
+            ->setIsAgreeTerms(true)
             ->setIsVerified(true)
             ->setAbout($this->faker()->realText(254))
             ->setDesignation('Admin Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
         $manager->persist(
@@ -88,10 +88,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Moderator
         /** @var User $moderator */
         $moderator = (new User());
-        $avatar = $this->avatarService->createAvatar($moderator->getEmail());
+        // $avatar = $this->avatarService->createAvatar($moderator->getEmail());
         $moderator
             ->setId(3)
-            ->setAvatar($moderator)
+            // ->setAvatar($moderator)
             // ->setTeamName('moderator.jpg')
             ->setRoles([HasRoles::MODERATOR])
             ->setLastname('Jane')
@@ -101,13 +101,14 @@ class AppAdminTeamUserFixtures extends Fixture
             ->setEmail('moderator@yourdomain.com')
             // ->setPhone($this->faker()->phoneNumber())
             ->setIsTeam(true)
+            ->setIsAgreeTerms(true)
             ->setIsVerified(true)
             ->setAbout($this->faker()->realText(254))
             ->setDesignation('Moderator Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
         $manager->persist(
@@ -119,7 +120,7 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Editor
         /** @var User $editor */
         $editor = (new User());
-        $avatar = $this->avatarService->createAvatar($editor->getEmail());
+        // $avatar = $this->avatarService->createAvatar($editor->getEmail());
         $editor
             ->setId(4)
             ->setAvatar($editor)
@@ -132,13 +133,14 @@ class AppAdminTeamUserFixtures extends Fixture
             ->setEmail('editor@yourdomain.com')
             // ->setPhone($this->faker()->phoneNumber())
             ->setIsTeam(true)
+            ->setIsAgreeTerms(true)
             ->setIsVerified(true)
             ->setAbout($this->faker()->realText(254))
             ->setDesignation('Editor Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
         $manager->persist(
@@ -153,27 +155,28 @@ class AppAdminTeamUserFixtures extends Fixture
         for ($i = 0; $i <= 10; ++$i) {
             /** @var User $user */
             $user = (new User());
-            $avatar = $this->avatarService->createAvatar($user->getEmail());
+            // $avatar = $this->avatarService->createAvatar($user->getEmail());
             $user
-                ->setAvatar($avatar)
+                // ->setAvatar($avatar)
                 ->setLastname($this->faker()->lastName)
                 ->setFirstname($this->faker()->firstName($genre))
                 ->setUsername($this->faker()->unique()->userName())
                 // ->setSlug($this->slugger->slug($user->getUsername())->lower())
                 ->setEmail($this->faker()->email())
-                ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setLastLoginIp($this->faker()->ipv4())
                 // ->setPhone($this->faker()->phoneNumber())
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             if ($i > 5) {
                 $user->setIsVerified(false);
                 $user->setIsSuspended($this->faker()->numberBetween(0, 1));
-                $user->setIsAgreeTerms($this->faker()->numberBetween(0, 1));
+                $user->setIsAgreeTerms(false);
             } else {
                 $user->setIsVerified(true);
+                $user->setIsAgreeTerms(true);
             }
 
             $this->addReference('user-'.$i, $user);

@@ -2,17 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Post;
-use App\Entity\User;
 use App\Entity\Comment;
-use App\Service\AvatarService;
+use App\Entity\Post;
 use App\Entity\Traits\HasRoles;
-use App\DataFixtures\FakerTrait;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppPostFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -20,7 +18,6 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly AvatarService $avatarService,
         private readonly SluggerInterface $slugger
     ) {
     }
@@ -31,26 +28,27 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
         /** @var User $author */
         $authors = [];
         $author = (new User());
-        $avatar = $this->avatarService->createAvatar($author->getEmail());
+        // $avatar = $this->avatarService->createAvatar($author->getEmail());
         $author
-            ->setId(4)
-            ->setAvatar($author)
-            //->setTeamName('author.jpg')
+            ->setId(5)
+            // ->setAvatar($author)
+            // ->setTeamName('author.jpg')
             ->setRoles([HasRoles::ADMIN])
             ->setLastname('Tom')
             ->setFirstname('Doe')
             ->setUsername('tom-admin')
-            //->setSlug('tom-admin')
+            // ->setSlug('tom-admin')
             ->setEmail('tom-admin@yourdomain.com')
-            //->setPhone($this->faker()->phoneNumber())
+            // ->setPhone($this->faker()->phoneNumber())
             ->setIsTeam(true)
+            ->setIsAgreeTerms(true)
             ->setIsVerified(true)
             ->setAbout($this->faker()->realText(254))
             ->setDesignation('Admin Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
         $manager->persist(
@@ -60,11 +58,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
         );
         $authors[] = $author;
 
-        $tags = [
-            'Creators', 'Branding', 'Budgeting', 'Catering', 'Collaboration', 
-            'Community', 'Content', 'Feature', 'News', 'Pricing', 'Marketing',
-            'Social Media', 'Sponsoring', 'Tips', 'Planning',
-        ];
+        $tags = ['France', 'Politics', 'World', 'Computer Science', 'Economy', 'Associations'];
 
         // Create 20 Posts
         $posts = [];
@@ -75,11 +69,13 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 ->setSlug($this->slugger->slug($post->getName())->lower())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setReadtime(rand(10, 160))
-                ->setAuthor($author)
-                //->setTags(mt_rand(0, 1) === 1 ? $this->faker()->unique()->word() : null)
-                //->setTags(mt_rand(0, 1) === 1 ? $tags : null)
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                // ->setAuthor($author)
+                // ->setTags(mt_rand(0, 1) === 1 ? $this->faker()->unique()->word() : null)
+                // ->setTags(mt_rand(0, 1) === 1 ? $tags : null)
+                ->setMetaTitle($post->getName())
+                ->setMetaDescription($this->faker()->realText(100))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             if ($i > 10) {
@@ -96,7 +92,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 );
             }
 
-            $category = $this->getReference('category-' . $this->faker()->numberBetween(1, 16));
+            $category = $this->getReference('category-'.$this->faker()->numberBetween(1, 6));
             $post->setCategory($category);
 
             $type = $this->getReference('type-'.$this->faker()->numberBetween(1, 4));
@@ -104,7 +100,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
 
             shuffle($tags);
             foreach (array_slice($tags, 0, 2) as $tag) {
-                $post->setTags(mt_rand(0, 1) === 1 ? $tag : null);
+                $post->setTags(1 === mt_rand(0, 1) ? $tag : null);
             }
 
             $manager->persist($post);
@@ -115,12 +111,12 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 $comment = (new Comment())
                     ->setIp($this->faker()->ipv4)
                     ->setContent($this->faker()->paragraph())
-                    ->setAuthor($this->getReference('user-' . $this->faker()->numberBetween(1, 10)))
+                    ->setAuthor($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
                     ->setPost($post)
                     ->setParent(null)
                     ->setIsApproved($this->faker()->numberBetween(0, 1))
                     ->setIsRGPD(true)
-                    ->setPublishedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                    ->setPublishedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ;
 
                 $manager->persist($comment);
@@ -138,7 +134,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
         return [
             AppAdminTeamUserFixtures::class,
             AppPostCategoryFixtures::class,
-            AppPostTypeFixtures::class
+            AppPostTypeFixtures::class,
         ];
     }
 }

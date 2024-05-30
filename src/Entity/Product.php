@@ -96,9 +96,6 @@ class Product
     #[Assert\PositiveOrZero(message: 'Stock cannot be negative')]
     private ?int $stock = null;
 
-    #[ORM\Column(type: Types::DECIMAL, options: ['default' => 0])]
-    private string $sold = '';
-
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
     #[Assert\NotNull]
     private bool $isOnSale = true;
@@ -126,7 +123,7 @@ class Product
     private Collection $subCategories;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    //#[ORM\JoinColumn(nullable: false)]
     private ?Brand $brand = null;
 
     /**
@@ -373,18 +370,6 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
-
-        return $this;
-    }
-
-    public function getSold(): ?string
-    {
-        return $this->sold;
-    }
-
-    public function setSold(string $sold): static
-    {
-        $this->sold = $sold;
 
         return $this;
     }

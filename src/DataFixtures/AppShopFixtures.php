@@ -5,10 +5,13 @@ namespace App\DataFixtures;
 use App\Entity\Size;
 use App\Entity\Brand;
 use App\Entity\Color;
+use App\Entity\Coupon;
 use App\Entity\Product;
 use App\Entity\Category;
+use App\Entity\CouponType;
 use App\Entity\SubCategory;
 use App\Entity\ProductImage;
+use App\Entity\HomepageHeroSetting;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -18,147 +21,139 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
 {
     use FakerTrait;
 
+    /**
+     * @var array<int, Brand>
+     */
+    private array $brands = [];
+
+    /**
+     * @var array<int, Category>
+     */
+    private array $categories = [];
+
+    /**
+     * @var array<int, CouponType>
+     */
+    private array $couponTypes = [];
+
+    /**
+     * @var array<int, Coupon>
+     */
+    private array $coupons = [];
+
+    /**
+     * @var array<int, SubCategory>
+     */
+    private array $subCategories = [];
+
+    private int $categoryId = 0;
+
     public function __construct(
         private readonly SluggerInterface $slugger
     ) {
     }
 
+    private function createBrands(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 15; ++$i) {
+            /** @var Brand $brand */
+            $brand = (new Brand())
+                ->setId($i)
+                ->setName(sprintf("Brand %d", $i))
+                ->setMetaTitle(sprintf("Brand %d", $i))
+                ->setMetaDescription(sprintf("Brand %d", $i))
+                ->setIsActive(1)
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+            $this->brands[$i] = $brand;
+            $manager->persist($brand);
+        }
+    }
+
+    private function createCategories(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 5; ++$i) {
+            $manager->persist($category = (new Category())
+                ->setId($this->categoryId)
+                ->setName(sprintf("Categorie %d", $this->categoryId)))
+            ;
+
+            $this->categoryId++;
+
+            for ($l = 1; $l <= 5; ++$l) {
+                $manager->persist($subCategory = (new Category())
+                    ->setId($this->categoryId)
+                    ->setName(sprintf("Categorie %d", $this->categoryId)))
+                ;
+
+                $this->categories[] = $subCategory;
+                $this->categoryId++;
+            }
+        }
+    }
+
+    private function createSubCategories(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 10; ++$i) {
+            /** @var SubCategory $subCategory */
+            $subCategory = (new SubCategory())
+                ->setId($i)
+                ->setName(sprintf("SubCategoies %d", $i))
+                ->setColor($this->faker()->hexColor())
+                ->setCategory($this->categories[$i % count($this->categories)])
+            ;
+            $this->subCategories[$i] = $subCategory;
+            $manager->persist($subCategory);
+        }
+    }
+
+    private function createcCouponType(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 10; ++$i) {
+            /** @var CouponType $couponType */
+            $couponType = (new CouponType())
+                ->setId($i)
+                ->setName($this->faker()->unique()->word())
+            ;
+            $this->couponTypes[$i] = $couponType;
+            $manager->persist($couponType);
+        }
+    }
+
+    private function createCoupons(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 10; ++$i) {
+            /** @var Coupon $coupon */
+            $coupon = (new Coupon())
+                ->setId($i)
+                ->setCode($this->faker()->regexify('[A-Z]{5}[0-4]{3}'))
+                ->setContent($this->faker()->realText(100))
+                ->setDiscount(rand(10, 160))
+                ->setMaxUsage(rand(1, 2))
+                ->setCouponType($this->couponTypes[($i % count($this->couponTypes)) + 1])
+                ->setValid(true)
+                //->addOrder()
+                ->setValidity(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-20 days', '+10 days')))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+            $this->coupons[$i] = $coupon;
+            $manager->persist($coupon);
+        }
+    }
+
     public function load(ObjectManager $manager): void
     {
-        /** @var array<SubCategory> $subCategories */
-        $subCategories = $manager->getRepository(SubCategory::class)->findAll();
+        /** @var array<HomepageHeroSetting> $homepages */
+        $homepages = $manager->getRepository(HomepageHeroSetting::class)->findAll();
 
-
-        // Create 20 Brands
-        /*
-        $brands = [];
-        for ($i = 0; $i <= 20; ++$i) {
-            $brand = new Brand();
-            $brand
-                ->setName($this->faker()->unique()->word())
-                ->setMetaTitle($brand->getName())
-                ->setMetaDescription($this->faker()->realText(100))
-                ->setIsActive($this->faker()->numberBetween(0, 1))
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ;
-
-            $manager->persist($brand);
-            $brands[] = $brand;
-        }
-        */
-
-        // Create 15 Brands
-        $brands = [
-            [
-                'name' => 'Scott Garza',
-                'metaTitle' => 'Sit tempor vel cum f',
-                'metaDescription' => 'Tempore voluptatem',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Bangladeshi',
-                'metaTitle' => 'Bangladeshi',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'CK',
-                'metaTitle' => 'CK',
-                'metaDescription' => 'CK',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Samsang',
-                'metaTitle' => 'Samsang',
-                'metaDescription' => 'Samsang',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Adidas',
-                'metaTitle' => 'Adidas',
-                'metaDescription' => NULL,
-                'isActive' => 1
-                
-            ],
-            [
-                'name' => 'Cocacola',
-                'metaTitle' => 'Cocacola',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Hero',
-                'metaTitle' => 'Hero',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Walton',
-                'metaTitle' => 'Walton',
-                'metaDescription' => 'Walton',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Rolex',
-                'metaTitle' => 'Rolex',
-                'metaDescription' => 'Rolex',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Lemon',
-                'metaTitle' => 'Lemon',
-                'metaDescription' => 'Lemon',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'HP',
-                'metaTitle' => 'HP',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'CHINA',
-                'metaTitle' => 'useful',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Indian',
-                'metaTitle' => 'titel',
-                'metaDescription' => NULL,
-                'isActive' => 1
-            ],
-            [
-                'name' => 'GUCCI',
-                'metaTitle' => 'Ad eius quam placeat',
-                'metaDescription' => 'Voluptas possimus d',
-                'isActive' => 1
-            ],
-            [
-                'name' => 'Martin Whitehead',
-                'metaTitle' => 'Martin Whitehead',
-                'metaDescription' => 'Possimus veniam qu',
-                'isActive' => 1
-            ],
-        ];
-
-        foreach($brands as $brand) {   
-            $newbrand = new Brand();
-            $newbrand
-                ->setName($brand['name'])
-                ->setMetaTitle($brand['metaTitle'])
-                ->setMetaDescription($brand['metaDescription'])
-                ->setIsActive($brand['isActive'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ;
-
-            $this->setReference($brand['name'], $newbrand);
-
-            $manager->persist($newbrand);
-            $brands[] = $brand;
-        }
+        $this->createBrands($manager);
+        $this->createCategories($manager);
+        $this->createSubCategories($manager);
+        $this->createcCouponType($manager);
+        $this->createCoupons($manager);
+        $manager->flush();
 
         // Create 30 Colors
         $colors = [
@@ -352,8 +347,8 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setHex($color['hex'])
                 ->setDisplayInSearch($color['displayInSearch'])
                 ->setIsActive($color['isActive'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $this->setReference($color['name'], $newcolor);
@@ -397,8 +392,8 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($size['name'])
                 ->setDisplayInSearch($size['displayInSearch'])
                 ->setIsActive($size['isActive'])
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $this->setReference($size['name'], $newsize);
@@ -411,12 +406,14 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         $products = [];
         for ($i = 0; $i <= 20; ++$i) {
             $product = new Product();
-            //$slug = strtolower($this->slugger->slug($product->getName()));
+            // $slug = strtolower($this->slugger->slug($product->getName()));
             $product
                 ->setName($this->faker()->unique()->word())
-                //->setSlug($slug)
+                // ->setSlug($slug)
                 ->setContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
-                ->setPrice(rand(100, 100000))
+                ->setPrice($this->faker()->randomFloat(2))
+                ->setSalePrice($this->faker()->randomFloat(2))
+                ->setDiscount($this->faker()->randomFloat(2))
                 ->setTax(0.2)
                 ->setStock(rand(0, 200))
                 ->setViews(rand(10, 160))
@@ -432,20 +429,22 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setFacebookUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setGoogleplusUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setLinkedinUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
-                //->setIsOnline($this->faker()->numberBetween(0, 1))
-                //->setIsActive($this->faker()->numberBetween(0, 1))
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->addSubCategory($this->faker()->randomElement($subCategories))
+                // ->setIsOnline($this->faker()->numberBetween(0, 1))
+                // ->setIsActive($this->faker()->numberBetween(0, 1))
+                ->setIsFeaturedProduct($this->faker()->numberBetween(0, 1))
+                ->setIsBestSelling($this->faker()->numberBetween(0, 1))
+                ->setIsNewArrival($this->faker()->numberBetween(0, 1))
+                ->setIsOnSale($this->faker()->numberBetween(0, 1))
+                ->setEnablereviews($this->faker()->numberBetween(0, 1))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->addSubCategory($this->faker()->randomElement($this->subCategories))
+                ->addAddedtofavoritesby($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
+                ->setIsonhomepageslider($this->faker()->randomElement($homepages))
+                ->setBrand($this->brands[($i % count($this->brands)) + 1])
             ;
 
             $this->addReference('product-'.$i, $product);
-
-            //$subCategory = $this->getReference('subCategory-'.$this->faker()->numberBetween(1, 8));
-            //$product->addSubCategory($subCategory);
-
-            $brand = $this->getReference('brand-'.$this->faker()->numberBetween(1, 15));
-            $product->setBrand($brand);
 
             $manager->persist($product);
             $products[] = $product;
@@ -460,10 +459,10 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setImageSize(70649)
                 ->setImageMimeType('image/jpeg')
                 ->setImageOriginalName('avatar-1.jpg')
-                ->setImageDimensions([256,256])
+                ->setImageDimensions([256, 256])
                 ->setPosition(rand(1, 20))
-                ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-                ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $manager->persist($productimage);
@@ -480,6 +479,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             AppAdminTeamUserFixtures::class,
+            AppSettingsFixtures::class,
             AppCategoryFixtures::class,
         ];
     }

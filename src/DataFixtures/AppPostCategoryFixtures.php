@@ -20,6 +20,61 @@ class AppPostCategoryFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $categories = [
+            [
+                'name' => 'France',
+                'color' => '#3f7fca',
+                'isOnline' => true,
+            ],
+            [
+                'name' => 'Politics',
+                'color' => '#1e81b0',
+                'isOnline' => true,
+            ],
+            [
+                'name' => 'World',
+                'color' => '#9141ac',
+                'isOnline' => true,
+            ],
+            [
+                'name' => 'Computer Science',
+                'color' => '#eb230d',
+                'isOnline' => true,
+            ],
+            [
+                'name' => 'Economy',
+                'color' => '#063970',
+                'isOnline' => true,
+            ],
+            [
+                'name' => 'Associations',
+                'color' => '#e07b39',
+                'isOnline' => true,
+            ],
+        ];
+
+        foreach ($categories as $category) {
+            $newcategory = new PostCategory();
+            $newcategory->setName($category['name']);
+            $newcategory->setSlug($this->slugger->slug($newcategory->getName())->lower());
+            $newcategory->setColor($category['color']);
+            $newcategory->setPostsCount(10);
+            $newcategory->setIsOnline($category['isOnline']);
+            $newcategory->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')));
+            $newcategory->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')));
+
+            $this->addReference('category-'.$this->counter, $newcategory);
+            ++$this->counter;
+
+            $manager->persist($newcategory);
+        }
+
+        $manager->flush();
+    }
+
+    /*
+    public function load(ObjectManager $manager): void
+    {
         // Create of 16 Categories
         $this->createCategory('Creators', '#3f7fca', true, $manager);
         $this->createCategory('Branding', '#1e81b0', true, $manager);
@@ -53,8 +108,8 @@ class AppPostCategoryFixtures extends Fixture
             ->setSlug($this->slugger->slug($category->getName())->lower())
             ->setColor($color)
             ->setIsOnline($isOnline)
-            ->setCreatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
-            ->setUpdatedAt(\DateTimeImmutable::createFromMutable($this->faker()->dateTime()))
+            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
         $manager->persist($category);
 
@@ -62,5 +117,5 @@ class AppPostCategoryFixtures extends Fixture
         ++$this->counter;
 
         return $category;
-    }
+    }*/
 }
