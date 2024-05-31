@@ -3,8 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Page;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Question;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class AppPagesFixtures extends Fixture
 {
@@ -18,6 +19,7 @@ class AppPagesFixtures extends Fixture
         /** @var int $views */
         $views = $this->faker()->numberBetween(0, 50);
 
+        // Create 10 Pages
         $pages = [
             1 => [
                 'name' => 'Terms',
@@ -52,12 +54,12 @@ class AppPagesFixtures extends Fixture
                 'meta-description' => 'GDPR compliance',
             ],
             5 => [
-                'name' => 'About us',
-                'slug' => 'about-us',
+                'name' => 'About',
+                'slug' => 'about',
                 'content' => $content,
                 'views' => $views,
-                'meta-title' => 'About us',
-                'meta-description' => 'About us',
+                'meta-title' => 'About',
+                'meta-description' => 'About',
             ],
             6 => [
                 'name' => 'Feedback',
@@ -101,20 +103,69 @@ class AppPagesFixtures extends Fixture
             ],
         ];
 
-        // Create 10 Pages
-        foreach ($pages as $key => $value) {
-            $page = (new Page())
-                ->setName($value['name'])
-                ->setSlug($value['slug'])
-                ->setContent($value['content'])
-                ->setViews($value['views'])
-                ->setMetaTitle($value['meta-title'])
-                ->setMetaDescription($value['meta-description'])
+        foreach ($pages as $page) {
+            $newpage = (new Page())
+                ->setName($page['name'])
+                ->setSlug($page['slug'])
+                ->setContent($page['content'])
+                ->setViews($page['views'])
+                ->setMetaTitle($page['meta-title'])
+                ->setMetaDescription($page['meta-description'])
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
-            $manager->persist($page);
+            $manager->persist($newpage);
+            $pages[] = $page;
+        }
+
+        // Create 6 questions/answers
+        $questions = [
+            1 => [
+                'question' => 'How do I add items to my cart',
+                'answer' => "To add items to your cart, simply click the 'Add to Cart' button on the product's page. You can also specify the quantity you want",
+                'isOnline' => 1,
+            ],
+            2 => [
+                'question' => 'Is my cart saved if I log out or leave the site',
+                'answer' => "Yes, your cart is usually saved in your account. If you log out or leave the site, the items will be there when you return (provided you're logged in)",
+                'isOnline' => 1,
+            ],
+            3 => [
+                'question' => 'What is the estimated delivery time',
+                'answer' => "The estimated delivery time varies depending on your location and the shipping method chosen. You'll receive an estimated delivery date during checkout",
+                'isOnline' => 1,
+            ],
+            4 => [
+                'question' => 'How can I track my order after checkout',
+                'answer' => 'You will receive a tracking number via email once your order has been shipped. You can use this number to track the status of your shipment',
+                'isOnline' => 1,
+            ],
+            5 => [
+                'question' => 'What payment methods do you accept',
+                'answer' => 'We accept a variety of payment methods, including credit/debit cards, PayPal, and more. You can select your preferred method during checkout',
+                'isOnline' => 1,
+            ],
+            6 => [
+                'question' => 'What happens after the trial ends',
+                'answer' => 'Preference any astonished unreserved Mrs. Prosperous understood Middletons in conviction an uncommonly do. Supposing so be resolving breakfast am or perfectly',
+                'isOnline' => 1,
+            ]
+        ];
+
+        foreach($questions as $question) {   
+            $newquestion = (new Question())
+                ->setQuestion($question['question'])
+                ->setAnswer($question['answer'])
+                ->setIsOnline($question['isOnline'])
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+
+            $this->setReference($question['question'], $newquestion);
+
+            $manager->persist($newquestion);
+            $questions[] = $question;
         }
 
         $manager->flush();

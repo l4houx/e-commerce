@@ -2,40 +2,36 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use App\Entity\Traits\HasLimit;
-use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Traits\HasMetaTrait;
-use App\Entity\Traits\HasViewsTrait;
-use App\Entity\Traits\HasActiveTrait;
-use App\Entity\Traits\HasIdNameTrait;
-use App\Repository\ProductRepository;
-use App\Entity\Traits\HasIsOnlineTrait;
 use App\Entity\Traits\HasDeletedAtTrait;
-use App\Entity\Traits\HasReferenceTrait;
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Traits\HasTimestampableTrait;
+use App\Entity\Traits\HasIdNameTrait;
+use App\Entity\Traits\HasIsOnlineTrait;
+use App\Entity\Traits\HasLimit;
+use App\Entity\Traits\HasMetaTrait;
 use App\Entity\Traits\HasSocialNetworksTrait;
-use Symfony\Component\HttpFoundation\File\File;
+use App\Entity\Traits\HasTimestampableTrait;
+use App\Entity\Traits\HasViewsTrait;
+use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[UniqueEntity('name')]
-//#[UniqueEntity('slug')]
+// #[UniqueEntity('slug')]
 #[Vich\Uploadable]
 class Product
 {
     use HasIdNameTrait;
     use HasMetaTrait;
-    // use HasActiveTrait;
-    // use HasIsOnlineTrait;
+    use HasIsOnlineTrait;
     use HasViewsTrait;
     use HasSocialNetworksTrait;
-    // use HasReferenceTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
 
@@ -69,8 +65,11 @@ class Product
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    //#[ORM\Column(type: Types::INTEGER)]
-    //private ?int $price = null;
+    #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
+    private $ref = '';
+
+    // #[ORM\Column(type: Types::INTEGER)]
+    // private ?int $price = null;
 
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\GreaterThan(0)]
@@ -123,7 +122,7 @@ class Product
     private Collection $subCategories;
 
     #[ORM\ManyToOne]
-    //#[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn(nullable: false)]
     private ?Brand $brand = null;
 
     /**
@@ -150,12 +149,33 @@ class Product
     #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private Collection $addedtofavoritesby;
 
+    /**
+     * @var Collection<int, FeatureValue>
+     */
+    #[ORM\OneToMany(targetEntity: FeatureValue::class, mappedBy: 'product', cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Count(1)]
+    #[Assert\Valid]
+    private Collection $features;
+
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'product', orphanRemoval: true, cascade: ['remove'])]
+    private Collection $reviews;
+
+    public function __toString(): string
+    {
+        return sprintf('#%d %s', $this->getId(), $this->getName());
+    }
+
     public function __construct()
     {
         $this->subCategories = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->addProductHistories = new ArrayCollection();
         $this->addedtofavoritesby = new ArrayCollection();
+        $this->features = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function hasContactAndSocialMedia(): bool
@@ -277,15 +297,27 @@ class Product
         return $this;
     }
 
+    public function getRef(): string
+    {
+        return $this->ref;
+    }
+
+    public function setRef(string $ref): static
+    {
+        $this->ref = $ref;
+
+        return $this;
+    }
+
     public function getFormattedPrice(): string
     {
-        //return number_format(($this->price / 100), 2, '.', ',');
-        return number_format(($this->price / 100), 0, '', ' ');
+        // return number_format(($this->price / 100), 2, '.', ',');
+        return number_format($this->price / 100, 0, '', ' ');
     }
 
     public function getFormattedSalePrice(): string
     {
-        return number_format(($this->salePrice / 100), 0, '', ' ');
+        return number_format($this->salePrice / 100, 0, '', ' ');
     }
 
     /*
@@ -594,5 +626,154 @@ class Product
     public function isAddedToFavoritesBy(User $user): bool
     {
         return $this->addedtofavoritesby->contains($user);
+    }
+
+    /**
+     * @return Collection<int, FeatureValue>
+     */
+    public function getFeatures(): Collection
+    {
+        return $this->features;
+    }
+
+    public function addFeature(FeatureValue $feature): static
+    {
+        if (!$this->features->contains($feature)) {
+            $this->features->add($feature);
+            $feature->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeature(FeatureValue $feature): static
+    {
+        if ($this->features->removeElement($feature)) {
+            // set the owning side to null (unless already changed)
+            if ($feature->getProduct() === $this) {
+                $feature->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getProduct() === $this) {
+                $review->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isRatedBy(User $user)
+    {
+        /** @var Review $review */
+        foreach ($this->reviews as $review) {
+            if ($review->getAuthor() === $user) {
+                return $review;
+            }
+        }
+
+        return false;
+    }
+
+    public function getRatingsPercentageForRating($rating): int|float
+    {
+        if (!$this->countVisibleReviews()) {
+            return 0;
+        }
+
+        return round(($this->getRatingsCountForRating($rating) / $this->countVisibleReviews()) * 100, 1);
+    }
+
+    public function getRatingsCountForRating($rating): int
+    {
+        if (!$this->countVisibleReviews()) {
+            return 0;
+        }
+
+        $ratingCount = 0;
+
+        /** @var Review $review */
+        foreach ($this->reviews as $review) {
+            if ($review->getIsVisible() && $review->getRating() === $rating) {
+                ++$ratingCount;
+            }
+        }
+
+        return $ratingCount;
+    }
+
+    public function getRatingAvg(): int|float
+    {
+        if (!$this->countVisibleReviews()) {
+            return 0;
+        }
+
+        $ratingAvg = 0;
+
+        /** @var Review $review */
+        foreach ($this->reviews as $review) {
+            if ($review->getIsVisible()) {
+                $ratingAvg += $review->getRating();
+            }
+        }
+
+        return round($ratingAvg / $this->countVisibleReviews(), 1);
+    }
+
+    public function getRatingPercentage(): int|float
+    {
+        if (!$this->countVisibleReviews()) {
+            return 0;
+        }
+
+        $ratingPercentage = 0;
+
+        /** @var Review $review */
+        foreach ($this->reviews as $review) {
+            if ($review->getIsVisible()) {
+                $ratingPercentage += $review->getRatingPercentage();
+            }
+        }
+
+        return round($ratingPercentage / $this->countVisibleReviews(), 1);
+    }
+
+    public function countVisibleReviews(): int
+    {
+        $count = 0;
+
+        /** @var Review $review */
+        foreach ($this->reviews as $review) {
+            if ($review->getIsVisible()) {
+                ++$count;
+            }
+        }
+
+        return $count;
     }
 }

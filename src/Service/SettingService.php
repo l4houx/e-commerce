@@ -224,7 +224,7 @@ class SettingService
     // Returns the blog posts after applying the specified search criterias
     public function getBlogPosts($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $selecttags = array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
         $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
@@ -241,7 +241,7 @@ class SettingService
     // Returns the posts types after applying the specified search criterias
     public function getPostsTypes($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $isOnline = array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
@@ -256,7 +256,7 @@ class SettingService
     // Returns the blog posts categories after applying the specified search criterias
     public function getBlogPostCategories($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
@@ -270,7 +270,7 @@ class SettingService
     // Returns the comments after applying the specified search criterias
     public function getComments($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
         $user = array_key_exists('user', $criterias) ? $criterias['user'] : 'all';
@@ -290,7 +290,7 @@ class SettingService
     // Returns the pages after applying the specified search criterias
     public function getPages($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
 
         return $this->em->getRepository("App\Entity\Page")->getPages($slug);
@@ -299,7 +299,7 @@ class SettingService
     // Returns the products after applying the specified search criterias
     public function getProducts($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
 
         $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
 
@@ -314,7 +314,7 @@ class SettingService
     // Returns the users after applying the specified search criterias
     public function getUsers($criterias): QueryBuilder
     {
-        $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $role = array_key_exists('role', $criterias) ? $criterias['role'] : 'all';
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $createdbyrestaurantslug = array_key_exists('createdbyrestaurantslug', $criterias) ? $criterias['createdbyrestaurantslug'] : 'all';

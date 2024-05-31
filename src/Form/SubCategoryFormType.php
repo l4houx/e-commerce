@@ -5,12 +5,13 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\SubCategory;
 use Symfony\Component\Form\AbstractType;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class SubCategoryFormType extends AbstractType
 {
@@ -24,21 +25,11 @@ class SubCategoryFormType extends AbstractType
                 'empty_data' => '',
                 'help' => t('Keep your category names under 10 characters. Write a name that describes the content of the topic. Contextualize for your product..'),
             ])
-            ->add('color', ChoiceType::class, [
-                'label' => t('Color :'),
+            ->add('color', ColorType::class, [
+                'label' => t('Color'),
                 'required' => true,
-                'multiple' => false,
-                'expanded' => true,
-                'choices' => [
-                    'Default' => 'dark', 
-                    'Primary' => 'primary', 
-                    'Secondary' => 'secondary', 
-                    'Success' => 'success', 
-                    'Danger' => 'danger',
-                    'Warning' => 'warning', 
-                    'Info' => 'info', 
-                ],
-                'label_attr' => ['class' => 'radio-custom radio-inline'],
+                // 'purify_html' => true,
+                'empty_data' => '',
             ])
             ->add('category', CategoryAutocompleteField::class)
         ;

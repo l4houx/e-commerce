@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\HasActiveTrait;
+use App\Entity\Traits\HasIsOnlineTrait;
 use App\Entity\Traits\HasIdNameTrait;
 use App\Entity\Traits\HasTimestampableTrait;
 use App\Repository\SizeRepository;
@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Size
 {
     use HasIdNameTrait;
-    use HasActiveTrait;
+    use HasIsOnlineTrait;
     use HasTimestampableTrait;
 
     #[ORM\Column(type: Types::SMALLINT)]

@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\HasActiveTrait;
+use App\Entity\Traits\HasIsOnlineTrait;
 use App\Entity\Traits\HasIdNameTrait;
 use App\Entity\Traits\HasTimestampableTrait;
 use App\Repository\ColorRepository;
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Color
 {
     use HasIdNameTrait;
-    use HasActiveTrait;
+    use HasIsOnlineTrait;
     use HasTimestampableTrait;
 
     #[ORM\Column(type: Types::STRING, length: 128)]

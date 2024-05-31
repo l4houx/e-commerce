@@ -32,7 +32,7 @@
                                     <div class="row align-items-xl-center">
                                         <div class="col-5 col-md-2">
                                             <div class="bg-light p-2 rounded-2">
-                                                <img src="/{{ item.product.imageName ? (item.product.getImagePath) : item.product.getImagePlaceholder }}" alt="{{ item.product.name }}">
+                                                <img src="{{ item.product.imageName ? (item.product.getImagePath) : item.product.getImagePlaceholder }}" alt="{{ item.product.brand.name }} - {{ item.product.name }}">
                                             </div>
                                         </div>
                                         <div class="col-7 col-md-10">
@@ -43,7 +43,7 @@
                                                             {{ item.product.name }}
                                                         </a>
                                                         <span class="fw-bold">
-                                                            ${{ item.product.price / 100 }}
+                                                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ item.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                                         </span>
                                                     </h6>
                                                     <ul class="nav nav-divider small align-items-center mt-1">
@@ -60,7 +60,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-md-4 col-xl-3 text-md-center">
-                                                    <h5 class="mb-0">${{ item.quantity * item.product.price / 100 }}</h5>
+                                                    <h5 class="mb-0">
+                                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ item.quantity * item.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                                    </h5>
                                                 </div>
                                                 <div class="col-sm-6 col-md-4 col-xl-2 text-md-center">
                                                     <a href="{{ path('cart_delete', {id: item.product.id }) }}" class="text-danger small">
@@ -93,6 +95,7 @@
                     </div>
                     <div class="col-lg-4 ps-xl-6">
                         <div class="card border p-4">
+                            {#
                             <div class="card-header p-0 pb-3">
                                 <h5 class="card-title mb-0">{{ 'Promo code'|trans }}</h5>
                                 <form class="input-group mt-4">
@@ -105,7 +108,7 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span>{{ 'Subtotal'|trans }}</span>
                                         <span class="heading-color fw-semibold mb-0">
-                                            ${{ total / 100 }}
+                                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ total ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                         </span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -118,11 +121,12 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="card-footer bg-transparent border-top p-0 pt-3">
+                            #}
+                            <div class="card-footer bg-transparent p-0 pt-3">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <span class="heading-color fw-normal">{{ 'Payable Now'|trans }}</span>
                                     <span class="h6 mb-0">
-                                        ${{ total / 100 }}
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ total ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                     </span>
                                 </div>
                                 <div class="d-grid">
@@ -143,48 +147,24 @@
             <div class="container">
                 <div class="row mb-4 mb-md-5">
                     <div class="col-12 text-center">
-                        <h2>Frequently Asked Questions</h2>
-                        <p class="mb-0">Perceived end knowledge certainly day sweetness why cordially</p>
+                        <h2>{{ 'Frequently Asked Questions'|trans }}</h2>
+                        <p class="mb-0">{{ 'Perceived end knowledge certainly day sweetness why cordially'|trans }}</p>
                     </div>
                 </div>
-                <div class="row g-4 g-md-5">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6>How do I add items to my cart?</h6>
-                            <p class="mb-0">To add items to your cart, simply click the "Add to Cart" button on the product's page. You can also specify the quantity you want.</p>
-                        </div>
+                {% if questions | length > 0 %}
+                    <div class="row g-4 g-md-5">
+                        {% for q in questions %}
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card card-body border bg-transparent h-100 p-4">
+                                    <h6>{{ q.question }}?</h6>
+                                    <p class="mb-0">{{ q.answer | html_markdown }}.</p>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6> Is my cart saved if I log out or leave the site?</h6>
-                            <p class="mb-0">Yes, your cart is usually saved in your account. If you log out or leave the site, the items will be there when you return (provided you're logged in).</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6>What is the estimated delivery time?</h6>
-                            <p class="mb-0">The estimated delivery time varies depending on your location and the shipping method chosen. You'll receive an estimated delivery date during checkout.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6>How can I track my order after checkout?</h6>
-                            <p class="mb-0">You will receive a tracking number via email once your order has been shipped. You can use this number to track the status of your shipment.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6>What payment methods do you accept?</h6>
-                            <p class="mb-0">We accept a variety of payment methods, including credit/debit cards, PayPal, and more. You can select your preferred method during checkout.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-body border bg-transparent h-100 p-4">
-                            <h6>What happens after the trial ends?</h6>
-                            <p class="mb-0">Preference any astonished unreserved Mrs. Prosperous understood Middletons in conviction an uncommonly do. Supposing so be resolving breakfast am or perfectly.</p>
-                        </div>
-                    </div>
-                </div>
+                {% else %}
+                    {% include "global/message.html.twig" with { type: "info", message: ('No questions found'|trans), icon: "bi bi-exclamation-circle" } %}
+                {% endif %}
             </div>
         </section>
     {% else %}

@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\HasActiveTrait;
+use App\Entity\Traits\HasIsOnlineTrait;
 use App\Entity\Traits\HasDeletedAtTrait;
 use App\Entity\Traits\HasIdNameTrait;
 use App\Entity\Traits\HasMetaTrait;
@@ -19,7 +19,7 @@ class Brand
 {
     use HasIdNameTrait;
     use HasMetaTrait;
-    use HasActiveTrait;
+    use HasIsOnlineTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
 

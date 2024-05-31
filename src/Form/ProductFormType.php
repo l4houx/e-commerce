@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Product;
+use App\Form\Type\SwitchType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use function Symfony\Component\Translation\t;
@@ -10,9 +11,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
@@ -90,6 +95,63 @@ class ProductFormType extends AbstractType
             ])
             ->add('subCategories', SubCategoriesAutocompleteField::class)
             ->add('brand', BrandAutocompleteField::class)
+            ->add('enablereviews', ChoiceType::class, [
+                'required' => true,
+                'multiple' => false,
+                'expanded' => true,
+                'label' => t('Enable reviews'),
+                'choices' => ['Enable' => true, 'Disable' => false],
+                'label_attr' => ['class' => 'radio-custom radio-inline'],
+            ])
+            ->add('externallink', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('External link'),
+                'help' => t('If your product has a dedicated website, enter its url here'),
+            ])
+            ->add('phone', TelType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Contact phone number'),
+                'help' => t('Enter the phone number to be called for inquiries'),
+            ])
+            ->add('email', EmailType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Contact email address'),
+                'help' => t('Enter the email address to be reached for inquiries'),
+            ])
+            ->add('youtubeurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Youtube video url'),
+                'help' => t('If you have an Youtube video that represents your activities as an product restaurant, add it in the standard format: https://www.youtube.com/watch?v=FzG4uDgje3M'),
+            ])
+            ->add('twitterurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Twitter'),
+            ])
+            ->add('instagramurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Instagram'),
+            ])
+            ->add('facebookurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Facebook'),
+            ])
+            ->add('googleplusurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('Google plus'),
+            ])
+            ->add('linkedinurl', UrlType::class, [
+                'purify_html' => true,
+                'required' => false,
+                'label' => t('LinkedIn'),
+            ])
             ->add('metaTitle', TextType::class, [
                 'label' => t('Meta title'),
                 'required' => false,
@@ -103,16 +165,7 @@ class ProductFormType extends AbstractType
                 'attr' => ['placeholder' => '', 'rows' => 6],
                 'help' => t(''),
             ])
-            /*
-            ->add('isActive', ChoiceType::class, [
-                'label' => t('Active'),
-                'required' => false,
-                'multiple' => false,
-                'expanded' => true,
-                'choices' => ['Enable' => true, 'Disable' => false],
-                'label_attr' => ['class' => 'radio-custom radio-inline'],
-            ])
-            */
+            ->add('isOnline', SwitchType::class, ['label' => t('Online')])
             //->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;

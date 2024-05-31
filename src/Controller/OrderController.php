@@ -34,7 +34,7 @@ class OrderController extends AbstractController
     {
         $order = new Order();
         // $order->setUsers($this->getUser());
-        $order->setReference(uniqid());
+        $order->setRef(uniqid());
 
         $form = $this->createForm(OrderFormType::class, $order)->handleRequest($request);
         if ($form->isSubmitted()) {

@@ -1,0 +1,67 @@
+{% if comment.isApproved %}
+    <div class="py-4">
+        <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
+            <div class="d-flex align-items-center me-3">
+                {% include "global/user-avatar.html.twig" with { user: comment.author, type: "lg" } %}
+                <div class="ps-3">
+                    <h6 class="fw-semibold mb-0">{{ comment.author.getFullName | lower | capitalize }}</h6>
+                    <span class="small">
+                        <a href="#c{{ comment.id }}" class="text-inherit">
+                            {{ comment.publishedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) }}
+                        </a>
+                    </span>
+                </div>
+            </div>
+            {% if is_granted('ROLE_USER') %}
+                <a href="#add-comment" class="nav-link small px-0" type="button" data-reply data-id="{{comment.id}}">
+                    <i class="fas fa-reply fs-lg me-2"></i>
+                    {{ 'Reply'|trans }}
+                </a>
+            {% endif %}
+        </div>
+        <div class="mb-0 pb-2">{{ comment.content | html_markdown }}</div>
+        {% for reply in comment.replies %}
+            <div class="position-relative ps-4 mt-4">
+                <span class="position-absolute top-0 start-0 w-1 h-100 bg-primary"></span>
+                <div class="d-flex align-items-center justify-content-between ps-3 pb-2 mb-1">
+                    <div class="d-flex align-items-center me-3">
+                        {% include "global/user-avatar.html.twig" with { user: reply.author, type: "lg" } %}
+                        <div class="ps-3">
+                            <h6 class="fw-semibold mb-0">{{ reply.author.getFullName | lower | capitalize }}</h6>
+                            <span class="small">
+                                <a href="#c{{ reply.id }}" class="text-inherit">
+                                    {{ reply.publishedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) }}
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="#add-comment" class="nav-link small px-0" type="button" data-reply data-id="{{reply.id}}">
+                            <i class="fas fa-reply fs-lg me-2"></i>
+                            {{ 'Reply'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="ps-3 mb-0">
+                    <a href="{{ path('user_profil', { slug : reply.author.slug }) }}" class="fw-semibold text-decoration-none">
+                        @{{ reply.author.getFullName | lower | capitalize }}
+                    </a>
+                    {{ reply.content | html_markdown }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <hr class="my-2">
+{% endif %}
+
+{% block javascripts %}
+	<script>
+		window.onload = () => {
+			document.querySelectorAll("[data-reply]").forEach(element => {
+				element.addEventListener("click", function(){
+					document.querySelector("#comments_parentid").value = this.dataset.id;
+				});
+			});
+		}
+	</script>
+{% endblock %}

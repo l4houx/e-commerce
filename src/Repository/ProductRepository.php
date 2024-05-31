@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Filter;
 use App\Entity\Product;
+use App\Entity\SubCategory;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,7 +30,7 @@ class ProductRepository extends ServiceEntityRepository
             ->orderBy('p.updatedAt', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
             ->where('p.updatedAt <= :now')
-            //->orWhere('p.isOnline = true')
+            ->orWhere('p.isOnline = true')
         ;
 
         return $this->paginator->paginate(
@@ -60,6 +62,96 @@ class ProductRepository extends ServiceEntityRepository
                 'sortFieldAllowList' => ['p.id', 'p.name', 'p.subCategories'],
             ]
         );
+    }
+
+    public function getForPagination(
+        int $page,
+        int $limit,
+        string $sort,
+        ?SubCategory $subCategory,
+        Filter $filter
+    ): PaginationInterface {
+        $builder = $this->createQueryBuilder("p")
+            ->addSelect("b")
+            ->addSelect("s")
+            ->join("p.brand", "b")
+            ->join("p.subCategories", "s")
+            ->andWhere('p.isOnline = true')
+            ->andWhere("p.price >= :min")
+            ->setParameter("min", $filter->min)
+            ->andWhere("p.price <= :max")
+            ->setParameter("max", $filter->max)
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit)
+        ;
+
+        $this->filterProducts($builder, $subCategory, $filter);
+
+        switch ($sort) {
+            case "price-asc":
+                $builder->orderBy("p.price", "asc");
+                break;
+            case "price-desc":
+                $builder->orderBy("p.price", "desc");
+                break;
+            case "name-asc":
+                $builder->orderBy("p.name", "asc");
+                break;
+            case "name-desc":
+                $builder->orderBy("p.name", "desc");
+                break;
+            default:
+                $builder->orderBy("s.id", "desc")->orderBy("p.id", "desc");
+                break;
+        }
+
+        $products = $this->paginator->paginate($builder, $page);
+
+        return $products;
+    }
+
+    private function filterProducts(
+        QueryBuilder $builder,
+        ?SubCategory $subCategory,
+        Filter $filter
+    ): void {
+        if ($filter->brand !== null) {
+            $builder
+                ->andWhere("b = :brand")
+                ->setParameter("brand", $filter->brand)
+            ;
+        }
+
+        if ($filter->keywords !== null) {
+            $builder
+                ->andWhere("CONCAT(p.name, ' ', p.content, ' ', b.name) LIKE :keywords")
+                ->setParameter("keywords", "%" . $filter->keywords . "%")
+            ;
+        }
+    }
+
+    public function getMinPrice(): int
+    {
+        return $this->createQueryBuilder("p")
+            ->select("p.price")
+            ->where("p.isOnline = true")
+            ->orderBy("p.price", "asc")
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    public function getMaxPrice(): int
+    {
+        return $this->createQueryBuilder("p")
+            ->select("p.price")
+            ->where("p.isOnline = true")
+            ->orderBy("p.price", "desc")
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
     }
 
     public function findByKeyword(string $keyword): array

@@ -9,6 +9,7 @@ if (toasts) {
     });
 }
 
+/*
 import Tagify from '@yaireo/tagify';
 var input = document.querySelector('input[name=tags]');
 new Tagify(input,
@@ -16,6 +17,7 @@ new Tagify(input,
         originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
     }
 )
+*/
 
 //import 'bootstrap';
 import 'htmx.org';

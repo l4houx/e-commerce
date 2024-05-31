@@ -111,8 +111,8 @@ services:
     Symfony\Component\Security\Http\Logout\LogoutUrlGenerator: '@security.logout_url_generator'
 
     # Setting
-    #app.setting:
-        #alias: App\Service\SettingService
+    app.setting:
+        alias: App\Service\SettingService
 
     # Notification Comment
     App\EventSubscriber\NotificationCommentsSubscriber:

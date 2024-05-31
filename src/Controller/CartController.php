@@ -2,20 +2,22 @@
 
 namespace App\Controller;
 
-use App\Repository\ProductRepository;
 use App\Service\CartService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Repository\ProductRepository;
+use App\Repository\QuestionRepository;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CartController extends AbstractController
 {
     public function __construct(
         private readonly ProductRepository $productRepository,
+        private readonly QuestionRepository $questionRepository,
         private readonly TranslatorInterface $translator
     ) {
     }
@@ -70,6 +72,7 @@ class CartController extends AbstractController
         return $this->render('cart/cart.html.twig', [
             'items' => $cartService->getCart(),
             'total'=> $cartService->getTotal(),
+            'questions' => $this->questionRepository->findResults(6)
         ]);
     }
 
@@ -104,7 +107,7 @@ class CartController extends AbstractController
     {
         $cartService->cartDelete($id);
 
-        $this->addFlash('info', $this->translator->trans('Content was deleted successfully.'));
+        $this->addFlash('info', $this->translator->trans('Cart was deleted successfully.'));
 
         return $this->redirectToRoute('cart', [], Response::HTTP_SEE_OTHER);
     }
@@ -122,7 +125,7 @@ class CartController extends AbstractController
     public function removeCartAll(CartService $cartService): RedirectResponse
     {
         $cartService->removeCartAll();
-        $this->addFlash('danger', $this->translator->trans('Content was deleted successfully.'));
+        $this->addFlash('danger', $this->translator->trans('Cart was deleted successfully.'));
 
         return $this->redirectToRoute('products');
     }

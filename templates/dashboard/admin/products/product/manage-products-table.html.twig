@@ -2,8 +2,8 @@
 	<table class="table mb-0 text-nowrap table-hover table-centered">
 		<thead class="">
 			<tr>
-				<th>#</th>
-				<th>{{ 'Name'|trans }}</th>
+				<th>{{ knp_pagination_sortable(rows, '#', 'p.id') }}</th>
+				<th>{{ knp_pagination_sortable(rows, 'Name'|trans, 'p.name') }}</th>
 				<th>{{ 'Content'|trans }}</th>
 				<th></th>
 			</tr>
@@ -16,7 +16,7 @@
 					<td>
 						<div class="d-flex align-items-center">
 							<div>
-								<img src="{{ product.imageName ? asset(product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.name }}" class="img-4by3-lg rounded">
+								<img src="{{ product.imageName ? asset(product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.brand.name }} - {{ product.name }}" class="img-4by3-lg rounded">
 							</div>
 							<div class="ms-3">
 								<h6 class="mb-1">
@@ -38,7 +38,9 @@
 						</p>
 						<ul class="nav nav-divider small align-items-center">
 							<li class="nav-item">{{ 'SubCategory'|trans }}: 
-								<b>{{ product.subCategories[0].name }}</b>
+								<b class="badge" style="background-color: {{ product.subCategories[0].color }}">
+									{{ product.subCategories[0].name }}
+								</b>
 							</li>
 							<li class="nav-item">{{ 'Stock'|trans }}: 
 								{% if product.stock > 0 %}
@@ -48,10 +50,12 @@
 								{% endif %}
 							</li>
 							<li class="nav-item">{{ 'Price'|trans }}: 
-								<b>{{ product.price / 100 }}</b>
+								<b>
+									{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+								</b>
 							</li>
 							<li class="nav-item">{{ 'Brand'|trans }}: 
-								<b>{{ product.brand }}</b>
+								<b>{{ product.brand.name }}</b>
 							</li>
 						</ul>
                     </td>

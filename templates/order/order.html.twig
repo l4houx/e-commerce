@@ -180,27 +180,30 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ 'Subtotal'|trans }}</span>
                                     <span class="heading-color fw-semibold mb-0">
-                                        $<span id="subtotal" class="heading-color fw-semibold mb-0">
-                                            {{ total / 100 }}
+                                        <span id="subtotal" class="heading-color fw-semibold mb-0">
+                                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ total ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                         </span>
                                     </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ 'Shipping Cost'|trans }}</span>
                                     <span class="heading-color fw-semibold mb-0">
-                                        $<span id="shippingcost" class="heading-color fw-semibold mb-0"></span>
+                                        <span id="shippingcost" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                     </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ 'Promotional code'|trans }}</span>
                                     <span class="heading-color fw-semibold mb-0">
-                                        $<span id="coupon" class="heading-color fw-semibold mb-0"></span>
+                                        <span id="coupon" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                     </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ 'Tax'|trans }}</span>
                                     <span class="heading-color fw-semibold mb-0">
-                                        $<span id="tax" class="heading-color fw-semibold mb-0"></span>
+                                        <span id="tax" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                     </span>
                                 </li>
                             </ul>
@@ -209,7 +212,8 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <span class="heading-color fw-normal">{{ 'Payable Now'|trans }}</span>
                                 <span class="h6 mb-0">
-                                    $<span id="totalprice" class="h6 mb-0"></span>
+                                    <span id="totalprice" class="h6 mb-0"></span>
+                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                 </span>
                             </div>
                             <div class="d-grid">

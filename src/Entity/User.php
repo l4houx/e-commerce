@@ -81,23 +81,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     private Collection $favorites;
 
     /**
+     * //@var //collection<int, Post>
+     */
+    //#[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
+    //private Collection $posts;
+
+    /**
      * @var collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $comments;
 
     /**
-     * //@var //collection<int, Post>
+     * @var Collection<int, Review>
      */
-    //#[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
-    //private Collection $posts;
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'author', orphanRemoval: true, cascade: ['remove'])]
+    private Collection $reviews;
 
     public function __construct()
     {
         $this->isVerified = false;
         $this->favorites = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         //$this->posts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -385,6 +392,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     }
 
     /**
+     * //@return Collection<int, Post>
+     */
+    /*public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+            $post->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): static
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getAuthor() === $this) {
+                $post->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }*/
+
+    /**
      * @return Collection<int, Comment>
      */
     public function getComments(): Collection
@@ -415,32 +452,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     }
 
     /**
-     * //@return Collection<int, Post>
+     * @return Collection<int, Review>
      */
-    /*public function getPosts(): Collection
+    public function getReviews(): Collection
     {
-        return $this->posts;
+        return $this->reviews;
     }
 
-    public function addPost(Post $post): static
+    public function addReview(Review $review): static
     {
-        if (!$this->posts->contains($post)) {
-            $this->posts->add($post);
-            $post->setAuthor($this);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removePost(Post $post): static
+    public function removeReview(Review $review): static
     {
-        if ($this->posts->removeElement($post)) {
+        if ($this->reviews->removeElement($review)) {
             // set the owning side to null (unless already changed)
-            if ($post->getAuthor() === $this) {
-                $post->setAuthor(null);
+            if ($review->getAuthor() === $this) {
+                $review->setAuthor(null);
             }
         }
 
         return $this;
-    }*/
+    }
 }

@@ -139,7 +139,7 @@ class OrderFormType extends AbstractType
             ])
             //->add('countrycode', CountryAutocompleteField::class)
             ->add('coupon', CouponAutocompleteField::class)
-            ->add('reference', HiddenType::class, [
+            ->add('ref', HiddenType::class, [
                 'label' => t('Reference'),
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())

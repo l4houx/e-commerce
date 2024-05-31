@@ -9,7 +9,7 @@ twig:
 
     globals:
         # Setting
-        #setting: '@App\Service\SettingService'
+        setting: '@App\Service\SettingService'
 
         # Language
         locales: "%app_locales%"

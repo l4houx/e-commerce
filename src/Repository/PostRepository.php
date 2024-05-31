@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use App\Entity\PostCategory;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasLimit;
 use function Symfony\Component\String\u;
@@ -91,7 +92,7 @@ class PostRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->select('p')
-            ->where('p.isOnline = true AND p.createdAt < NOW()')
+            ->where('p.isOnline = true AND createdAp.t < NOW()')
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($maxResults)
         ;
@@ -148,11 +149,12 @@ class PostRepository extends ServiceEntityRepository
     public function findPrevious(Post $post): ?Post
     {
         return $this->createQueryBuilder('p')
-            ->where('p.isOnline = true AND p.publishedAt < NOW()')
+            //->where('p.isOnline = true AND p.publishedAt < NOW()')
+            ->where('p.isOnline = true')
             ->andWhere('p.publishedAt < :postPublishedAt')
             ->setParameter('postPublishedAt', $post->getPublishedAt())
             ->orderBy('p.publishedAt', 'DESC')
-            ->groupBy('p.id')
+            //->groupBy('p.id')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -162,11 +164,12 @@ class PostRepository extends ServiceEntityRepository
     public function findNext(Post $post): ?Post
     {
         return $this->createQueryBuilder('p')
-            ->where('p.isOnline = true AND p.publishedAt < NOW()')
+            //->where('p.isOnline = true AND p.publishedAt < NOW()')
+            ->where('p.isOnline = true')
             ->andWhere('p.publishedAt < :postPublishedAt')
             ->setParameter('postPublishedAt', $post->getPublishedAt())
             ->orderBy('p.publishedAt', 'ASC')
-            ->groupBy('p.id')
+            //->groupBy('p.id')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -192,20 +195,5 @@ class PostRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-    }
-
-    /**
-     * Transforms the search string into an array of search terms.
-     *
-     * @return string[]
-     */
-    private function extractSearchTerms(string $searchQuery): array
-    {
-        $terms = array_unique(u($searchQuery)->replaceMatches('/[[:space:]]+/', ' ')->trim()->split(' '));
-
-        // ignore the search terms that are too short
-        return array_filter($terms, static function ($term) {
-            return 2 <= $term->length();
-        });
     }
 }

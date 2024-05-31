@@ -18,8 +18,11 @@ use function Symfony\Component\String\u;
 class Order
 {
     use HasIdTrait;
-    use HasReferenceTrait;
+    //use HasReferenceTrait;
     use HasTimestampableTrait;
+
+    #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
+    private $ref = '';
 
     /** -2: failed / -1: cancel / 0: waiting for payment / 1: paid */
     #[ORM\Column(type: Types::INTEGER)]
@@ -80,6 +83,18 @@ class Order
     public function __construct()
     {
         $this->status = 0;
+    }
+
+    public function getRef(): string
+    {
+        return $this->ref;
+    }
+
+    public function setRef(string $ref): static
+    {
+        $this->ref = $ref;
+
+        return $this;
     }
 
     public function getStatus(): ?int

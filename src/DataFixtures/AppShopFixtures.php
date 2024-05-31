@@ -6,11 +6,15 @@ use App\Entity\Size;
 use App\Entity\Brand;
 use App\Entity\Color;
 use App\Entity\Coupon;
+use App\Entity\Review;
+use App\Entity\Feature;
 use App\Entity\Product;
 use App\Entity\Category;
 use App\Entity\CouponType;
 use App\Entity\SubCategory;
+use App\Entity\FeatureValue;
 use App\Entity\ProductImage;
+use App\Entity\AddProductHistory;
 use App\Entity\HomepageHeroSetting;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -46,6 +50,11 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
      */
     private array $subCategories = [];
 
+    /**
+     * @var array<int, Feature>
+     */
+    private array $features = [];
+
     private int $categoryId = 0;
 
     public function __construct(
@@ -62,7 +71,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName(sprintf("Brand %d", $i))
                 ->setMetaTitle(sprintf("Brand %d", $i))
                 ->setMetaDescription(sprintf("Brand %d", $i))
-                ->setIsActive(1)
+                ->setIsOnline(1)
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
@@ -143,6 +152,16 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         }
     }
 
+    private function createFeature(ObjectManager $manager): void
+    {
+        for ($i = 1; $i <= 10; ++$i) {
+            /** @var Feature $feature */
+            $feature = (new Feature())->setId($i)->setName(sprintf("Feature %d", $i));
+            $this->features[$i] = $feature;
+            $manager->persist($feature);
+        }
+    }
+
     public function load(ObjectManager $manager): void
     {
         /** @var array<HomepageHeroSetting> $homepages */
@@ -161,192 +180,191 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 'name' => 'Red',
                 'hex' => '#ff0000',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Blue',
                 'hex' => '#0000ff',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Green',
                 'hex' => '#008000',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Orange',
                 'hex' => '#ffa500',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'White',
                 'hex' => '#ffffff',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
                 
             ],
             [
                 'name' => 'Black',
                 'hex' => '#000000',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Yellow',
                 'hex' => '#ffff00',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Violet',
                 'hex' => '#ee82ee',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Silver',
                 'hex' => '#c0c0c0',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Grey',
                 'hex' => '#808080',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'LightSlateGray',
                 'hex' => '#778899',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Maroon',
                 'hex' => '#800000',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Brown',
                 'hex' => '#a52a2a',
                 'displayInSearch' => 1,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'DarkBlue',
                 'hex' => '#00008b',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Navy blue',
                 'hex' => '#0b5394',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'LightGreen',
                 'hex' => '#90ee90',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Purple',
                 'hex' => '#800080',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'DarkViolet',
                 'hex' => '#9400d3',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Gold',
                 'hex' => '#ffd700',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'LightYellow',
                 'hex' => '#ffffe0',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Khaki',
                 'hex' => '#f0e68c',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'MediumPurple',
                 'hex' => '#9370db',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Olive',
                 'hex' => '#808000',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'DarkCyan',
                 'hex' => '#008b8b',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'SkyBlue',
                 'hex' => '#87ceeb',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'MediumSlateblue',
                 'hex' => '#7b68ee',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'RosyBrown',
                 'hex' => '#bc8f8f',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Chocolate',
                 'hex' => '#d2691e',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'Peru',
                 'hex' => '#cd853f',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'DarkGoldenrod',
                 'hex' => '#b8860b',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
         ];
 
         foreach($colors as $color) {   
-            $newcolor = new Color();
-            $newcolor
+            $newcolor = (new Color())
                 ->setName($color['name'])
                 ->setHex($color['hex'])
                 ->setDisplayInSearch($color['displayInSearch'])
-                ->setIsActive($color['isActive'])
+                ->setIsOnline($color['isOnline'])
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
@@ -362,36 +380,35 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name' => 'S',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'M',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'L',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'XL',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ],
             [
                 'name' => 'XXL',
                 'displayInSearch' => 0,
-                'isActive' => 1
+                'isOnline' => 1
             ]
         ];
 
         foreach($sizes as $size) {   
-            $newsize = new Size();
-            $newsize
+            $newsize = (new Size())
                 ->setName($size['name'])
                 ->setDisplayInSearch($size['displayInSearch'])
-                ->setIsActive($size['isActive'])
+                ->setIsOnline($size['isOnline'])
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
@@ -411,12 +428,13 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($this->faker()->unique()->word())
                 // ->setSlug($slug)
                 ->setContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
-                ->setPrice($this->faker()->randomFloat(2))
-                ->setSalePrice($this->faker()->randomFloat(2))
-                ->setDiscount($this->faker()->randomFloat(2))
+                ->setRef(sprintf("REF_%d", $i))
+                ->setPrice(rand(100, 1600))
+                ->setSalePrice(rand(100, 1600))
+                ->setDiscount(rand(100, 1600))
                 ->setTax(0.2)
-                ->setStock(rand(0, 200))
-                ->setViews(rand(10, 160))
+                ->setStock(rand(100, 1600))
+                ->setViews(rand(100, 1600))
                 ->setMetaTitle($product->getName())
                 ->setMetaDescription($this->faker()->realText(100))
                 ->setExternallink(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
@@ -429,8 +447,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setFacebookUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setGoogleplusUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setLinkedinUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
-                // ->setIsOnline($this->faker()->numberBetween(0, 1))
-                // ->setIsActive($this->faker()->numberBetween(0, 1))
+                ->setIsOnline($this->faker()->numberBetween(0, 1))
                 ->setIsFeaturedProduct($this->faker()->numberBetween(0, 1))
                 ->setIsBestSelling($this->faker()->numberBetween(0, 1))
                 ->setIsNewArrival($this->faker()->numberBetween(0, 1))
@@ -444,8 +461,20 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setBrand($this->brands[($i % count($this->brands)) + 1])
             ;
 
+            shuffle($this->features);
+
+             /** @var Feature $feature */
+            foreach (array_slice($this->features, 0, 3) as $feature) {
+                $product->addFeature(
+                    (new FeatureValue())
+                        ->setFeature($feature)
+                        ->setValue($feature->getName())
+                );
+            }
+
             $this->addReference('product-'.$i, $product);
 
+            $this->createFeature($manager);
             $manager->persist($product);
             $products[] = $product;
         }
@@ -467,6 +496,36 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($productimage);
             $productimages[] = $productimage;
+        }
+
+        // Create 20 Add Products History
+        $producthistories = [];
+        for ($i = 0; $i <= 20; ++$i) {
+            $producthistory = (new AddProductHistory())
+                ->setQuantity($this->faker()->numberBetween(1, 2))
+                ->setProduct($this->faker()->randomElement($products))
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+
+            $manager->persist($producthistory);
+            $producthistories[] = $producthistory;
+        }
+
+        // Create 20 Review by Recipe
+        for ($i = 0; $i <= 20; ++$i) {
+            $review = new Review();
+            $review
+                ->setAuthor($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
+                ->setProduct($this->faker()->randomElement($products))
+                ->setIsVisible($this->faker()->numberBetween(0, 1))
+                ->setRating($this->faker()->numberBetween(1, 5))
+                ->setName($this->faker()->unique()->sentence(5, true))
+                ->setSlug($this->slugger->slug($review->getName())->lower())
+                ->setContent($this->faker()->paragraph())
+            ;
+
+            $manager->persist($review);
         }
 
         $manager->flush();

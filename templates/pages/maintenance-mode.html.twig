@@ -1,9 +1,9 @@
-{% extends 'empty.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% set pagetitle = 'Maintenance mode'|trans %}
 {% block title pagetitle %}
 
-{% block content %}
+{% block body %}
     <div class="offset-xl-1 col-xl-5 col-lg-6 col-md-12 col-12 text-center text-lg-start">
         {% if customMessage %}
             <h1 class="display-3 mb-2 fw-bold">{{ customMessage }}</h1>

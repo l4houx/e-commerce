@@ -25,6 +25,11 @@ doctrine:
         controller_resolver:
             auto_mapping: true
 
+        #filters:
+            #softdeleteable:
+                #class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+                #enabled: true
+
 when@test:
     doctrine:
         dbal:

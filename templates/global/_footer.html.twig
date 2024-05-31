@@ -24,7 +24,7 @@
 					<img class="dark-mode-item h-40px" src="{{ asset('images/logo-light.svg') }}" alt="{{ website_name }}">
 				</a>
 				<p class="mt-4 mb-2">
-					A Bootstrap theme that's both stylish and functional, perfect for any type of technology or corporate website.
+					{{ settings["website_about"] | raw | nl2br }}
 				</p>
 			</div>
 			<div class="col-lg-8 col-xxl-7">
@@ -32,11 +32,13 @@
 					<div class="col-6 col-md-4">
 						<h6 class="mb-2 mb-md-4">{{ 'Quick links'|trans }}</h6>
 						<ul class="nav flex-column">
-							<li class="nav-item">
-								<a class="nav-link pt-0" href="">
-									{{ 'About us'|trans }}
-								</a>
-							</li>
+							{% if '1' == settings['show_about_page'] %}
+								<li class="nav-item">
+									<a class="nav-link pt-0" href="{{ path('page', { slug : settings['about_page_slug'] }) }}">
+										{{ 'About us'|trans }}
+									</a>
+								</li>
+							{% endif %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ path('contact') }}">
 									{{ 'Contact'|trans }}
@@ -87,20 +89,24 @@
 								</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="">
-									{{ 'Privacy Policy'|trans }}
-								</a>
-							</li>
+								{% if '1' == settings['show_privacy_policy_page'] %}
+									<a class="nav-link" href="{{ path('page', { slug : settings['privacy_policy_page_slug'] }) }}">
+										{{ 'Privacy'|trans }}
+									</a>
+								</li>
+							{% endif %}
 							<li class="nav-item">
-								<a class="nav-link" href="">
+								<a class="nav-link" href="{{ path('posts') }}">
 									{{ 'News and blogs'|trans }}
 								</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="">
-									{{ 'Terms &amp; condition'|trans }}
-								</a>
-							</li>
+							{% if '1' == settings['show_terms_of_service_page'] %}
+								<li class="nav-item">
+									<a class="nav-link" href="{{ path('page', { slug : settings['terms_of_service_page_slug'] }) }}">
+										{{ 'Terms'|trans }}
+									</a>
+								</li>
+							{% endif %}
 						</ul>
 					</div>
 					<div class="col-md-4">
@@ -161,4 +167,6 @@
 	</div>
 </footer>
 
-<div class="back-top"></div>
+{% if '1' == settings["show_back_to_top_button"] %}
+	<div class="back-top"></div>
+{% endif %}

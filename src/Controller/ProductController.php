@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Filter;
 use App\Entity\Product;
+use App\Entity\Category;
+use App\Entity\SubCategory;
+use App\Form\FilterFormType;
 use App\Entity\Traits\HasLimit;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
@@ -27,6 +31,53 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: '/products', name: 'products', methods: ['GET'])]
+    public function index(
+        Request $request,
+        ?SubCategory $subCategory,
+    ): Response {
+        $min = $this->productRepository->getMinPrice();
+        $max = $this->productRepository->getMaxPrice();
+
+        $filter = new Filter();
+        $filter->min = $min;
+        $filter->max = $max;
+
+        $form = $this->createForm(FilterFormType::class, $filter)->handleRequest($request);
+
+        $products = $this->productRepository->getForPagination(
+            $request->query->getInt("page", 1),
+            $request->query->getInt("limit", HasLimit::PRODUCT_LIMIT),
+            $request->query->get("sort", "new-products"),
+            $subCategory,
+            $filter
+        );
+
+        $pages = ceil(count($products) / $request->query->getInt("limit", HasLimit::PRODUCT_LIMIT));
+
+        return $this->render("product/index.html.twig", [
+            "products" => $products,
+            "category" => $subCategory,
+            "params" => array_merge(
+                $request->query->all(),
+                [
+                    "category" => $subCategory?->getId(),
+                    "page" =>  $request->query->getInt("page", 1),
+                    "limit" => $request->query->getInt("limit", 18),
+                    "sort" => $request->query->get("sort", "new-products")
+                ]
+            ),
+            "form" => $form,
+            "min" => $min,
+            "max" => $max,
+            "pages" => $pages,
+            "pageRange" => range(
+                max(1, $request->query->getInt("page", 1) - 3),
+                min($pages, $request->query->getInt("page", 1) + 3)
+            )
+        ]);
+    }
+
+    /*
     public function products(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -37,6 +88,7 @@ class ProductController extends AbstractController
 
         return $this->render('product/products.html.twig', compact('products'));
     }
+    */
 
     #[Route(path: '/product/{id}', name: 'product', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     public function product(Request $request, Product $product, EntityManagerInterface $em): Response
