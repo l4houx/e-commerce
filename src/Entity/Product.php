@@ -8,6 +8,7 @@ use App\Entity\Traits\HasIsOnlineTrait;
 use App\Entity\Traits\HasLimit;
 use App\Entity\Traits\HasMetaTrait;
 use App\Entity\Traits\HasSocialNetworksTrait;
+use App\Entity\Traits\HasTagTrait;
 use App\Entity\Traits\HasTimestampableTrait;
 use App\Entity\Traits\HasViewsTrait;
 use App\Repository\ProductRepository;
@@ -31,6 +32,7 @@ class Product
     use HasMetaTrait;
     use HasIsOnlineTrait;
     use HasViewsTrait;
+    use HasTagTrait;
     use HasSocialNetworksTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;

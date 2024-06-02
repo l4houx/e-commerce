@@ -47,55 +47,55 @@
                             {% include "global/post-share.html.twig" %}
                         </div>
                         <span class="text-secondary opacity-3 mx-3">|</span>
-                        <a href="#" class="text-secondary text-primary-hover mb-0">
-                            <i class="fas fa-comment me-2"></i>5
+                        <a href="#add-comment" class="text-secondary text-primary-hover mb-0">
+                            <i class="fas fa-comment me-2"></i>
+                            {{ comments.getTotalItemCount }} {{ comments.getTotalItemCount > 1 ? "comments"|trans : "comment"|trans }}
                         </a>
                         {% if post.readtime %}
                             <span class="text-secondary opacity-3 mx-3">|</span>
                             <span class="text-secondary">{{ post.readtime | duration }} {{ 'min read'|trans }}</span>
                         {% endif %}
+                        <span class="text-secondary opacity-3 mx-3">|</span>
+                        <span class="text-secondary">
+                            <i class="fas fa-clock me-2"></i>{{ post.createdAt | format_date('long') }}
+                        </span>
                     </div>
                     <img src="{{ post.imageName ? (post.getImagePath) : post.getImagePlaceholder }}" class="img-fluid rounded mt-5" alt="{{ post.name }}">
                     <p class="mt-5">{{ post.content | html_markdown }}</p>
-                    <p class="mb-0">{{ 'Published the'|trans }} {{ post.createdAt | format_date('long') }}</p>
                     <div class="bg-light border rounded d-md-flex justify-content-between align-items-center text-center p-3 mt-5">
-                        <!-- Title -->
-                        <h6 class="mb-0">Was this article helpful?</h6>
-                        <small class="py-3 p-md-0 d-block">25 out of 78 found this helpful</small>
-                        <!-- Check buttons -->
-                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                            <!-- Yes button -->
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1">
-                            <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradio1"><i class="fa-regular fa-thumbs-up me-1"></i> Yes</label>
-                            <!-- No button -->
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2">
-                            <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradio2"> No <i class="fa-regular fa-thumbs-down ms-1"></i></label>
+                        <h6 class="mb-0">{{ 'Was this article helpful?'|trans }}</h6>
+                        <small class="py-3 p-md-0 d-block"></small>
+                        {% if app.user %}
+                            <a href="{{ path('post_like', {id: post.id}) }}" data-action="like" data-nb={{ post.likes|length }} class="text-secondary text-primary-hover mb-0">
+                            {% endif %}
+                                <i class="far fa-thumbs-up me-1 {{ app.user in post.likes ? '' : 'd-none' }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'Yes like'|trans }}"></i> 
+                                <i class="far fa-thumbs-down ms-1 {{ app.user in post.likes ? 'd-none' : '' }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ "No like"|trans }}"></i> 
+                                <span>{{ post.likes|length }} {{ 'I like'|trans }}</span>
+                            {% if app.user %}
+                            </a>
+                        {% endif %}
+                    </div>
+                    {% if previous and next %}
+                        <div class="d-md-flex justify-content-between align-items-center text-center mt-5">
+                            {% if previous %}
+                                <a href="{{ path('post', { slug: previous.slug }) }}" class="btn btn-outline-secondary btn-sm mb-0">
+                                    <i class="fa-regular fas fa-arrow-left me-1"></i>
+                                    {{ 'Previous Post'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if next %}
+                                <a href="{{ path('post', { slug: next.slug }) }}" class="btn btn-outline-secondary btn-sm mb-0">
+                                    {{ 'Next Post'|trans }}
+                                    <i class="fa-regular fas fa-arrow-right ms-1"></i>
+                                </a>
+                            {% endif %}
                         </div>
-                    </div>
-                    <div class="d-md-flex justify-content-between align-items-center text-center mt-5">
-                        {% if previous %}
-                            <a href="{{ path('post', { slug: previous.slug }) }}" class="btn btn-outline-secondary btn-sm mb-0">
-                                <i class="fa-regular fas fa-arrow-left me-1"></i>
-                                {{ 'Previous Post'|trans }}
-                            </a>
-                        {% endif %}
-                        {% if next %}
-                            <a href="{{ path('post', { slug: next.slug }) }}" class="btn btn-outline-secondary btn-sm mb-0">
-                                {{ 'Next Post'|trans }}
-                                <i class="fa-regular fas fa-arrow-right ms-1"></i>
-                            </a>
-                        {% endif %}
-                    </div>
+                    {% endif %}
                     {% set post_comments_enabled = settings["post_comments_enabled"] %}
                     {% if 'no' != settings["post_comments_enabled"] %}
                         {% if settings["post_comments_enabled"] == "native" %}
                             {% if is_granted('ROLE_USER') %}
-                                <div class="mt-4 text-end">
-                                    <a class="btn btn-primary-soft mb-0" data-bs-toggle="collapse" href="#collapseComment" role="button" aria-expanded="false" aria-controls="collapseComment">
-                                        {{ 'Write a comment'|trans }}
-                                    </a>
-                                </div>
-                                <div class="collapse" id="collapseComment">
+                                <div class="mt-4">
                                     <div class="card card-body">
                                         {{ render(controller('App\\Controller\\PostCommentController::form', {'id': post.id})) }}
                                     </div>
@@ -172,16 +172,16 @@
                         <a href="#" class="btn btn-sm btn-outline-primary mb-0">{{ 'Follow author'|trans }}</a>
                     </div>
                     #}
-                    {% set similarposts = setting.getBlogPosts({"limit": 5, "category": post.category.slug, "otherthan": post.id}).getQuery().getResult() %}
-                    {% if similarposts | length %}
+                    {% set similarPosts = setting.getBlogPosts({"limit": 6, "category": post.category.slug, "otherthan": post.id}).getQuery().getResult() %}
+                    {% if similarPosts | length %}
                         <div class="align-items-center mt-5">
                             <h6 class="mb-3 d-inline-block">{{ 'Related post'|trans }}:</h6>
                             <ul class="list-group list-group-flush">
-                                {% for similarpost in similarposts %}
+                                {% for post in similarPosts %}
                                     {% set link = path('post', { slug : post.slug }) %}
                                     <li class="list-group-item ps-0">
                                         <a href="{{ link }}" class="heading-color text-primary-hover fw-semibold">
-                                            {{ similarpost.name | html_markdown_excerpt(38) }}
+                                            {{ post.name | html_markdown_excerpt(38) }}
                                         </a>
                                     </li>
                                 {% endfor %}

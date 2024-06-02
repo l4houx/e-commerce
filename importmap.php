@@ -59,4 +59,13 @@ return [
     '@yaireo/tagify' => [
         'version' => '4.26.5',
     ],
+    'axios' => [
+        'version' => '1.7.2',
+    ],
+    'jquery' => [
+        'version' => '3.7.1',
+    ],
+    'notyf' => [
+        'version' => '3.10.0',
+    ],
 ];

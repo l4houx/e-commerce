@@ -13,8 +13,8 @@
                 </div>
             </div>
             {% if is_granted('ROLE_USER') %}
-                <a href="#add-comment" class="nav-link small px-0" type="button" data-reply data-id="{{comment.id}}">
-                    <i class="fas fa-reply fs-lg me-2"></i>
+                <a href="#add-comment" class="text-secondary text-primary-hover small px-0" type="button" data-reply data-id="{{comment.id}}">
+                    <i class="fas fa-share me-2"></i>
                     {{ 'Reply'|trans }}
                 </a>
             {% endif %}
@@ -36,8 +36,8 @@
                         </div>
                     </div>
                     {% if is_granted('ROLE_USER') %}
-                        <a href="#add-comment" class="nav-link small px-0" type="button" data-reply data-id="{{reply.id}}">
-                            <i class="fas fa-reply fs-lg me-2"></i>
+                        <a href="#add-comment" class="text-secondary text-primary-hover small px-0" type="button" data-reply data-id="{{reply.id}}">
+                            <i class="fas fa-share me-2"></i>
                             {{ 'Reply'|trans }}
                         </a>
                     {% endif %}

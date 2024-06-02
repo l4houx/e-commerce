@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasLimit;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
@@ -40,5 +41,43 @@ class CategoryRepository extends ServiceEntityRepository
                 'sortFieldAllowList' => ['c.id', 'c.name'],
             ]
         );
+    }
+
+    /**
+     * Returns the categories after applying the specified search criterias.
+     *
+     * @param bool   $isOnline
+     * @param string $keyword
+     * @param int    $id
+     * @param int    $limit
+     * @param string $sort
+     * @param string $order
+     * 
+     * @return QueryBuilder<Category>
+     */
+    public function getCategories($isOnline, $keyword, $id, $limit, $sort, $order): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('DISTINCT c');
+
+        if ($isOnline !== "all") {
+            $qb->andWhere('c.isOnline = :isOnline')->setParameter('isOnline', $isOnline);
+        }
+
+        if ($keyword !== "all") {
+            $qb->andWhere('c.name LIKE :keyword or :keyword LIKE c.name')->setParameter('keyword', '%'.$keyword.'%');
+        }
+
+        if ($id !== "all") {
+            $qb->andWhere('c.id = :id')->setParameter('id', $id);
+        }
+
+        if ($limit !== "all") {
+            $qb->setMaxResults($limit);
+        }
+
+        $qb->orderBy($sort, $order);
+
+        return $qb;
     }
 }

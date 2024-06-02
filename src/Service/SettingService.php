@@ -2,23 +2,23 @@
 
 namespace App\Service;
 
-use Twig\Environment;
 use App\Entity\Setting;
-use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasRoles;
 use App\Repository\SettingRepository;
-use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class SettingService
 {
@@ -194,15 +194,15 @@ class SettingService
         } else {
             if ($alt) {
                 if ($this->authChecker->isGranted(HasRoles::ADMINAPPLICATION) || $this->authChecker->isGranted(HasRoles::ADMIN)) {
-                    return new RedirectResponse($this->router->generate('dashboard_admin_' . $alt));
+                    return new RedirectResponse($this->router->generate('dashboard_admin_'.$alt));
                 } elseif ($this->authChecker->isGranted(HasRoles::MODERATOR)) {
-                    return new RedirectResponse($this->router->generate('dashboard_moderator_' . $alt));
+                    return new RedirectResponse($this->router->generate('dashboard_moderator_'.$alt));
                 } elseif ($this->authChecker->isGranted(HasRoles::TEAM)) {
-                    return new RedirectResponse($this->router->generate('dashboard_team_' . $alt));
+                    return new RedirectResponse($this->router->generate('dashboard_team_'.$alt));
                 } elseif ($this->authChecker->isGranted(HasRoles::EDITOR)) {
-                    return new RedirectResponse($this->router->generate('dashboard_editor_' . $alt));
+                    return new RedirectResponse($this->router->generate('dashboard_editor_'.$alt));
                 } elseif ($this->authChecker->isGranted(HasRoles::DEFAULT)) {
-                    return new RedirectResponse($this->router->generate('dashboard_user_' . $alt));
+                    return new RedirectResponse($this->router->generate('dashboard_user_'.$alt));
                 } else {
                     return new RedirectResponse($this->router->generate($alt));
                 }
@@ -224,7 +224,7 @@ class SettingService
     // Returns the blog posts after applying the specified search criterias
     public function getBlogPosts($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $selecttags = array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
         $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
@@ -241,7 +241,7 @@ class SettingService
     // Returns the posts types after applying the specified search criterias
     public function getPostsTypes($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $isOnline = array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
@@ -256,7 +256,7 @@ class SettingService
     // Returns the blog posts categories after applying the specified search criterias
     public function getBlogPostCategories($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
@@ -270,7 +270,7 @@ class SettingService
     // Returns the comments after applying the specified search criterias
     public function getComments($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
         $user = array_key_exists('user', $criterias) ? $criterias['user'] : 'all';
@@ -290,31 +290,70 @@ class SettingService
     // Returns the pages after applying the specified search criterias
     public function getPages($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
 
         return $this->em->getRepository("App\Entity\Page")->getPages($slug);
     }
 
+    // Returns the reviews after applying the specified search criterias
+    public function getReviews($criterias): QueryBuilder
+    {
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
+        $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
+        $user = array_key_exists('user', $criterias) ? $criterias['user'] : 'all';
+        $product = array_key_exists('product', $criterias) ? $criterias['product'] : 'all';
+        $isVisible = array_key_exists('isVisible', $criterias) ? $criterias['isVisible'] : true;
+        $rating = array_key_exists('rating', $criterias) ? $criterias['rating'] : 'all';
+        $minrating = array_key_exists('minrating', $criterias) ? $criterias['minrating'] : 'all';
+        $maxrating = array_key_exists('maxrating', $criterias) ? $criterias['maxrating'] : 'all';
+        $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
+        $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
+        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
+        $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
+
+        return $this->em->getRepository("App\Entity\Review")->getReviews($keyword, $slug, $user, $product, $isVisible, $rating, $minrating, $maxrating, $limit, $count, $sort, $order);
+    }
+
+    // Returns the categories after applying the specified search criterias
+    public function getCategories($criterias): QueryBuilder
+    {
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $isOnline = array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
+        $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
+        $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
+        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'c.name';
+        $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'ASC';
+
+        return $this->em->getRepository("App\Entity\Category")->getCategories($isOnline, $keyword, $id, $limit, $sort, $order);
+    }
+
     // Returns the products after applying the specified search criterias
     public function getProducts($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
-
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $selecttags = array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
+        $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
-
-        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
-        $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'ASC';
+        $addedtofavoritesby = array_key_exists('addedtofavoritesby', $criterias) ? $criterias['addedtofavoritesby'] : 'all';
+        $isOnHomepageSlider = array_key_exists('isOnHomepageSlider', $criterias) ? $criterias['isOnHomepageSlider'] : 'all';
+        $subCategories = array_key_exists('subCategories', $criterias) ? $criterias['subCategories'] : 'all';
+        $ref = array_key_exists('ref', $criterias) ? $criterias['ref'] : 'all';
         $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
-        $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
+        $otherthan = array_key_exists('otherthan', $criterias) ? $criterias['otherthan'] : 'all';
+        $sort = array_key_exists('order', $criterias) ? $criterias['order'] : 'createdAt';
+        $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
 
-        return $this->em->getRepository("App\Entity\Product")->getProducts($id, $sort, $order, $limit, $count);
+        return $this->em->getRepository("App\Entity\Product")->getProducts($selecttags, $isOnline, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan);
     }
 
     // Returns the users after applying the specified search criterias
     public function getUsers($criterias): QueryBuilder
     {
-        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $role = array_key_exists('role', $criterias) ? $criterias['role'] : 'all';
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $createdbyrestaurantslug = array_key_exists('createdbyrestaurantslug', $criterias) ? $criterias['createdbyrestaurantslug'] : 'all';
@@ -328,9 +367,9 @@ class SettingService
         $isSuspended = array_key_exists('isSuspended', $criterias) ? $criterias['isSuspended'] : false;
         $countryslug = array_key_exists('countryslug', $criterias) ? $criterias['countryslug'] : 'all';
         $followedby = array_key_exists('followedby', $criterias) ? $criterias['followedby'] : 'all';
-        $hasboughtsubscriptionforRecipe = array_key_exists('hasboughtsubscriptionfor', $criterias) ? $criterias['hasboughtsubscriptionfor'] : "all";
-        $hasboughtsubscriptionforRestaurant = array_key_exists('hasboughtsubscriptionforrestaurant', $criterias) ? $criterias['hasboughtsubscriptionforrestaurant'] : "all";
-        $apiKey = array_key_exists('apikey', $criterias) ? $criterias['apikey'] : "all";
+        $hasboughtsubscriptionforRecipe = array_key_exists('hasboughtsubscriptionfor', $criterias) ? $criterias['hasboughtsubscriptionfor'] : 'all';
+        $hasboughtsubscriptionforRestaurant = array_key_exists('hasboughtsubscriptionforrestaurant', $criterias) ? $criterias['hasboughtsubscriptionforrestaurant'] : 'all';
+        $apiKey = array_key_exists('apikey', $criterias) ? $criterias['apikey'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
         $isOnHomepageSlider = array_key_exists('isOnHomepageSlider', $criterias) ? $criterias['isOnHomepageSlider'] : 'all';
         $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
@@ -339,6 +378,39 @@ class SettingService
         $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
 
         return $this->em->getRepository("App\Entity\User")->getUsers($role, $keyword, $createdbyrestaurantslug, $restaurantname, $restaurantslug, $username, $email, $firstname, $lastname, $isVerified, $isSuspended, $countryslug, $slug, $followedby, $hasboughtsubscriptionforRecipe, $hasboughtsubscriptionforRestaurant, $apiKey, $isOnHomepageSlider, $limit, $sort, $order, $count);
+    }
+
+    // Returns the help center categories after applying the specified search criterias
+    public function getHelpCenterCategories($criterias): QueryBuilder
+    {
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $parent = \array_key_exists('parent', $criterias) ? $criterias['parent'] : 'all';
+        $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $keyword = \array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
+        $slug = \array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
+        $limit = \array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
+        $order = \array_key_exists('order', $criterias) ? $criterias['order'] : 'c.name';
+        $sort = \array_key_exists('sort', $criterias) ? $criterias['sort'] : 'ASC';
+
+        return $this->em->getRepository("App\Entity\HelpCenterCategory")->getHelpCenterCategories($parent, $isOnline, $keyword, $slug, $limit, $order, $sort);
+    }
+
+    // Returns the help center articles after applying the specified search criterias
+    public function getHelpCenterArticles($criterias): QueryBuilder
+    {
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $selecttags = \array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
+        $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $isFeatured = \array_key_exists('isFeatured', $criterias) ? $criterias['isFeatured'] : 'all';
+        $keyword = \array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
+        $slug = \array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
+        $category = \array_key_exists('category', $criterias) ? $criterias['category'] : 'all';
+        $limit = \array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
+        $otherthan = \array_key_exists('otherthan', $criterias) ? $criterias['otherthan'] : 'all';
+        $sort = \array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
+        $order = \array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
+
+        return $this->em->getRepository("App\Entity\HelpCenterArticle")->getHelpCenterArticles($selecttags, $isOnline, $isFeatured, $keyword, $slug, $category, $limit, $sort, $order, $otherthan);
     }
 
     // Returns the currencies

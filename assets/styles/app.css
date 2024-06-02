@@ -26973,4 +26973,8 @@ button.text-primary-hover:hover {
     width: 2rem !important
 }
 
+notyf {
+    display: none;
+}
+
 /*User CSS*/

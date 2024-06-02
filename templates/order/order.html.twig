@@ -259,8 +259,52 @@
             </div>
         </div>
     </section>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            const selector = $('#order_form_countrycode');
+            const value = selector.val();
+            const url = `https://127.0.0.1:8001/fr/order/country/${value}/shipping-cost`;
+            //const url = "{{ absolute_url((path('order_shipping_cost', { id: "id" })))|raw }}";
+
+            function ajaxRequest(url) {
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function (response) {
+                        const newResponse = JSON.parse(response);
+                        $("#shippingcost").text(newResponse.content);
+                        const subTotal = parseFloat($('#subtotal').text());
+                        const shippingCost = parseInt($('#shippingcost').text());
+                        $('#totalprice').text(subTotal + shippingCost);
+                        //console.log(subTotal, shippingCost);
+
+                        if (parseInt(newResponse.status === 200)) {
+                            $("#shippingCost").text(newResponse.content);
+                            const subTotal = parseFloat($('#subtotal').text());
+                            const shippingCost = parseInt($('#shippingcost').text());
+                            $('#totalprice').text(subTotal + shippingCost);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+
+                    }
+                });
+            }
+
+            ajaxRequest(url);
+
+            selector.on('change', function () {
+                const urlUpdate = `https://127.0.0.1:8001/fr/order/country/${$(this).val()}/shipping-cost`;
+                ajaxRequest(urlUpdate);
+            });
+        });
+    </script>
 {% endblock %}
 
+{#  
 {% block javascripts %}
     {{ parent() }}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -305,3 +349,4 @@
         });
     </script>
 {% endblock %}
+#}

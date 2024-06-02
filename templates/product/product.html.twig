@@ -3,6 +3,25 @@
 {% set pagetitle = product.name %}
 {% block title pagetitle %}
 
+{% block meta_dynamic_seo %}
+	<meta name="description" content="{{ product.content | raw | nl2br | striptags | slice(0, 200) | raw }}...">
+    {#  
+	{% if product.tags %}
+		<meta name="keywords" content="{{ product.name }}, {% for tag in product.tags %} {{ tag }} {{ not loop.last ? ', ' : '' }}{% endfor %}">
+	{% else %}
+		<meta name="keywords" content="{{ settings['website_keywords_' ~ app.request.locale] }}">
+	{% endif %}
+    #}
+	<meta property="og:title" content="{{ product.name }}"/>
+	{# <meta property="og:image" content="{{ app.request.getUriForPath() }}"> #}
+	<meta property="og:description" content="{{ product.content | raw | nl2br | striptags | slice(0, 200) | raw }}...">
+	<meta property="og:created_time" content="{{ product.createdAt | date('c') }}">
+	<meta name="twitter:title" content="{{ product.name }}"/>
+	{# <meta name="twitter:image" content="{{ app.request.getUriForPath() }}"> #}
+	<meta name="twitter:image:alt" content="{{ product.name }}"/>
+	<meta name="twitter:description" content="{{ product.content | raw | nl2br | striptags | slice(0, 200) | raw }}...">
+{% endblock %}
+
 {% block breadcrumb %}
 	{% set breadcrumb = [{ "products": "Products"|trans, "current":(pagetitle) }] %}
 	{% include "global/breadcrumb.html.twig" with breadcrumb %}
@@ -49,6 +68,8 @@
                         <a href="#" class="heading-color text-primary-hover mb-0">345 reviews</a>
                         <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
                         <span>86 sold</span>
+                        <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
+                        <span>{{ "Ref"|trans }}: {{ product.ref }}</span>
                     </div>
                     <h4 class="text-success mb-4">
                         {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
@@ -303,7 +324,7 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Sort by</h5>
+                        <h5 class="mb-0">{{ 'Sort by'|trans }}</h5>
                         <div class="col-xl-3">
                             <select class="form-select" aria-label="Default select example">
                                 <option value="1">Most Recent</option>

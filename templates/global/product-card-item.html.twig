@@ -1,7 +1,11 @@
 {# 
 {% set runtimeConfig = {"thumbnail": {"size": thumbnailsize } } %} 
 #}
-{% set link = path('product', { id : product.id }) %}
+{% if customLink is defined %}
+    {% set link = customLink %}
+{% else %}
+    {% set link = path('product', { id : product.id }) %} 
+{% endif %}
 <div class="col-sm-6 col-lg-4">
 	<div class="card border bg-transparent overflow-hidden p-0 h-100">
 		<div class="position-absolute start-0 top-0 d-flex align-items-start w-100 z-index-2 p-3">
@@ -11,9 +15,23 @@
 			{% if product.tax %}
 				<span class="badge text-bg-danger ms-2">{{ product.tax * 100 }}% {{ 'off'|trans }}</span>
 			{% endif %}
-			<a href="#" class="btn btn-white btn-round border mb-0 ms-auto">
-				<i class="fas fa-heart"></i>
-			</a>
+			{% if (not is_granted('IS_AUTHENTICATED_REMEMBERED') or is_granted('ROLE_USER')) and hideFavoriteButton is not defined %}
+				{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+					{% if product.isAddedToFavoritesBy(app.user) %}
+						<button data-bs-target="{{ path('dashboard_user_favorites_remove', { id : product.id }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-remove" bs-data-toggle="tooltip" title="{{ "Remove from favorites"|trans }}">
+							<i class="fas fa-heart"></i>
+						</button>
+					{% else %}
+						<button data-bs-target="{{ path('dashboard_user_favorites_new', { id : product.id }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-new" bs-data-toggle="tooltip" title="{{ "Add to favorites"|trans }}">
+							<i class="far fa-heart"></i>
+						</button>
+					{% endif %}
+				{% else %}
+					<a href="{{ path('signin')~'?_target_path='~app.request.getPathInfo }}" class="btn btn-white btn-round border mb-0 ms-auto" bs-data-toggle="tooltip" title="{{ "Add to favorites"|trans }}">
+						<i class="far fa-heart"></i>
+					</a>
+				{% endif %}
+			{% endif %}
 		</div>
 		<div class="card-header bg-light rounded m-2">
 			<img src="{{ product.imageName ? (product.getImagePath) : product.getImagePlaceholder }}" alt="{{ product.brand.name }} - {{ product.name }}">

@@ -79,11 +79,12 @@
             {% block cover '' %}
             {% block pageheader '' %}
             {% block breadcrumb '' %}
+            {% include 'global/_notyf.html.twig' %}
             {% block body '' %}
         </main>
         {% block footer %}
             {% include "global/_footer.html.twig" %}
         {% endblock %}
-        {{ component('flash_messages') }}
+        {# {{ component('flash_messages') }} #}
     </body>
 </html>

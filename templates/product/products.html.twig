@@ -259,7 +259,7 @@
                     {% if products.getTotalItemCount > 0 %}
                         <div class="row g-4 g-lg-5">
                             {% for product in products %}
-                                {% include "global/product-item-card.html.twig" with {product: product, thumbnailsize: [241, 241]} %}
+                                {% include "global/product-card-item.html.twig" with {product: product, thumbnailsize: [241, 241]} %}
                             {% endfor %}
                         </div>
                         {{ knp_pagination_render(products, null, {}, {'align': 'right'}) }}
@@ -271,3 +271,5 @@
         </div>
     </section>
 {% endblock %}
+
+

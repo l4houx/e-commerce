@@ -24,6 +24,9 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        /** @var array<User> $users */
+        $users = $manager->getRepository(User::class)->findAll();
+
         // User Admin
         /** @var User $author */
         $authors = [];
@@ -101,6 +104,13 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
             shuffle($tags);
             foreach (array_slice($tags, 0, 2) as $tag) {
                 $post->setTags(1 === mt_rand(0, 1) ? $tag : null);
+            }
+
+            // Create Post Like
+            for ($i = 0; $i < mt_rand(0, 15); $i++) {
+                $post->addLike(
+                    $users[mt_rand(0, count($users) - 1)]
+                );
             }
 
             $manager->persist($post);
