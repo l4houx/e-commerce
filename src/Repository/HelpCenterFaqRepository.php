@@ -50,7 +50,7 @@ class HelpCenterFaqRepository extends ServiceEntityRepository
     public function findRand(int $maxResults): array // HelpCenterController
     {
         return $this->createQueryBuilder('f')
-            ->orderBy('Rand()')
+            ->orderBy('f.createdAt', 'DESC')
             ->where('f.isOnline = true')
             ->setMaxResults($maxResults)
             ->getQuery()

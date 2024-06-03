@@ -45,9 +45,17 @@
 								</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="career.html">Career <span class="badge text-bg-danger ms-2">2 Job</span></a></li>
-							<li class="nav-item">
-								<a class="nav-link" href="career-single.html">Career detail</a></li>
+								<a class="nav-link" href="">
+									{{ 'Feedback'|trans }}
+								</a>
+							</li>
+							{% if '1' == settings['show_cookie_policy_page'] %}
+								<li class="nav-item">
+									<a class="nav-link" href="{{ path('page', { slug : settings['cookie_policy_page_slug'] }) }}">
+										{{ 'Cookie Notice'|trans }}
+									</a>
+								</li>
+							{% endif %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ path('contact') }}">
 									{{ 'Become a partner'|trans }}
@@ -80,11 +88,18 @@
 					<div class="col-6 col-md-4">
 						<h6 class="mb-2 mb-md-4">{{ 'Community'|trans }}</h6>
 						<ul class="nav flex-column">
-							<li class="nav-item"><a class="nav-link pt-0" href="#">Documents</a></li>
 							<li class="nav-item">
-								<a class="nav-link" href="#">Supports <i class="bi bi-box-arrow-up-right small ms-1"></i></a></li>
+								<a class="nav-link pt-0" href="{{ path('help_center') }}">
+									{{ 'Help center'|trans }}
+								</a>
+							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="">
+								<a class="nav-link" href="{{ path('help_center_support') }}">
+									{{ 'Support'|trans }} <i class="bi bi-box-arrow-up-right small ms-1"></i>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('help_center_faq') }}">
 									{{ 'Faqs'|trans }}
 								</a>
 							</li>

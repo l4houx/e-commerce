@@ -1,27 +1,19 @@
-{% extends 'help.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% set bodyClass = 'bg-white' %}
 {% set pagetitle = 'Help Center Article'|trans ~ " " ~ article.title %}
 {% block title pagetitle %}
-
-{% block pageheader %}
-	<div class="py-8 bg-light">
-		<div class="container">
-			<div class="row">
-				<div class="offset-md-2 col-md-8 col-12">
-					<h1 class="fw-bold mb-1 display-4">{{ pagetitle }}</h1>
-				</div>
-			</div>
-		</div>
-	</div>
-{% endblock %}
 
 {% block breadcrumb %}
 	{% set breadcrumb = [{ "help_center": ('Help center'|trans), (path("help_center_category", { slug: article.category.slug })): article.category.name | raw | striptags | slice(0, 10) | raw, "current":(pagetitle) }] %}
 	{% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 
-{% block content %}
+{% block body %}
+
+
+
+
+
 	<section class="py-8">
 		<div class="container mb-lg-8">
 			<div class="row">

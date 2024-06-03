@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\DataTransferObject\HelpCenterSupportDTO;
+use App\Entity\User;
+use App\Entity\Traits\HasLimit;
+use App\Entity\Traits\HasRoles;
+use App\Service\SettingService;
 use App\Entity\HelpCenterArticle;
 use App\Entity\HelpCenterCategory;
-use App\Entity\Traits\HasRoles;
-use App\Entity\User;
-use App\Event\HelpCenterSupportRequestEvent;
 use App\Form\HelpCenterSupportFormType;
-use App\Repository\HelpCenterArticleRepository;
-use App\Repository\HelpCenterCategoryRepository;
-use App\Repository\HelpCenterFaqRepository;
-use App\Service\SettingService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Repository\HelpCenterFaqRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use App\Event\HelpCenterSupportRequestEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\HelpCenterArticleRepository;
 use Symfony\Component\Routing\Annotation\Route;
+use App\DataTransferObject\HelpCenterSupportDTO;
+use App\Repository\HelpCenterCategoryRepository;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/help-center')]
 class HelpCenterController extends AbstractController
@@ -39,9 +41,7 @@ class HelpCenterController extends AbstractController
     #[Route('', name: 'help_center', methods: ['GET'])]
     public function helpCenter(): Response
     {
-        $faqs = $this->helpCenterFaqRepository->findRand(6);
-
-        return $this->render('helpCenter/index.html.twig', compact('faqs'));
+        return $this->render('helpCenter/index.html.twig');
     }
 
     #[Route('/support', name: 'help_center_support', methods: ['GET', 'POST'])]
@@ -75,15 +75,19 @@ class HelpCenterController extends AbstractController
     }
 
     #[Route('/faq', name: 'help_center_faq', methods: ['GET'])]
-    public function helpCenterFaq(Request $request): Response
+    public function helpCenterFaq(Request $request, PaginatorInterface $paginator): Response
     {
+        $faqs = $paginator->paginate($this->settingService->getHelpCenterFaqs([]), $request->query->getInt('page', 1), HasLimit::HELPCENTERFAQ_LIMIT, ['wrap-queries' => true]);
+
+        /*
         $faqs = $this->helpCenterFaqRepository->findAlls();
 
-        if (!$faqs) {
+        if (!$faq) {
             $this->addFlash('danger', $this->translator->trans('The faq can not be found'));
 
             return $this->redirectToRoute('help_center', [], Response::HTTP_SEE_OTHER);
         }
+        */
 
         return $this->render('helpCenter/faq.html.twig', compact('faqs'));
     }
@@ -97,7 +101,7 @@ class HelpCenterController extends AbstractController
         if (!$category) {
             $this->addFlash('danger', $this->translator->trans('The category not be found'));
 
-            return $this->redirectToRoute('help_center');
+            return $this->redirectToRoute('help_center', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('helpCenter/category.html.twig', compact('category'));
@@ -112,7 +116,7 @@ class HelpCenterController extends AbstractController
         if (!$article) {
             $this->addFlash('danger', $this->translator->trans('The article not be found'));
 
-            return $this->redirectToRoute('help_center');
+            return $this->redirectToRoute('help_center', [], Response::HTTP_SEE_OTHER);
         }
 
         $article->viewed();
