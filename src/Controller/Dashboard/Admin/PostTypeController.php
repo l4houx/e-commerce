@@ -74,6 +74,12 @@ class PostTypeController extends AdminBaseController
         return $this->render('dashboard/admin/post/types/new-edit.html.twig', compact('form', 'type'));
     }
 
+    #[Route(path: '/types/{slug}', name: 'view', methods: ['GET'])]
+    public function view(PostType $type): Response
+    {
+        return $this->render('dashboard/admin/post/types/view.html.twig', compact('type'));
+    }
+
     #[Route(path: '/types/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     #[Route(path: '/types/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function delete(string $slug): Response

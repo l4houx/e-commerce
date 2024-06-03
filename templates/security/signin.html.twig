@@ -60,9 +60,11 @@
                             </div>
                         </div>
                     </form>
-                    <div class="mt-4 text-center">
-                        <span>{{ 'You do not have an account?'|trans }}<a href="{{ path('signup') }}"> {{ 'Sign up'|trans }}</a></span>
-                    </div>
+                    {% if '1' == settings['users_can_register'] %}
+                        <div class="mt-4 text-center">
+                            <span>{{ 'You do not have an account?'|trans }}<a href="{{ path('signup') }}"> {{ 'Sign up'|trans }}</a></span>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

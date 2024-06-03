@@ -413,6 +413,22 @@ class SettingService
         return $this->em->getRepository("App\Entity\HelpCenterArticle")->getHelpCenterArticles($selecttags, $isOnline, $isFeatured, $keyword, $slug, $category, $limit, $sort, $order, $otherthan);
     }
 
+    // Returns the help center faqs after applying the specified search criterias
+    public function getHelpCenterFaqs($criterias): QueryBuilder
+    {
+        // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $selecttags = \array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
+        $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $keyword = \array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
+        $id = \array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
+        $limit = \array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
+        $otherthan = \array_key_exists('otherthan', $criterias) ? $criterias['otherthan'] : 'all';
+        $sort = \array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
+        $order = \array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
+
+        return $this->em->getRepository("App\Entity\HelpCenterFaq")->getHelpCenterFaqs($selecttags, $isOnline, $keyword, $id, $limit, $sort, $order, $otherthan);
+    }
+
     // Returns the currencies
     public function getCurrencies(mixed $criterias): QueryBuilder
     {

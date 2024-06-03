@@ -1,23 +1,22 @@
-<div class="card border-0 mb-4">
-    <div class="card-header">
-        <h4 class="mb-0">
+<div class="card bg-transparent p-0">
+    <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center p-0 pb-3">
+        <h6 class="card-title mb-0">
             {{ pagetitle }} 
             {% if app.request.attributes.get('_route') == 'dashboard_admin_post_edit' %}
-                "{{ post.title }}"
+                "{{ post.name }}"
             {% endif %}
-        </h4>
+        </h6>
+        <div>
+            <a href="{{ path('dashboard_admin_post_index') }}" class="btn btn-sm btn-outline-success me-2">
+                {{ 'Return to list'|trans }}
+            </a>
+        </div>
     </div>
     {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'} }) }}
-        <div class="card-body">
+        <div class="card-body px-0">
             <div>
-                {% include "global/message.html.twig" with { type: "info", icon: "bi bi-exclamation-circle", message: ("The fields preceded with a red * are mandatory"|trans) } %}
+                {% include "global/message.html.twig" with { type: "info", icon: "fas fa-exclamation", message: ("The fields preceded with a red * are mandatory"|trans) } %}
             </div>
-            {% if app.request.attributes.get('_route') == 'dashboard_admin_post_edit' %}
-                <div>
-                    <h5 class="mb-3">{{ 'Main post image'|trans }}</h5>
-                    <img src="{{ post.imageName ? asset(post.getImagePath) : post.getImagePlaceholder }}" alt="{{ post.title }}" class="img-4by3-lg rounded">
-                </div>
-            {% endif %}
             {{ form_widget(form) }}
             <div class="col-12 pt-2">
                 <button type="submit" class="{% if post.id %}btn btn-warning{% else %}btn btn-primary{% endif %} me-4">

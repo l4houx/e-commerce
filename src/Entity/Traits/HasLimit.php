@@ -34,11 +34,11 @@ final class HasLimit
 
     public const POSTCATEGORY_LIMIT = 10;
 
-    public const COMMENT_LIMIT = 4;
+    public const COMMENT_LIMIT = 10;
 
     public const CONTACT_LIMIT = 10;
 
-    public const FAQ_LIMIT = 10;
+    public const HELPCENTERFAQ_LIMIT = 10;
 
     public const HELPCENTERARTICLE_LIMIT = 10;
 

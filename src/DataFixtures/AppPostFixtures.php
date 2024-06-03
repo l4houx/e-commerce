@@ -27,40 +27,6 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
         /** @var array<User> $users */
         $users = $manager->getRepository(User::class)->findAll();
 
-        // User Admin
-        /** @var User $author */
-        $authors = [];
-        $author = (new User());
-        // $avatar = $this->avatarService->createAvatar($author->getEmail());
-        $author
-            ->setId(5)
-            // ->setAvatar($author)
-            // ->setTeamName('author.jpg')
-            ->setRoles([HasRoles::ADMIN])
-            ->setLastname('Tom')
-            ->setFirstname('Doe')
-            ->setUsername('tom-admin')
-            // ->setSlug('tom-admin')
-            ->setEmail('tom-admin@yourdomain.com')
-            // ->setPhone($this->faker()->phoneNumber())
-            ->setIsTeam(true)
-            ->setIsAgreeTerms(true)
-            ->setIsVerified(true)
-            ->setAbout($this->faker()->realText(254))
-            ->setDesignation('Admin Staff')
-            ->setLastLogin(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
-            ->setLastLoginIp($this->faker()->ipv4())
-            ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
-            ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
-        ;
-
-        $manager->persist(
-            $author->setPassword(
-                $this->hasher->hashPassword($author, 'author')
-            )
-        );
-        $authors[] = $author;
-
         $tags = ['France', 'Politics', 'World', 'Computer Science', 'Economy', 'Associations'];
 
         // Create 20 Posts
@@ -72,7 +38,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 ->setSlug($this->slugger->slug($post->getName())->lower())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setReadtime(rand(10, 160))
-                // ->setAuthor($author)
+                // ->setAuthor($this->getReference('Admin'))
                 // ->setTags(mt_rand(0, 1) === 1 ? $this->faker()->unique()->word() : null)
                 // ->setTags(mt_rand(0, 1) === 1 ? $tags : null)
                 ->setMetaTitle($post->getName())

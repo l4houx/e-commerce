@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Color;
+use App\Form\Type\SwitchType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use function Symfony\Component\Translation\t;
@@ -40,14 +41,7 @@ class ColorFormType extends AbstractType
                 // 'purify_html' => true,
                 'empty_data' => '',
             ])
-            ->add('isActive', ChoiceType::class, [
-                'label' => t('Active'),
-                'required' => false,
-                'multiple' => false,
-                'expanded' => true,
-                'choices' => ['Enable' => 1, 'Disable' => 0],
-                'label_attr' => ['class' => 'radio-custom radio-inline'],
-            ])
+            ->add('isOnline', SwitchType::class, ['label' => t('Online')])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
     }

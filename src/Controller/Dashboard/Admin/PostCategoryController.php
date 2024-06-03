@@ -30,6 +30,16 @@ class PostCategoryController extends AdminBaseController
     }
 
     #[Route(path: '/categories', name: 'index', methods: ['GET'])]
+    public function index(Request $request, PaginatorInterface $paginator): Response
+    {
+        $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
+
+        $rows = $paginator->paginate($this->settingService->getBlogPostCategories(['keyword' => $keyword, 'isOnline' => 'all', 'order' => 'c.createdAt', 'sort' => 'DESC']), $request->query->getInt('page', 1), HasLimit::POSTCATEGORY_LIMIT, ['wrap-queries' => true]);
+
+        return $this->render('dashboard/admin/post/category/index.html.twig', compact('rows'));
+    }
+
+    /*
     public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -37,6 +47,7 @@ class PostCategoryController extends AdminBaseController
 
         return $this->render('dashboard/admin/post/category/index.html.twig', compact('rows'));
     }
+    */
 
     #[Route(path: '/categories/new', name: 'new', methods: ['GET', 'POST'])]
     #[Route(path: '/categories/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
@@ -74,6 +85,12 @@ class PostCategoryController extends AdminBaseController
         }
 
         return $this->render('dashboard/admin/post/category/new-edit.html.twig', compact('form', 'postcategory'));
+    }
+
+    #[Route(path: '/categories/{slug}', name: 'view', methods: ['GET'])]
+    public function view(PostCategory $postcategory): Response
+    {
+        return $this->render('dashboard/admin/post/category/view.html.twig', compact('postcategory'));
     }
 
     #[Route(path: '/categories/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]

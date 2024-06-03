@@ -30,7 +30,7 @@ class PostCategoryFormType extends AbstractType
                 'required' => true,
                 // 'purify_html' => true,
                 'empty_data' => '',
-                'help' => t('Keep your category names under 10 characters. Write a name that describes the content of the topic. Contextualize for your audience..'),
+                'help' => t('Keep your category names under 10 characters. Write heading that describe the topic content. Contextualize for Your Category.'),
             ])
             ->add('slug', TextType::class, [
                 'label' => t('Slug'),

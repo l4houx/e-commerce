@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Brand;
+use App\Form\Type\SwitchType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use function Symfony\Component\Translation\t;
@@ -48,14 +49,7 @@ class BrandFormType extends AbstractType
                 'attr' => ['placeholder' => '', 'rows' => 6],
                 'help' => t(''),
             ])
-            ->add('isActive', ChoiceType::class, [
-                'label' => t('Active'),
-                'required' => false,
-                'multiple' => false,
-                'expanded' => true,
-                'choices' => ['Enable' => true, 'Disable' => false],
-                'label_attr' => ['class' => 'radio-custom radio-inline'],
-            ])
+            ->add('isOnline', SwitchType::class, ['label' => t('Online')])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
     }

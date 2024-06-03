@@ -319,8 +319,6 @@ e.init();
 import $ from 'jquery';
 window.jQuery = $;
 
-import { Notyf } from './vendor/notyf/notyf.index.js';
-
 $(function() {
     // Enable tooltips everywhere via data-toggle attribute
     function tooltip() {

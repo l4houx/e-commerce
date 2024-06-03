@@ -3,20 +3,21 @@
 namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\Post;
+use App\Entity\Traits\HasLimit;
+use App\Entity\Traits\HasRoles;
 use App\Entity\User;
 use App\Form\PostFormType;
-use App\Entity\Traits\HasRoles;
-use App\Service\SettingService;
 use App\Repository\PostRepository;
+use App\Service\SettingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/%website_dashboard_path%/admin/manage-posts', name: 'dashboard_admin_post_')]
 #[IsGranted(HasRoles::ADMINAPPLICATION)]
@@ -30,7 +31,17 @@ class PostController extends AdminBaseController
     ) {
     }
 
-    #[Route(path: '/articles', name: 'index', methods: ['GET'])]
+    #[Route(path: '', name: 'index', methods: ['GET'])]
+    public function index(Request $request, PaginatorInterface $paginator): Response
+    {
+        $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
+
+        $rows = $paginator->paginate($this->settingService->getBlogPosts(['keyword' => $keyword, 'isOnline' => 'all']), $request->query->getInt('page', 1), HasLimit::POST_LIMIT, ['wrap-queries' => true]);
+
+        return $this->render('dashboard/admin/post/articles/index.html.twig', compact('rows'));
+    }
+
+    /*
     public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -38,14 +49,15 @@ class PostController extends AdminBaseController
 
         return $this->render('dashboard/admin/post/articles/index.html.twig', compact('rows'));
     }
+    */
 
-    #[Route(path: '/articles/new', name: 'new', methods: ['GET', 'POST'])]
-    #[Route(path: '/articles/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route(path: '/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function newedit(Request $request, ?string $slug = null, #[CurrentUser] User $user): Response
     {
         if (!$slug) {
             $post = new Post();
-            $post->setAuthor($user);
+        // $post->setAuthor($user);
         } else {
             /** @var Post $post */
             $post = $this->settingService->getBlogPosts(['isOnline' => 'all', 'slug' => $slug])->getQuery()->getOneOrNullResult();
@@ -77,8 +89,14 @@ class PostController extends AdminBaseController
         return $this->render('dashboard/admin/post/articles/new-edit.html.twig', compact('post', 'form'));
     }
 
-    #[Route(path: '/articles/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/articles/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}', name: 'view', methods: ['GET'])]
+    public function view(Post $post): Response
+    {
+        return $this->render('dashboard/admin/post/articles/view.html.twig', compact('post'));
+    }
+
+    #[Route(path: '/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function delete(string $slug): Response
     {
         /** @var Post $post */
@@ -105,7 +123,7 @@ class PostController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/articles/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function restore(string $slug): Response
     {
         /** @var Post $post */
@@ -126,8 +144,8 @@ class PostController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/articles/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/articles/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function showhide(string $slug): Response
     {
         /** @var Post $post */

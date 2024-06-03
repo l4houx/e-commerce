@@ -8,6 +8,7 @@ use App\Entity\Comment;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasLimit;
+use App\Service\SettingService;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -20,7 +21,8 @@ class CommentRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly PaginatorInterface $paginator
+        private readonly PaginatorInterface $paginator,
+        private readonly SettingService $settingService
     ) {
         parent::__construct($registry, Comment::class);
     }
@@ -211,7 +213,7 @@ class CommentRepository extends ServiceEntityRepository
 
         if ('all' !== $user) {
             $qb->leftJoin('c.author', 'a');
-            //$qb->andWhere('a.username = :user')->setParameter('user', $user);
+            $qb->andWhere('a.username = :user')->setParameter('user', $user);
         }
 
         if ('all' !== $isApproved) {

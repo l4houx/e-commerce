@@ -371,11 +371,13 @@
                                         {{ 'Sign in'|trans }}
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('signup') }}">
-                                        {{ 'Sign up'|trans }}
-                                    </a>
-                                </li>
+                                {% if '1' == settings['users_can_register'] %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('signup') }}">
+                                            {{ 'Sign up'|trans }}
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     {% endif %}

@@ -26,7 +26,7 @@ class PagesController extends AbstractController
         return $this->render('pages/pages.html.twig');
     }
 
-    #[Route(path: '/{slug}', name: 'page', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}', name: 'page', methods: ['GET'])]
     public function page(Request $request, string $slug): Response
     {
         $page = $this->settingService->getPages(['slug' => $slug])->getQuery()->getOneOrNullResult();

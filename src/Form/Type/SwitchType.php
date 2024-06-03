@@ -14,9 +14,11 @@ class SwitchType extends CheckboxType
             'required' => false,
             'attr' => [
                 'is' => 'input-switch',
+                'class' => 'me-2',
+                'style' => 'margin-left: -24px;',
             ],
             'row_attr' => [
-                'class' => 'form-check form-switch mb-4 ps-2'
+                'class' => 'form-check form-switch mb-4'
             ],
         ]);
     }

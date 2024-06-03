@@ -32,6 +32,14 @@ class PagesController extends AdminBaseController
     }
 
     #[Route(path: '', name: 'index', methods: ['GET'])]
+    public function index(Request $request, PaginatorInterface $paginator): Response
+    {
+        $rows = $paginator->paginate($this->settingService->getPages([]), $request->query->getInt('page', 1), HasLimit::PAGE_LIMIT, ['wrap-queries' => true]);
+
+        return $this->render('dashboard/admin/pages/index.html.twig', compact('rows'));
+    }
+
+    /*
     public function index(Request $request, #[CurrentUser] User $user): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -39,10 +47,11 @@ class PagesController extends AdminBaseController
 
         return $this->render('dashboard/admin/pages/index.html.twig', compact('rows'));
     }
+    */
 
     #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
-    #[Route(path: '/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    public function newedit(Request $request, #[CurrentUser] User $user, ?string $slug = null): Response
+    #[Route(path: '/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function newedit(Request $request, ?string $slug = null): Response
     {
         if (!$slug) {
             $page = new Page();
@@ -77,32 +86,13 @@ class PagesController extends AdminBaseController
         return $this->render('dashboard/admin/pages/new-edit.html.twig', compact('page', 'form'));
     }
 
-    #[Route(path: '/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    /*
-    public function delete(Request $request, Page $page): Response
+    #[Route(path: '/{slug}', name: 'view', methods: ['GET'])]
+    public function view(Page $page): Response
     {
-        /** @var string|null $token /
-        $token = $request->request->get('token');
-
-        if (!$this->isCsrfTokenValid('delete', $token)) {
-            return $this->redirectToRoute('dashboard_admin_page_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        if (!$page) {
-            $this->addFlash('danger', $this->translator->trans('The page can not be found'));
-
-            return $this->redirectToRoute('dashboard_admin_page_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $this->em->remove($page);
-        $this->em->flush();
-
-        $this->addFlash('danger', $this->translator->trans('Content was deleted successfully.'));
-
-        return $this->redirectToRoute('dashboard_admin_page_index', [], Response::HTTP_SEE_OTHER);
+        return $this->render('dashboard/admin/pages/view.html.twig', compact('page'));
     }
-    */
 
+    #[Route(path: '/{slug}/delete', name: 'delete', methods: ['GET'])]
     public function delete(Request $request, Page $page): Response
     {
         if (!$page) {

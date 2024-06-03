@@ -65,7 +65,4 @@ return [
     'jquery' => [
         'version' => '3.7.1',
     ],
-    'notyf' => [
-        'version' => '3.10.0',
-    ],
 ];

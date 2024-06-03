@@ -63,6 +63,7 @@ class PostFormType extends AbstractType
             ->add('tags', TextType::class, [
                 'label' => t('Tags'),
                 // 'purify_html' => true,
+                'required' => false,
                 'empty_data' => '',
                 'attr' => [
                     'class' => 'tags-input',
@@ -73,7 +74,7 @@ class PostFormType extends AbstractType
             ->add('readtime', TextType::class, [
                 'label' => t('Reading time in minutes'),
                 'required' => false,
-                'purify_html' => true,
+                // 'purify_html' => true,
                 'attr' => ['class' => 'touchspin-integer', 'data-min' => 1, 'data-max' => 1000000],
             ])
             ->add('metaTitle', TextType::class, [
@@ -88,6 +89,12 @@ class PostFormType extends AbstractType
                 'empty_data' => '',
                 'attr' => ['placeholder' => '', 'rows' => 6],
                 'help' => t(''),
+            ])
+            ->add('publishedAt', null, [
+                'label' => t('Published the'),
+                'required' => false,
+                'empty_data' => '',
+                'widget' => 'single_text',
             ])
             ->add('isOnline', SwitchType::class, ['label' => t('Online')])
             ->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))

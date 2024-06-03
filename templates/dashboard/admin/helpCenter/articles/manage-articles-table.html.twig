@@ -3,7 +3,7 @@
 		<thead class="">
 			<tr>
 				<th>#</th>
-				<th>{{ 'Title'|trans }}</th>
+				<th>{{ 'Name'|trans }}</th>
 				<th>{{ 'Category'|trans }}</th>
 				<th>{{ 'Views'|trans }}</th>
 				<th>{{ 'Last updated'|trans }}</th>
@@ -17,28 +17,28 @@
 				<tr>
 					<td>{{ article.id }}</td>
 					<td>
-						<a href="{{ path('help_center_article', { slug : article.slug }) }}" target="_blank" class="text-inherit">
-							<div class="d-flex align-items-center">
-								<div class="ms-3">
-									<h4 class="mb-1 text-primary-hover">
-										{{ article.title }}
-									</h4>
-									<span>
-										{{ 'Published'|trans }}
-										{{ article.createdAt ? article.createdAt | ago() : '' }}
-									</span>
-								</div>
-							</div>
-						</a>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-1">
+									<a href="{{ path('help_center_article', { slug : article.slug }) }}" target="_blank">
+										{{ article.name }}
+									</a>
+                                </h6>
+                                <p class="heading-color fw-normal small mb-2">
+                                    {{ 'Published the'|trans }}
+                                    <span class="text-primary">{{ article.createdAt ? article.createdAt | format_date('long') : '' }}</span>
+                                </span>
+                            </div>
+                        </div>
 					</td>
 					<td>
 						{% if article.category.parent %}
 							{% if article.category.parent.parent %}
 								{{ article.category.parent.parent.name }}
-								<i class="bi bi-chevron-right"></i>
+								<i class="fas fa-chevron-right"></i>
 							{% endif %}
 							{{ article.category.parent.name }}
-							<i class="bi bi-chevron-right"></i>
+							<i class="fas fa-chevron-right"></i>
 						{% endif %}
 						{{ article.category.name }}
 					</td>
@@ -48,29 +48,29 @@
                         </span>
 					</td>
 					<td>
-						{{ article.updatedAt ? article.updatedAt | ago() : '' }}
+						{{ article.updatedAt ? article.updatedAt | format_date('long') : '' }}
 					</td>
 					<td>
 						{% if article.isFeatured %}
 							<span class="badge bg-info-soft">
-								<i class="bi bi-star"></i>
+								<i class="fas fa-star fa-fw"></i>
 								{{ "Featured"|trans }}
 							</span>
 						{% endif %}
 						{% if article.isOnline == false %}
-							<span class="badge bg-danger-soft">
-								<i class="bi bi-eye-slash"></i>
+							<span class="badge bg-danger">
+								<i class="fas fa-eye-slash fa-fw"></i>
 								{{ "Offline"|trans }}
 							</span>
 						{% else %}
-							<span class="badge bg-success-soft">
-								<i class="bi bi-eye"></i>
+							<span class="badge bg-success">
+								<i class="fas fa-eye fa-fw"></i>
 								{{ "Online"|trans }}
 							</span>
 						{% endif %}
 						{% if article.deletedAt %}
 							<span class="badge bg-danger-soft">
-								<i class="bi bi-alarm"></i>
+								<i class="fas fa-times fa-fw"></i>
 								{{ "Deleted"|trans }}
 							</span>
 						{% endif %}
@@ -78,43 +78,47 @@
 					<td>
 						<div class="dropdown dropstart">
 							<a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button" id="Dropdown1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="bi bi-three-dots-vertical"></i>
+								<i class="fas fa-ellipsis-v"></i>
 							</a>
 							<div class="dropdown-menu" aria-labelledby="Dropdown1" style="">
 								<span class="dropdown-header">{{ 'Settings'|trans }}</span>
 								<a class="dropdown-item" href="{{ link }}">
-									<i class="bi bi-pencil dropdown-item-icon"></i>
+									<i class="fas fa-pencil fa-fw dropdown-item-icon"></i>
 									{{ 'Edit'|trans }}
+								</a>
+								<a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_view', { slug : article.slug }) }}">
+									<i class="fas fa-binoculars fa-fw dropdown-item-icon"></i>
+									{{ 'View'|trans }}
 								</a>
 								{% if article.isOnline == true %}
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_hide', { slug : article.slug }) }}">
-                                        <i class="bi bi-eye-slash dropdown-item-icon"></i>
+                                        <i class="fas fa-eye-slash fa-fw dropdown-item-icon"></i>
                                         {{ "Offline"|trans }}
                                     </a>
 								{% else %}
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_show', { slug : article.slug }) }}">
-                                        <i class="bi bi-eye dropdown-item-icon"></i>
+                                        <i class="fas fa-eye fa-fw dropdown-item-icon"></i>
                                         {{ "Online"|trans }}
                                     </a>
 								{% endif %}
 								{% if article.isFeatured == true %}
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_notfeatured', { slug : article.slug }) }}">
-                                        <i class="bi bi-pin dropdown-item-icon"></i>
+                                        <i class="fas fa-thumbtack fa-fw dropdown-item-icon"></i>
                                         {{ "Mark as not featured"|trans }}
                                     </a>
 								{% else %}
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_featured', { slug : article.slug }) }}">
-                                        <i class="bi bi-star dropdown-item-icon"></i>
+                                        <i class="fas fa-star fa-fw dropdown-item-icon"></i>
                                         {{ "Mark as featured"|trans }}
                                     </a>
 								{% endif %}
                                 {% if article.deletedAt %}
 									<a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_restore', { slug : article.slug }) }}">
-										<i class="bi bi-trash-fill dropdown-item-icon"></i>
+										<i class="fas fa-trash-restore fa-fw dropdown-item-icon"></i>
 										{{ 'Restore'|trans }}
 									</a>
                                     <a href="#" onclick="event.preventDefault(); confirm('{{ "Are you sure you want to delete this item?"|trans }}') && document.getElementById('js-article-delete-form').submit();" class="dropdown-item">
-                                        <i class="bi bi-trash dropdown-item-icon"></i>
+                                        <i class="fas fa-trash fa-fw dropdown-item-icon"></i>
                                         {{ 'Delete permanently'|trans }}
                                     </a>
                                     <form id="js-article-delete-form" action="{{ path('dashboard_admin_help_center_article_delete', { slug : article.slug }) }}" method="post" class="">
@@ -123,7 +127,7 @@
                                     </form>
                                 {% else %}
 									<a class="dropdown-item" href="{{ path('dashboard_admin_help_center_article_disable', { slug : article.slug }) }}">
-										<i class="bi bi-alarm dropdown-item-icon"></i>
+										<i class="fas fa-times fa-fw dropdown-item-icon"></i>
 										{{ 'Delete'|trans }}
 									</a>
                                 {% endif %}
@@ -134,7 +138,7 @@
 			{% endfor %}
 		</tbody>
 	</table>
-	<div class="card-footer">
+	<div class="card-footer bg-transparent text-end p-0">
 		{{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }}
 	</div>
 </div>
