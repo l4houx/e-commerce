@@ -9,5 +9,132 @@
 {% endblock %}
 
 {% block body %}
-
+    <section class="pt-0">
+        <div class="container">
+			<div class="row align-items-center g-4 mb-5">
+				<div class="col-md-6">
+					<h4 class="mb-0">{{ "Users summary"|trans }}</h4>
+				</div>
+				<div class="col-md-5 ms-auto text-sm-end">
+					<a href="{{ path('dashboard_admin_user_index') }}" class="btn btn-light btn-sm mb-0">
+						{{ "Manage users"|trans }}
+					</a>
+				</div>
+			</div>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getUsers({"role": "user", "count": true, "isVerified": true, "isSuspended": false}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Active user"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getUsers({"role": "user", "count": true, "isVerified": false, "isSuspended": false}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-danger mb-0">-</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Inactive user"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getUsers({"role": "user", "count": true, "isVerified": false, "isSuspended": true}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-danger mb-0">-</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Suspended user"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getUsers({"count": true}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Total users"|trans }}</p>
+					</div>
+				</div>
+			</div>
+			{% set users = setting.getUsers({"role": "user", "isVerified": "all", "limit": 3}).getQuery().getResult() %}
+			{% if users | length > 0 %}
+				<div class="my-5">
+					{% include "dashboard/admin/user/manage-users-table.html.twig" with {rows: users, header: false, pagination: false} %}
+				</div>
+			{% endif %}
+			<div class="row align-items-center g-4 mb-5">
+				<div class="col-md-6">
+					<h4 class="mb-0">{{ "Products summary"|trans }}</h4>
+				</div>
+				<div class="col-md-5 ms-auto text-sm-end">
+					<a href="{{ path('dashboard_admin_product_index') }}" class="btn btn-light btn-sm mb-0">
+						{{ "Manage products"|trans }}
+					</a>
+				</div>
+			</div>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getProducts({"count": true, "isOnline": "all", "elapsed": "all"}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Products added"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getProducts({"count": true, "isOnline": true, "elapsed": "all"}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Published products"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getProducts({"count": true, "isOnline": true, "elapsed": false}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Upcoming products"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getProducts({"count": true, "isOnline": false, "elapsed": "all"}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-danger mb-0">-</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "No published"|trans }}</p>
+					</div>
+				</div>
+			</div>
+			{% set products = setting.getProducts({"isOnline": "all", "elapsed": "all", "limit": 3}).getQuery().getResult() %}
+			{% if products | length > 0 %}
+				<div class="my-5">
+					{% include "dashboard/admin/products/product/manage-products-table.html.twig" with {rows: products, header: false, pagination: false} %}
+				</div>
+			{% endif %}
+        </div>
+    </section>
 {% endblock %}

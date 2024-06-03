@@ -228,6 +228,7 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @param string               $selecttags
      * @param bool                 $isOnline
+     * @param string               $elapsed
      * @param string               $keyword
      * @param int                  $id
      * @param Collection           $addedtofavoritesby
@@ -241,14 +242,27 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @return QueryBuilder<Product>
      */
-    public function getProducts($selecttags, $isOnline, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan): QueryBuilder
+    public function getProducts($selecttags, $isOnline, $elapsed, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
 
         if (!$selecttags) {
-            $qb->select('p');
+            if ($count) {
+                $qb->select('COUNT(p)');
+            } else {
+                $qb->select('p');
+            }
+
             if ('all' !== $isOnline) {
                 $qb->andWhere('p.isOnline = :isOnline')->setParameter('isOnline', $isOnline);
+            }
+
+            if ('all' !== $elapsed) {
+                if (true === $elapsed || '1' == $elapsed) {
+                    $qb->andWhere('p.createdAt < CURRENT_TIMESTAMP()');
+                } elseif (false === $elapsed || '0' == $elapsed) {
+                    $qb->andWhere('p.createdAt >= CURRENT_TIMESTAMP()');
+                }
             }
 
             if ('all' !== $keyword) {

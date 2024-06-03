@@ -28,7 +28,7 @@ class PostTypeController extends AdminBaseController
     ) {
     }
 
-    #[Route(path: '/types', name: 'index', methods: ['GET'])]
+    #[Route(path: '', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -37,8 +37,8 @@ class PostTypeController extends AdminBaseController
         return $this->render('dashboard/admin/post/types/index.html.twig', compact('rows'));
     }
 
-    #[Route(path: '/types/new', name: 'new', methods: ['GET', 'POST'])]
-    #[Route(path: '/types/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route(path: '/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function newedit(Request $request, ?string $slug = null): Response
     {
         if (!$slug) {
@@ -74,14 +74,14 @@ class PostTypeController extends AdminBaseController
         return $this->render('dashboard/admin/post/types/new-edit.html.twig', compact('form', 'type'));
     }
 
-    #[Route(path: '/types/{slug}', name: 'view', methods: ['GET'])]
+    #[Route(path: '/{slug}', name: 'view', methods: ['GET'])]
     public function view(PostType $type): Response
     {
         return $this->render('dashboard/admin/post/types/view.html.twig', compact('type'));
     }
 
-    #[Route(path: '/types/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/types/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/delete', name: 'delete', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function delete(string $slug): Response
     {
         /** @var PostType $type */
@@ -114,7 +114,7 @@ class PostTypeController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_type_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/types/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function restore(string $slug): Response
     {
         /** @var PostType $type */
@@ -135,8 +135,8 @@ class PostTypeController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_type_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/types/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/types/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function showhide(string $slug): Response
     {
         /** @var PostType $type */

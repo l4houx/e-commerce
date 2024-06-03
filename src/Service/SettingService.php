@@ -336,6 +336,7 @@ class SettingService
         // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $selecttags = array_key_exists('selecttags', $criterias) ? $criterias['selecttags'] : false;
         $isOnline = \array_key_exists('isOnline', $criterias) ? $criterias['isOnline'] : true;
+        $elapsed = array_key_exists('elapsed', $criterias) ? $criterias['elapsed'] : false;
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
         $id = array_key_exists('id', $criterias) ? $criterias['id'] : 'all';
         $addedtofavoritesby = array_key_exists('addedtofavoritesby', $criterias) ? $criterias['addedtofavoritesby'] : 'all';
@@ -346,8 +347,9 @@ class SettingService
         $otherthan = array_key_exists('otherthan', $criterias) ? $criterias['otherthan'] : 'all';
         $sort = array_key_exists('order', $criterias) ? $criterias['order'] : 'createdAt';
         $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
+        $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
 
-        return $this->em->getRepository("App\Entity\Product")->getProducts($selecttags, $isOnline, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan);
+        return $this->em->getRepository("App\Entity\Product")->getProducts($selecttags, $isOnline, $elapsed, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count);
     }
 
     // Returns the users after applying the specified search criterias
@@ -356,28 +358,21 @@ class SettingService
         // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $role = array_key_exists('role', $criterias) ? $criterias['role'] : 'all';
         $keyword = array_key_exists('keyword', $criterias) ? $criterias['keyword'] : 'all';
-        $createdbyrestaurantslug = array_key_exists('createdbyrestaurantslug', $criterias) ? $criterias['createdbyrestaurantslug'] : 'all';
-        $restaurantname = array_key_exists('restaurantname', $criterias) ? $criterias['restaurantname'] : 'all';
-        $restaurantslug = array_key_exists('restaurantslug', $criterias) ? $criterias['restaurantslug'] : 'all';
         $username = array_key_exists('username', $criterias) ? $criterias['username'] : 'all';
         $email = array_key_exists('email', $criterias) ? $criterias['email'] : 'all';
         $firstname = array_key_exists('firstname', $criterias) ? $criterias['firstname'] : 'all';
         $lastname = array_key_exists('lastname', $criterias) ? $criterias['lastname'] : 'all';
         $isVerified = array_key_exists('isVerified', $criterias) ? $criterias['isVerified'] : true;
         $isSuspended = array_key_exists('isSuspended', $criterias) ? $criterias['isSuspended'] : false;
-        $countryslug = array_key_exists('countryslug', $criterias) ? $criterias['countryslug'] : 'all';
         $followedby = array_key_exists('followedby', $criterias) ? $criterias['followedby'] : 'all';
-        $hasboughtsubscriptionforRecipe = array_key_exists('hasboughtsubscriptionfor', $criterias) ? $criterias['hasboughtsubscriptionfor'] : 'all';
-        $hasboughtsubscriptionforRestaurant = array_key_exists('hasboughtsubscriptionforrestaurant', $criterias) ? $criterias['hasboughtsubscriptionforrestaurant'] : 'all';
-        $apiKey = array_key_exists('apikey', $criterias) ? $criterias['apikey'] : 'all';
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
         $isOnHomepageSlider = array_key_exists('isOnHomepageSlider', $criterias) ? $criterias['isOnHomepageSlider'] : 'all';
         $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : 'all';
-        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'u.createdAt';
+        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
         $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
         $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
 
-        return $this->em->getRepository("App\Entity\User")->getUsers($role, $keyword, $createdbyrestaurantslug, $restaurantname, $restaurantslug, $username, $email, $firstname, $lastname, $isVerified, $isSuspended, $countryslug, $slug, $followedby, $hasboughtsubscriptionforRecipe, $hasboughtsubscriptionforRestaurant, $apiKey, $isOnHomepageSlider, $limit, $sort, $order, $count);
+        return $this->em->getRepository("App\Entity\User")->getUsers($role, $keyword, $username, $email, $firstname, $lastname, $isVerified, $isSuspended, $slug, $followedby, $isOnHomepageSlider, $limit, $sort, $order, $count);
     }
 
     // Returns the help center categories after applying the specified search criterias

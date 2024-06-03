@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(HasRoles::ADMIN)]
+#[IsGranted(HasRoles::TEAM)]
 class MainController extends AdminBaseController
 {
     #[Route(path: '/%website_dashboard_path%/admin', name: 'dashboard_admin_index', methods: ['GET'])]

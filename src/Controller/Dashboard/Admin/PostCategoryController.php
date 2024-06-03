@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route(path: '/%website_dashboard_path%/admin/manage-posts', name: 'dashboard_admin_post_category_')]
+#[Route(path: '/%website_dashboard_path%/admin/manage-posts-categories', name: 'dashboard_admin_post_category_')]
 #[IsGranted(HasRoles::ADMINAPPLICATION)]
 class PostCategoryController extends AdminBaseController
 {
@@ -29,7 +29,7 @@ class PostCategoryController extends AdminBaseController
     ) {
     }
 
-    #[Route(path: '/categories', name: 'index', methods: ['GET'])]
+    #[Route(path: '', name: 'index', methods: ['GET'])]
     public function index(Request $request, PaginatorInterface $paginator): Response
     {
         $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
@@ -49,8 +49,8 @@ class PostCategoryController extends AdminBaseController
     }
     */
 
-    #[Route(path: '/categories/new', name: 'new', methods: ['GET', 'POST'])]
-    #[Route(path: '/categories/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route(path: '/{slug}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function newedit(Request $request, ?string $slug = null): Response
     {
         if (!$slug) {
@@ -87,14 +87,14 @@ class PostCategoryController extends AdminBaseController
         return $this->render('dashboard/admin/post/category/new-edit.html.twig', compact('form', 'postcategory'));
     }
 
-    #[Route(path: '/categories/{slug}', name: 'view', methods: ['GET'])]
+    #[Route(path: '/{slug}', name: 'view', methods: ['GET'])]
     public function view(PostCategory $postcategory): Response
     {
         return $this->render('dashboard/admin/post/category/view.html.twig', compact('postcategory'));
     }
 
-    #[Route(path: '/categories/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/categories/{slug}/delete', name: 'delete', methods: ['POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/disable', name: 'disable', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/delete', name: 'delete', methods: ['POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function delete(string $slug): Response
     {
         /** @var PostCategory $postcategory */
@@ -128,7 +128,7 @@ class PostCategoryController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_category_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/categories/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/restore', name: 'restore', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function restore(string $slug): Response
     {
         /** @var PostCategory $postcategory */
@@ -149,8 +149,8 @@ class PostCategoryController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_post_category_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/categories/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    #[Route(path: '/categories/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/show', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/{slug}/hide', name: 'hide', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function showhide(string $slug): Response
     {
         /** @var PostCategory $postcategory */

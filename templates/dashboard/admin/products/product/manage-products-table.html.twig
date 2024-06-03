@@ -1,13 +1,15 @@
 <div class="table-responsive overflow-y-hidden">
 	<table class="table mb-0 text-nowrap table-hover table-centered">
-		<thead class="">
-			<tr>
-				<th>{{ knp_pagination_sortable(rows, '#', 'p.id') }}</th>
-				<th>{{ knp_pagination_sortable(rows, 'Name'|trans, 'p.name') }}</th>
-				<th>{{ 'Content'|trans }}</th>
-				<th></th>
-			</tr>
-		</thead>
+		{% if header is not defined or header != false %}
+			<thead class="">
+				<tr>
+					<th>#</th>
+					<th>{{ 'Name'|trans }}</th>
+					<th>{{ 'Content'|trans }}</th>
+					<th></th>
+				</tr>
+			</thead>
+		{% endif %}
 		<tbody>
 			{% for product in rows %}
 				{% set link = path('dashboard_admin_product_edit', { id : product.id }) %}
@@ -93,7 +95,9 @@
 			{% endfor %}
 		</tbody>
 	</table>
-	<div class="card-footer bg-transparent text-end p-0">
-		{{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }}
-	</div>
+	{% if pagination is not defined or pagination != false %}
+		<div class="card-footer bg-transparent text-end p-0">
+			{{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }}
+		</div>
+	{% endif %}
 </div>
