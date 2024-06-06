@@ -29,7 +29,7 @@
                         {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'} }) }}
                             <div class="card-body px-0">
                                 <div>
-                                    {% include "global/message.html.twig" with { type: 'info', icon: 'fas fa-ban', message: ('Do you want to reset "%fullName%'|trans({'%fullName%' : user.getFullName()})~ 'access by generating a new random password?'|trans) } %}
+                                    {% include "global/message.html.twig" with { type: 'info', icon: 'fas fa-ban', message: ('Do you want to reset "%fullName%'|trans({'%fullName%' : user.getFullName | lower | capitalize})~ 'access by generating a new random password?'|trans) } %}
                                 </div>
                                 {{ form_errors(form) }}
 								<button type="submit" class="btn btn-primary mb-0">

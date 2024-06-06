@@ -17,7 +17,7 @@
 		<tbody>
 			{% for user in rows %}
 				{# {% set link = path('user_profil', { slug : user.slug }) %} #}
-				<tr class="{{ user.suspended ? "bg-light" }}">
+				<tr class="{{ user.isSuspended ? "bg-light" }}">
 					<td>{{ user.id }}</td>
 					<td>
 						<div class="d-flex align-items-center">
@@ -99,9 +99,9 @@
                                         <input type="hidden" name="_token" value="{{ csrf_token('user_deletion_' ~ user.id) }}">
                                         <input type="hidden" name="_method" value="DELETE">
                                     </form>
-                                    <a href="{{ path('dashboard_admin_user_information', { id: user.id }) }}" class="dropdown-item">
-                                        <i class="fas fa-file-alt fa-fw dropdown-item-icon"></i>
-                                        {{ 'More information'|trans }}
+                                    <a href="{{ path('dashboard_admin_user_view', { id: user.id }) }}" class="dropdown-item">
+                                        <i class="fas fa-binoculars fa-fw dropdown-item-icon"></i>
+                                        {{ 'View'|trans }}
                                     </a>
                                     {% if ('ROLE_EDITOR' in user.roles) == false %}
                                         <a href="{{ path('dashboard_admin_user_change_role', { id: user.id }) }}" onclick="return confirm('{{"Are you sure you want to assign the role editor to this user ?"|trans }}')" class="dropdown-item">

@@ -98,7 +98,11 @@ class UserController extends AdminBaseController
                     ))
                     ->to(new Address($user->getEmail(), $user->getFullName()))
                     ->htmlTemplate("mails/welcome.html.twig")
-                    ->context(["username" => $user->getUsername(), "password" => $password])
+                    ->context([
+                        "user" => $user,
+                        "username" => $user->getUsername(), 
+                        "password" => $password
+                    ])
             );
 
             $this->addFlash(
@@ -227,17 +231,10 @@ class UserController extends AdminBaseController
         return $this->redirectToRoute('dashboard_admin_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route(path: '/{id}/more-information', name: 'information', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
-    public function informations(Request $request): Response
+    #[Route(path: '/{id}/more-information', name: 'view', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    public function view(User $user): Response
     {
-        $user = $this->userRepository->findAll();
-        if (!$user) {
-            $this->addFlash('danger', $this->translator->trans('The user can not be found'));
-
-            return $this->redirectToRoute('dashboard_admin_user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('dashboard/admin/user/information.html.twig', compact('user'));
+        return $this->render('dashboard/admin/user/view.html.twig', compact('user'));
     }
 
     #[Route(path: '/{id}/change-role', name: 'change_role', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
