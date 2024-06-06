@@ -108,7 +108,7 @@ class AppSettingsFixtures extends Fixture
         $settings[] = new Setting('Number Of Posts On The homepage', 'homepage_posts_number', 3, NumberType::class);
         $settings[] = new Setting('Number Of Testimonials On The homepage', 'homepage_testimonials_number', 2, NumberType::class);
         $settings[] = new Setting('Number Of Categories On The homepage', 'homepage_categories_number', 8, NumberType::class);
-        $settings[] = new Setting('Number Of Products On The homepage', 'homepage_products_number', 12, NumberType::class);
+        $settings[] = new Setting('Number Of Products On The homepage', 'homepage_products_number', 6, NumberType::class);
 
         // Pages Show Action
         $settings[] = new Setting('Show the homepage hero seach box', 'show_search_box', true, CheckboxType::class);

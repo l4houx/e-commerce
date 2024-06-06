@@ -81,7 +81,7 @@ class ReviewRepository extends ServiceEntityRepository
         }
 
         if ('all' !== $product) {
-            //$qb->leftJoin('product.id', 'product');
+            $qb->leftJoin('product.id', 'product');
             $qb->andWhere('product.slug = :product')->setParameter('product', $product);
         }
 

@@ -98,6 +98,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'author', orphanRemoval: true, cascade: ['remove'])]
     private Collection $reviews;
 
+    /**
+     * @var Collection<int, Testimonial>
+     */
+    #[ORM\OneToMany(targetEntity: Testimonial::class, mappedBy: 'author', orphanRemoval: true, cascade: ['remove'])]
+    private Collection $testimonials;
+
     public function __construct()
     {
         $this->isVerified = false;
@@ -105,6 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         //$this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->testimonials = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -479,5 +486,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Testimonial>
+     */
+    public function getTestimonials(): Collection
+    {
+        return $this->testimonials;
+    }
+
+    public function addTestimonial(Testimonial $testimonial): static
+    {
+        if (!$this->testimonials->contains($testimonial)) {
+            $this->testimonials->add($testimonial);
+            $testimonial->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTestimonial(Testimonial $testimonial): static
+    {
+        if ($this->testimonials->removeElement($testimonial)) {
+            // set the owning side to null (unless already changed)
+            if ($testimonial->getAuthor() === $this) {
+                $testimonial->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isRatedBy(User $user)
+    {
+        /** @var Testimonial $testimonial */
+        foreach ($this->testimonials as $testimonial) {
+            if ($testimonial->getAuthor() === $user) {
+                return $testimonial;
+            }
+        }
+
+        return false;
     }
 }

@@ -6,6 +6,7 @@
 					<th>#</th>
 					<th>{{ 'Name'|trans }}</th>
 					<th>{{ 'Content'|trans }}</th>
+					<th>{{ 'Status'|trans }}</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -25,7 +26,6 @@
 									<a href="{{ link }}" target="_blank">
 										{{ product.name }}
 									</a>
-									{# <span class="small text-muted ms-1">#{{ product.reference }}</span> #}
 								</h6>
 								<p class="heading-color fw-normal small mb-2">
 									{{ 'Published the'|trans }}: 
@@ -59,8 +59,22 @@
 							<li class="nav-item">{{ 'Brand'|trans }}: 
 								<b>{{ product.brand.name }}</b>
 							</li>
+							<li class="nav-item">{{ "Ref"|trans }}: 
+								<b>{{ product.ref }}</b>
+							</li>
 						</ul>
                     </td>
+					<td>
+						<span class="badge bg-{{ product.stringifyStatusClass }} me-1 d-inline-block align-middle">
+							{{ product.stringifyStatus|trans }}
+						</span>
+						{% if product.deletedAt %}
+							<span class="badge bg-danger-soft">
+								<i class="fas fa-times fa-fw"></i>
+								{{ "Deleted"|trans }}
+							</span>
+						{% endif %}
+					</td>
 					<td>
 						<div class="dropdown dropstart">
 							<a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button" id="Dropdown1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -72,10 +86,23 @@
 									<i class="fas fa-pencil fa-fw dropdown-item-icon"></i>
 									{{ 'Edit'|trans }}
 								</a>
-								<a class="dropdown-item" href="{{ path('dashboard_admin_product_show', {id : product.id }) }}">
-									<i class="fas fa-eye fa-fw dropdown-item-icon"></i>
-									{{ 'Show'|trans }}
+								<a class="dropdown-item" href="{{ path('dashboard_admin_product_view', { id : product.id }) }}">
+									<i class="fas fa-binoculars fa-fw dropdown-item-icon"></i>
+									{{ 'View'|trans }}
 								</a>
+								{#  
+                                {% if product.isOnline == true %}
+                                    <a class="dropdown-item" href="{{ path('dashboard_admin_product_hide', { id : product.id }) }}">
+                                        <i class="fas fa-eye-slash fa-fw dropdown-item-icon"></i>
+                                        {{ "Offline"|trans }}
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{{ path('dashboard_admin_product_show', { id : product.id }) }}">
+                                        <i class="fas fa-eye fa-fw dropdown-item-icon"></i>
+                                        {{ "Online"|trans }}
+                                    </a>
+                                {% endif %}
+								#}
 								<a class="dropdown-item" href="{{ path('dashboard_admin_product_add_stock', {id : product.id }) }}">
 									<i class="fas fa-plus fa-fw dropdown-item-icon"></i>
 									{{ 'Stock'|trans }}

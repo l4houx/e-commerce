@@ -24,12 +24,25 @@
                             <input class="form-control focus-shadow-none bg-light border-0 me-1" type="search" name="keyword" value="{{ app.request.get('keyword') }}" placeholder="{{ 'Search for answer...'|trans }}">
                         </div>
                     </form>
-                    <ul class="list-inline small mb-0 mt-3">
-                        <li class="list-inline-item"> <span class="text-secondary">Popular search: </span></li>
-                        <li class="list-inline-item"> <a class="text-primary-hover heading-color text-decoration-underline mb-lg-0" href="#"> How can we help?</a> </li>
-                        <li class="list-inline-item"> <a class="text-primary-hover heading-color text-decoration-underline mb-lg-0" href="#"> Installation Guide? </a> </li>
-                        <li class="list-inline-item"> <a class="text-primary-hover heading-color text-decoration-underline mb-lg-0" href="#"> How to view expired tickets? </a> </li>
-                    </ul>
+                    {% if app.request.get('keyword') %}
+                        {% set searchresults = setting.getHelpCenterArticles({"keyword":app.request.get('keyword')}).getQuery().getResult() %}
+                        <ul class="list-inline small mb-0 mt-3">
+                            <li class="list-inline-item"> 
+                                <span class="text-secondary">
+                                    {{ "%resultsCount% result(s) found"|trans({'%resultsCount%': searchresults|length}) ~ " " ~ "for"|trans ~ ' "' ~ app.request.get('keyword') ~ '"' }}:
+                                </span>
+                            </li>
+                            {% if searchresults|length %}
+                                <li class="list-inline-item">
+                                    {% for article in searchresults %}
+                                        <a class="text-primary-hover heading-color text-decoration-underline mb-lg-0" href="{{ path('help_center_article', {slug: article.slug}) }}">
+                                            {{ article.name }}?
+                                        </a>
+                                    {% endfor %}
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
                 </div>
             </div>
         </div>

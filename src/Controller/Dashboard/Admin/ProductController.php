@@ -110,14 +110,14 @@ class ProductController extends AbstractController
         return $this->render('dashboard/admin/products/product/new-edit.html.twig', compact('form', 'product'));
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
-    public function show(Product $product): Response
+    #[Route('/{id}', name: 'view', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    public function view(Product $product): Response
     {
         $product->viewed();
         $this->em->persist($product);
         $this->em->flush();
 
-        return $this->render('dashboard/admin/products/product/show.html.twig', compact('product'));
+        return $this->render('dashboard/admin/products/product/view.html.twig', compact('product'));
     }
 
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]

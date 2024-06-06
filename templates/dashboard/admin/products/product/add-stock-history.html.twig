@@ -4,7 +4,7 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-	{% set breadcrumb = [{ "dashboard_main": ('Dashboard' | trans), "dashboard_admin_product_index": 'Manage products'|trans, (path('dashboard_admin_product_show', { id: product.id })): product.name, "current":(pagetitle) }] %}
+	{% set breadcrumb = [{ "dashboard_main": ('Dashboard' | trans), "dashboard_admin_product_index": 'Manage products'|trans, (path('dashboard_admin_product_view', { id: product.id })): product.name, "current":(pagetitle) }] %}
 	{% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 

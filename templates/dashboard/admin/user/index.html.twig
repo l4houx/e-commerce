@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set pagetitle = 'Manage users'|trans %}
+{% set pagetitle = 'Manage users '|trans ~ (rows.getTotalItemCount) %}
 {% block title pagetitle %}
 
 {% block breadcrumb %}

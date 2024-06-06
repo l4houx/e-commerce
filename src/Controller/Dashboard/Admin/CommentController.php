@@ -38,6 +38,12 @@ class CommentController extends AdminBaseController
         return $this->render('dashboard/admin/comment/index.html.twig', compact('rows'));
     }
 
+    #[Route(path: '/{id}', name: 'view', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    public function view(Comment $comment): Response
+    {
+        return $this->render('dashboard/admin/comment/view.html.twig', compact('comment'));
+    }
+
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
     public function delete(Request $request, Comment $comment): Response
     {

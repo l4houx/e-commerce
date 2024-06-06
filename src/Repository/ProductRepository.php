@@ -228,7 +228,7 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @param string               $selecttags
      * @param bool                 $isOnline
-     * @param string               $elapsed
+     * @param \DateTimeImmutable   $elapsed
      * @param string               $keyword
      * @param int                  $id
      * @param Collection           $addedtofavoritesby
@@ -248,9 +248,9 @@ class ProductRepository extends ServiceEntityRepository
 
         if (!$selecttags) {
             if ($count) {
-                $qb->select('COUNT(p)');
+                $qb->select('COUNT(DISTINCT p)');
             } else {
-                $qb->select('p');
+                $qb->select('DISTINCT p');
             }
 
             if ('all' !== $isOnline) {
@@ -258,11 +258,18 @@ class ProductRepository extends ServiceEntityRepository
             }
 
             if ('all' !== $elapsed) {
+                $qb
+                    ->orderBy('p.createdAt', 'DESC')
+                    ->andWhere('p.createdAt <= :now')
+                    ->setParameter('now', new \DateTimeImmutable())
+                ;
+                /*
                 if (true === $elapsed || '1' == $elapsed) {
                     $qb->andWhere('p.createdAt < CURRENT_TIMESTAMP()');
                 } elseif (false === $elapsed || '0' == $elapsed) {
                     $qb->andWhere('p.createdAt >= CURRENT_TIMESTAMP()');
                 }
+                */
             }
 
             if ('all' !== $keyword) {
@@ -296,6 +303,7 @@ class ProductRepository extends ServiceEntityRepository
 
             if ('all' !== $otherthan) {
                 $qb->andWhere('p.id != :otherthan')->setParameter('otherthan', $otherthan);
+                $qb->andWhere('p.id = :otherthan')->setParameter('otherthan', $otherthan);
             }
 
             $qb->orderBy('p.'.$sort, $order);

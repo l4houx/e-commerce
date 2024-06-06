@@ -135,6 +135,67 @@
 					{% include "dashboard/admin/products/product/manage-products-table.html.twig" with {rows: products, header: false, pagination: false} %}
 				</div>
 			{% endif %}
+			<div class="row align-items-center g-4 mb-5">
+				<div class="col-md-6">
+					<h4 class="mb-0">{{ "Testimonials summary"|trans }}</h4>
+				</div>
+				<div class="col-md-5 ms-auto text-sm-end">
+					<a href="{{ path('dashboard_admin_testimonial_index') }}" class="btn btn-light btn-sm mb-0">
+						{{ "Manage testimonials"|trans }}
+					</a>
+				</div>
+			</div>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getTestimonials({"count": true, "isOnline": "all"}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Testimonials added"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getTestimonials({"count": true, "isOnline": true}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-primary mb-0">+</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "Published testimonials"|trans }}</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-light border text-center rounded p-4">
+						<div class="d-flex justify-content-center">
+							<h4 class="mb-0">
+								{{ setting.getTestimonials({"count": true, "isOnline": false}).getQuery().getSingleScalarResult() }}
+							</h4>
+							<span class="h4 text-danger mb-0">-</span>
+						</div>
+						<p class="text-center heading-color mb-0">{{ "No published"|trans }}</p>
+					</div>
+				</div>
+			</div>
+			{% set testimonials = setting.getTestimonials({"isOnline": "all", "limit": 3}).getQuery().getResult() %}
+			{% if testimonials | length > 0 %}
+				<div class="my-5">
+					{% include "dashboard/admin/testimonials/manage-testimonials-table.html.twig" with {rows: testimonials, header: false, pagination: false} %}
+				</div>
+			{% endif %}
+			<div class="row align-items-center g-4 mb-5">
+				<div class="col-md-6">
+					<h4 class="mb-0">{{ "Reviews summary"|trans }}</h4>
+				</div>
+				<div class="col-md-5 ms-auto text-sm-end">
+					<a href="" class="btn btn-light btn-sm mb-0">
+						{{ "Manage reviews"|trans }}
+					</a>
+				</div>
+			</div>
         </div>
     </section>
 {% endblock %}

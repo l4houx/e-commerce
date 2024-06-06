@@ -81,9 +81,9 @@ class ProductFormType extends AbstractType
                 'attr' => ['placeholder' => '', 'rows' => 6],
                 'help' => t(''),
             ])
-            ->add('price', MoneyType::class, options: [
+            ->add('price', MoneyType::class, [
                 'label' => t('Price'),
-                'divisor' => 100,
+                //'divisor' => 100,
                 'constraints' => [
                     new Positive(
                         message: t('The price cannot be negative')
@@ -103,52 +103,60 @@ class ProductFormType extends AbstractType
                 'choices' => ['Enable' => true, 'Disable' => false],
                 'label_attr' => ['class' => 'radio-custom radio-inline'],
             ])
+            ->add('enabletestimonials', ChoiceType::class, [
+                'required' => true,
+                'multiple' => false,
+                'expanded' => true,
+                'label' => t('Enable reviews'),
+                'choices' => ['Enable' => true, 'Disable' => false],
+                'label_attr' => ['class' => 'radio-custom radio-inline'],
+            ])
             ->add('externallink', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('External link'),
                 'help' => t('If your product has a dedicated website, enter its url here'),
             ])
             ->add('phone', TelType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Contact phone number'),
                 'help' => t('Enter the phone number to be called for inquiries'),
             ])
             ->add('email', EmailType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Contact email address'),
                 'help' => t('Enter the email address to be reached for inquiries'),
             ])
             ->add('youtubeurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Youtube video url'),
                 'help' => t('If you have an Youtube video that represents your activities as an product restaurant, add it in the standard format: https://www.youtube.com/watch?v=FzG4uDgje3M'),
             ])
             ->add('twitterurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Twitter'),
             ])
             ->add('instagramurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Instagram'),
             ])
             ->add('facebookurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Facebook'),
             ])
             ->add('googleplusurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('Google plus'),
             ])
             ->add('linkedinurl', UrlType::class, [
-                'purify_html' => true,
+                //'purify_html' => true,
                 'required' => false,
                 'label' => t('LinkedIn'),
             ])

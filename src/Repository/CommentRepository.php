@@ -139,8 +139,6 @@ class CommentRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->join('c.post', 'p')
             ->where('p.isOnline = true')
-            ->join('c.venue', 'v')
-            ->where('v.isOnline = true')
             ->andWhere('c.author = :user')
             ->andWhere('c.isApproved = true')
             ->orderBy('c.publishedAt', 'DESC')

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Profile of '|trans ~ user.username %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+    {% if is_granted("ROLE_USER") %}
+        {% set breadcrumb = [{ "dashboard_main": ('Dashboard'|trans), "current":(pagetitle) }] %}
+    {% else %}
+        {% set breadcrumb = [{ "current":(pagetitle) }] %}
+    {% endif %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+    <section class="pt-0">
+        <div class="container">
+
+        </div>
+    </section>
+{% endblock %}

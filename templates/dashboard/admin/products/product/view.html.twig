@@ -15,28 +15,38 @@
                 <div class="col-12">
                     <div class="row">
                         <div class="col-lg-6">
-                            <div class="table-responsive overflow-y-hidden">
+                            <div class="table-responsive overflow-y-hslugden">
                                 <table class="table table-borderless table-striped table-hover table-sm">
                                     <thead class="">
                                         <tr>
                                             <th colspan="2">
-                                                <i class="fas fa-file text-muted"></i>
+                                                <i class="fas fa-file fa-fw text-muted"></i>
                                                 {{ "General information"|trans }}
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
+                                            <td width="30%">#</th>
+                                            <td>{{ product.id }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">{{ "Ref"|trans }}</th>
+                                            <td>{{ product.ref }}</td>
+                                        </tr>
+                                        <tr>
                                             <td width="30%">{{ 'Name'|trans }}</th>
                                             <td>{{ product.name }}</td>
                                         </tr>
                                         <tr>
                                             <td width="30%">{{ 'Content'|trans }}</th>
-                                            <td>{{ product.content | html_markdown | nl2br }}</td>
+                                            <td>{{ product.content | html_markdown }}</td>
                                         </tr>
                                         <tr>
                                             <td width="30%">{{ 'Price'|trans }}</th>
-                                            <td>{{ product.price / 100 }}</td>
+                                            <td>
+                                                {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td width="30%">{{ 'Stock'|trans }}</th>
@@ -51,39 +61,37 @@
                                             <td>{{ product.brand }}</td>
                                         </tr>
                                         <tr>
-                                            <td width="30%">#</th>
-                                            <td>{{ product.id }}</td>
+                                            <td width="30%">{{ "Views"|trans }}</th>
+                                            <td><span class="text-decoration-none">{{ product.views }}</span></td>
                                         </tr>
+                                        {% if product.tags %}
+                                            <tr>
+                                                <td wslugth="30%">{{ 'Tags'|trans }}</th>
+                                                <td>{{ product.tags }}</td>
+                                            </tr>
+                                        {% endif %}
                                         <tr>
                                             <td width="30%">{{ 'Meta title'|trans }}</th>
                                             <td>{{ product.metaTitle }}</td>
                                         </tr>
                                         <tr>
                                             <td width="30%">{{ 'Meta description'|trans }}</th>
-                                            <td>{{ product.metaDescription | html_markdown | nl2br }}</td>
+                                            <td>{{ product.metaDescription | html_markdown }}</td>
                                         </tr>
-                                        <tr>
-                                            <td width="30%">{{ "Views"|trans }}</th>
-                                            <td><span class="text-decoration-none">{{ product.views }}</span></td>
-                                        </tr>
-                                        {#  
                                         <tr>
                                             <td width="30%">{{ 'Status'|trans }}</th>
                                             <td>
-                                                {% if product.isActive == false %}
-                                                    <span class="badge bg-danger">
-                                                        <i class="fas fa-eye-slash"></i>
-                                                        {{ "Offline"|trans }}
-                                                    </span>
-                                                {% else %}
-                                                    <span class="badge bg-success">
-                                                        <i class="fas fa-eye"></i>
-                                                        {{ "Online"|trans }}
+                                                <span class="badge bg-{{ product.stringifyStatusClass }} me-1 d-inline-block align-middle">
+                                                    {{ product.stringifyStatus|trans }}
+                                                </span>
+                                                {% if product.deletedAt %}
+                                                    <span class="badge bg-danger-soft">
+                                                        <i class="fas fa-times fa-fw"></i>
+                                                        {{ "Deleted"|trans }}
                                                     </span>
                                                 {% endif %}
                                             </td>
                                         </tr>
-                                        #}
                                         <tr>
                                             <td width="30%">{{ 'Creation date'|trans }}</th>
                                             <td>{{ product.createdAt ? product.createdAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
@@ -91,6 +99,10 @@
                                         <tr>
                                             <td width="30%">{{ 'Update date'|trans }}</th>
                                             <td>{{ product.updatedAt ? product.updatedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td wslugth="30%">{{ 'Deleted date'|trans }}</th>
+                                            <td>{{ product.deletedAt ? product.deletedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

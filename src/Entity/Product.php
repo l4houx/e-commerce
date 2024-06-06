@@ -165,6 +165,32 @@ class Product
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'product', orphanRemoval: true, cascade: ['remove'])]
     private Collection $reviews;
 
+    public function stringifyStatus(): string
+    {
+        if (!$this->isOnline) {
+            return 'Offline';
+        } elseif (!$this->isOnline) {
+            return 'Draft';
+        } elseif (!$this->isOnline) {
+            return 'Schedule';
+        } else {
+            return 'Online';
+        }
+    }
+
+    public function stringifyStatusClass(): string
+    {
+        if (!$this->isOnline) {
+            return 'danger';
+        } elseif (!$this->isOnline) {
+            return 'warning';
+        } elseif (!$this->isOnline) {
+            return 'info';
+        } else {
+            return 'success';
+        }
+    }
+
     public function __toString(): string
     {
         return sprintf('#%d %s', $this->getId(), $this->getName());

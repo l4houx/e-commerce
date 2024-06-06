@@ -136,7 +136,8 @@ class PostRepository extends ServiceEntityRepository
                 $qb->setMaxResults($limit);
             }
             if ('all' !== $otherthan) {
-                $qb->andWhere('p.id != :otherthan')->setParameter('otherthan', $otherthan);
+                $qb->andWhere('p.slug != :otherthan')->setParameter('otherthan', $otherthan);
+                $qb->andWhere('p.slug = :otherthan')->setParameter('otherthan', $otherthan);
             }
             $qb->orderBy('p.'.$sort, $order);
         } else {

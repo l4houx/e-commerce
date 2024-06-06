@@ -12,7 +12,7 @@ class SendMailService
 {
     public function __construct(
         private readonly MailerInterface $mailer,
-        private readonly ParameterBagInterface $params
+        private readonly ParameterBagInterface $parameter
     ) {
     }
 
@@ -28,7 +28,7 @@ class SendMailService
         $email = (new TemplatedEmail())
             ->to(new Address(
                 $to,
-                $this->params->get('website_name'),
+                $this->parameter->get('website_name'),
             ))
             ->from(new Address($from))
             ->subject($subject)

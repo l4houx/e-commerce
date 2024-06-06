@@ -12,6 +12,7 @@ use App\Entity\Product;
 use App\Entity\Category;
 use App\Entity\CouponType;
 use App\Entity\SubCategory;
+use App\Entity\Testimonial;
 use App\Entity\FeatureValue;
 use App\Entity\ProductImage;
 use App\Entity\AddProductHistory;
@@ -453,6 +454,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setIsNewArrival($this->faker()->numberBetween(0, 1))
                 ->setIsOnSale($this->faker()->numberBetween(0, 1))
                 ->setEnablereviews($this->faker()->numberBetween(0, 1))
+                ->setEnabletestimonials($this->faker()->numberBetween(0, 1))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->addSubCategory($this->faker()->randomElement($this->subCategories))
@@ -523,9 +525,29 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($this->faker()->unique()->sentence(5, true))
                 ->setSlug($this->slugger->slug($review->getName())->lower())
                 ->setContent($this->faker()->paragraph())
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;
 
             $manager->persist($review);
+        }
+
+        // Create 20 Testimonial by User
+        for ($i = 0; $i <= 20; ++$i) {
+            $testimonial = new Testimonial();
+            $testimonial
+                ->setAuthor($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
+                ->setProduct($this->faker()->randomElement($products))
+                ->setIsOnline($this->faker()->numberBetween(0, 1))
+                ->setRating($this->faker()->numberBetween(1, 5))
+                ->setName($this->faker()->unique()->sentence(5, true))
+                ->setSlug($this->slugger->slug($testimonial->getName())->lower())
+                ->setContent($this->faker()->paragraph())
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+
+            $manager->persist($testimonial);
         }
 
         $manager->flush();

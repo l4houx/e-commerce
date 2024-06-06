@@ -2,12 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Traits\HasRoles;
 use App\Entity\User;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Service\AvatarService;
+use App\Entity\Traits\HasRoles;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppAdminTeamUserFixtures extends Fixture
 {
@@ -15,6 +16,7 @@ class AppAdminTeamUserFixtures extends Fixture
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
+        private readonly AvatarService $avatarService,
         private readonly SluggerInterface $slugger
     ) {
     }
@@ -24,10 +26,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Super Admin Application
         /** @var User $superadmin */
         $superadmin = (new User());
-        // $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
+        $avatar = $this->avatarService->createAvatar($superadmin->getEmail());
         $superadmin
             ->setId(1)
-            // ->setAvatar($avatar)
+            ->setAvatar($avatar)
             // ->setTeamName('superadmin.jpg')
             ->setRoles([HasRoles::ADMINAPPLICATION])
             ->setLastname('Cameron')
@@ -58,10 +60,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Admin
         /** @var User $admin */
         $admin = (new User());
-        // $avatar = $this->avatarService->createAvatar($admin->getEmail());
+        $avatar = $this->avatarService->createAvatar($admin->getEmail());
         $admin
             ->setId(2)
-            // ->setAvatar($avatar)
+            ->setAvatar($avatar)
             // ->setTeamName('admin.jpg')
             ->setRoles([HasRoles::ADMIN])
             ->setLastname('Wade')
@@ -90,10 +92,10 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Moderator
         /** @var User $moderator */
         $moderator = (new User());
-        // $avatar = $this->avatarService->createAvatar($moderator->getEmail());
+        $avatar = $this->avatarService->createAvatar($moderator->getEmail());
         $moderator
             ->setId(3)
-            // ->setAvatar($moderator)
+            ->setAvatar($moderator)
             // ->setTeamName('moderator.jpg')
             ->setRoles([HasRoles::MODERATOR])
             ->setLastname('Jane')
@@ -122,7 +124,7 @@ class AppAdminTeamUserFixtures extends Fixture
         // User Editor
         /** @var User $editor */
         $editor = (new User());
-        // $avatar = $this->avatarService->createAvatar($editor->getEmail());
+        $avatar = $this->avatarService->createAvatar($editor->getEmail());
         $editor
             ->setId(4)
             ->setAvatar($editor)
@@ -157,9 +159,9 @@ class AppAdminTeamUserFixtures extends Fixture
         for ($i = 0; $i <= 10; ++$i) {
             /** @var User $user */
             $user = (new User());
-            // $avatar = $this->avatarService->createAvatar($user->getEmail());
+            $avatar = $this->avatarService->createAvatar($user->getEmail());
             $user
-                // ->setAvatar($avatar)
+                ->setAvatar($avatar)
                 ->setLastname($this->faker()->lastName)
                 ->setFirstname($this->faker()->firstName($genre))
                 ->setUsername($this->faker()->unique()->userName())

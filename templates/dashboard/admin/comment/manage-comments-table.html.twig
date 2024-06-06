@@ -5,7 +5,6 @@
                 <th>#</th>
 				<th>{{ 'Author'|trans}}</th>
                 <th>{{ 'Content'|trans }}</th>
-				<th>{{ 'IP adress'|trans }}</th>
 				<th>{{ 'Status'|trans }}</th>
 				<th></th>
 			</tr>
@@ -22,7 +21,7 @@
 							</div>
 							<div class="ms-3">
 								<h6 class="mb-1">
-									<a href="{{ path('user_profil', { slug : comment.author.slug }) }}" target="_blank">
+									<a href="{{ path('user_profil', { id : comment.author.id }) }}" target="_blank">
 										{{ comment.author.username }}
 									</a>
 								</h6>
@@ -36,49 +35,36 @@
 						</div>
 					</td>
                     <td>
-                        {% set link = path('post', { slug : comment.post.slug } , "#c" ~ comment.id) %}
-						<a href="{{ link }}" target="_blank">
-							<div class="mt-4">
-								<div>
-									<span class="mb-1 text-primary">
+						<div class="d-flex align-items-center">
+							<div>
+								<h6 class="mb-1">
+									<a href="{{ path('post', { slug : comment.post.slug } , "#c" ~ comment.id) }}" target="_blank">
 										{{ "Article"|trans ~ ": " ~ comment.post }}
+									</a>
+								</h6>
+								<p class="heading-color fw-normal small mb-2">
+									{{ 'Description :'|trans }}
+									<span class="text-primary">
+										{{ comment.content | html_markdown_excerpt(40) }}
 									</span>
-                                    <p class="heading-color fw-normal small mb-2">
-                                        {{ 'Description :'|trans }}
-                                        {{ comment.content | html_markdown_excerpt(40) }}
-                                    </p>
-								</div>
+								</p>
 							</div>
-						</a>
+						</div>
 					</td>
 					<td>
-						<a href="https://ipinfo.io/{{ comment.ip }}" target="_blank">{{ comment.ip }}</a>
-						{% if comment.ip %}
-							{{ ipService.getLocation(comment.ip).emoji ?? '' }}
-						{% endif %}
-                    </td>
-					<td>
 						{% if comment.isApproved == false %}
-							<span class="badge bg-danger">
-								<i class="fas fa-eye-slash fa-fw"></i>
-								{{ "Refused"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "Refused"|trans }}
+							<br>
 						{% else %}
-							<span class="badge bg-success">
-								<i class="fas fa-eye fa-fw"></i>
-								{{ "Approved"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Approved"|trans }}
+							<br>
 						{% endif %}
 						{% if comment.isRGPD == false %}
-							<span class="badge bg-warning-soft">
-								<i class="fas fa-circle-xmark fa-fw"></i>
-								{{ "Disabled rgpd"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-warning me-2"></i>{{ "Disabled rgpd"|trans }}
+							<br>
 						{% else %}
-							<span class="badge bg-secondary-soft">
-								<i class="fas fa-circle-check fa-fw"></i>
-								{{ "Enabled rgpd"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-secondary me-2"></i>{{ "Enabled rgpd"|trans }}
+							<br>
 						{% endif %}
 					</td> 
 					<td>
@@ -94,6 +80,10 @@
 									{{ 'Edit'|trans }}
 								</a>
                                 #}
+								<a class="dropdown-item" href="{{ path('dashboard_admin_comment_view', { id : comment.id }) }}">
+									<i class="fas fa-binoculars fa-fw dropdown-item-icon"></i>
+									{{ 'View'|trans }}
+								</a>
                                 {% if comment.isApproved == true %}
                                     <a class="dropdown-item" href="{{ path('dashboard_admin_comment_hide', { id : comment.id }) }}">
                                         <i class="fas fa-eye-slash fa-fw dropdown-item-icon"></i>

@@ -65,6 +65,10 @@
                                 <tr>
                                     <td wslugth="30%">{{ 'Status'|trans }}</th>
                                     <td>
+                                        <span class="badge bg-{{ post.stringifyStatusClass }} me-1 d-inline-block align-middle">
+                                            {{ post.stringifyStatus|trans }}
+                                        </span>
+                                        {#  
                                         {% if post.isOnline == false %}
                                             <span class="badge bg-danger">
                                                 <i class="fas fa-eye-slash fa-fw"></i>
@@ -76,6 +80,7 @@
                                                 {{ "Online"|trans }}
                                             </span>
                                         {% endif %}
+                                        #}
                                         {% if post.deletedAt %}
                                             <span class="badge bg-danger-soft">
                                                 <i class="fas fa-times fa-fw"></i>
