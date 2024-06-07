@@ -71,10 +71,6 @@
                                     {% endif %}
                                 {% endif %}
                                 <tr>
-                                    <td wslugth="30%">{{ 'Register duration'|trans }}</th>
-                                    <td>{{ user.registerDuration }}s</td>
-                                </tr>
-                                <tr>
                                     <td wslugth="30%">{{ 'Last login / IP'|trans }}</th>
                                     <td>
                                         {% if user.lastLogin %}
@@ -107,13 +103,11 @@
                                         {% else %}
                                             <i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Enabled"|trans }}
                                             <br>
-                                        {% endif %}
-                                        {#  
+                                        {% endif %} 
                                         {% if user.deletedAt %}
                                             <i class="fa-solid fa-circle fa-2xs text-danger-soft me-2"></i>{{ "Deleted"|trans }}
                                             <br>
                                         {% endif %}
-                                        #}
                                     </td>
                                 </tr>
                                 <tr>
@@ -123,13 +117,11 @@
                                 <tr>
                                     <td wslugth="30%">{{ 'Update date'|trans }}</th>
                                     <td>{{ user.updatedAt ? user.updatedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
-                                </tr>
-                                {#  
+                                </tr>  
                                 <tr>
                                     <td wslugth="30%">{{ 'Deleted date'|trans }}</th>
                                     <td>{{ user.deletedAt ? user.deletedAt | localizeddate('medium', 'short', app.request.locale, date_timezone, date_format) : '' }}</td>
                                 </tr>
-                                #}
                             </tbody>
                         </table>
                     </div>

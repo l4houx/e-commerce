@@ -8,7 +8,6 @@
 					<th>{{ 'Full name'|trans }}</th>
 					<th>{{ 'Last login / IP'|trans}}</th>
 					<th>{{ 'Roles'|trans }}</th>
-					<th>{{ 'Register duration'|trans }}</th>
 					<th>{{ 'Status'|trans }}</th>
 					<th></th>
 				</tr>
@@ -54,13 +53,16 @@
 					<td>
 						{{ user.getRole|trans|raw }}
 					</td>
-					<td>{{ user.registerDuration }}s</td>
 					<td>
 						{% if user.isVerified == false %}
 							<i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "Disabled"|trans }}
 							<br>
 						{% else %}
 							<i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Enabled"|trans }}
+							<br>
+						{% endif %}
+						{% if user.deletedAt %}
+							<i class="fa-solid fa-circle fa-2xs text-danger-soft me-2"></i>{{ "Deleted"|trans }}
 							<br>
 						{% endif %}
 					</td>

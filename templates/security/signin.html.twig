@@ -51,7 +51,7 @@
                                 <input type="checkbox" class="form-check-input" name="_remember_me" id="rememberme" checked>
                                 <label class="form-check-label" for="rememberme">{{ 'Remember me'|trans }}</label>
                             </div>
-                            <a href="" class="link-underline-primary"> {{ 'Forgot password?'|trans }}</a>
+                            <a href="{{ path('app_forgot_password_request') }}" class="link-underline-primary"> {{ 'Forgot password?'|trans }}</a>
                         </div>
                         <input type="hidden" id="csrf_token" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                         <div class="align-items-center mt-0">

@@ -2,18 +2,17 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
-
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -44,36 +43,38 @@ class ChangePasswordFormType extends AbstractType
             ->add('newPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'options' => [
-                    // 'purify_html' => true,
-                    'toggle' => true,
-                    'translation_domain' => 'messages',
+                    'attr' => [
+                        // 'purify_html' => true,
+                        'autocomplete' => 'new-password',
+                        'toggle' => true,
+                        'translation_domain' => 'messages',
+                    ],
                 ],
                 'first_options' => [
-                    'hash_property_path' => 'password',
-                    'label' => t('New Password'),
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => t('Please enter a password'),
+                        ]),
+                        new Length([
+                            'min' => 16,
+                            'minMessage' => t('Your password must have at least {{ limit }} characters'),
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                        new PasswordStrength(),
+                        new NotCompromisedPassword(),
+                    ],
+                    'label' => t('New password'),
                     'attr' => [...$editAttr, ...['placeholder' => '**************']],
                 ],
                 'second_options' => [
-                    'label' => t('Confirm your new password'),
+                    'label' => t('Confirm Your New Password'),
                     'attr' => [...$editAttr, ...['placeholder' => '**************']],
                 ],
                 'translation_domain' => 'messages',
-                'invalid_message' => t('Password fields must correspond.'),
-                'required' => true,
+                'invalid_message' => t('The password fields must match.'),
                 'mapped' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => t('Please enter a password'),
-                    ]),
-                    new Length([
-                        'min' => 16,
-                        'minMessage' => t('Your password must have at least {{ limit }} characters'),
-                        'max' => 128,
-                    ]),
-                    new PasswordStrength(
-                        minScore: PasswordStrength::STRENGTH_STRONG
-                    ),
-                ],
+                'required' => true,
             ])
         ;
     }
@@ -81,10 +82,8 @@ class ChangePasswordFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
             'current_password_is_required' => false,
         ]);
-
         $resolver->setAllowedTypes('current_password_is_required', 'bool');
     }
 }

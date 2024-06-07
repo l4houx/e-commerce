@@ -158,6 +158,10 @@ sf-open-email: ## Open Email catcher.
 	$(SYMFONY) open:local:webmail
 .PHONY: sf-open-email
 
+sf-messenger: ## Open Email catcher.
+	$(SYMFONY_CONSOLE) messenger:consume async -vv
+.PHONY: sf-messenger
+
 sf-check-requirements: ## Check requirements.
 	$(SYMFONY) check:requirements
 .PHONY: sf-check-requirements

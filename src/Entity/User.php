@@ -7,6 +7,7 @@ use App\Entity\Traits\HasRoles;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Entity\Traits\HasIsTeamTrait;
+use App\Entity\Traits\HasDeletedAtTrait;
 use function Symfony\Component\String\u;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\HasTimestampableTrait;
@@ -26,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     use HasRegistrationDetailsTrait;
     use HasIsTeamTrait;
     use HasTimestampableTrait;
+    use HasDeletedAtTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

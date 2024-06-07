@@ -12,8 +12,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class MainController extends BaseController
 {
     #[Route(path: '/%website_dashboard_path%/user', name: 'dashboard_user_index', methods: ['GET'])]
-    public function index(): void
+    public function index(): Response
     {
         //return $this->redirectToRoute('dashboard_user_orders');
+        return $this->redirectToRoute('dashboard_user_my_dashboard');
     }
 }

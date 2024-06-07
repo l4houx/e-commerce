@@ -125,17 +125,20 @@ class UserFormType extends AbstractType
             ])
             // Agree Terms
             ->add('isAgreeTerms', CheckboxType::class, [
+                'label' => t('By clicking the Sign Up button, I agree to'),
                 'mapped' => true,
                 'constraints' => [
                     new IsTrue([
                         'message' => t('You must accept the conditions of use of your personal data.'),
                     ]),
                 ],
+                'data' => true, // Default checked
             ])
             // Verified
             ->add('isVerified', CheckboxType::class, [
                 'label' => t('Verified'),
                 'required' => false,
+                'data' => true, // Default checked
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
             ->add('save', SubmitType::class, [

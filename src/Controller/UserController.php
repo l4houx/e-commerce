@@ -11,15 +11,16 @@ use Symfony\Component\Routing\Requirement\Requirement;
 
 class UserController extends BaseController
 {
-    #[Route(path: '/profile/@{id}', name: 'user_profil', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
+    #[Route(path: '/profile/{id}', name: 'user_profil', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     public function userProfil(
         User $user,
         CommentRepository $commentRepository,
         ReviewRepository $reviewRepository
     ): Response {
-        $lastComments = $commentRepository->findLastByUser($user, 4);
-        $lastReviews = $reviewRepository->findLastByUser($user, 4);
-
-        return $this->render('user/profile-manager.html.twig', compact('user', 'lastComments', 'lastReviews'));
+        return $this->render('user/profile-manager.html.twig', [
+            'user' => $user,
+            'lastComments' => $commentRepository->findLastByUser($user, 4),
+            'lastReviews' => $reviewRepository->findLastByUser($user, 4),
+        ]);
     }
 }

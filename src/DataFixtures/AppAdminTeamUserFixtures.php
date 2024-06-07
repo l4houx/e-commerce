@@ -178,6 +178,7 @@ class AppAdminTeamUserFixtures extends Fixture
                 $user->setIsVerified(false);
                 $user->setIsSuspended($this->faker()->numberBetween(0, 1));
                 $user->setIsAgreeTerms(false);
+                $user->setDeletedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')));
             } else {
                 $user->setIsVerified(true);
                 $user->setIsAgreeTerms(true);
