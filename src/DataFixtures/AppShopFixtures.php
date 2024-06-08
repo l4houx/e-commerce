@@ -454,7 +454,6 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setIsNewArrival($this->faker()->numberBetween(0, 1))
                 ->setIsOnSale($this->faker()->numberBetween(0, 1))
                 ->setEnablereviews($this->faker()->numberBetween(0, 1))
-                ->setEnabletestimonials($this->faker()->numberBetween(0, 1))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->addSubCategory($this->faker()->randomElement($this->subCategories))
@@ -537,7 +536,6 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
             $testimonial = new Testimonial();
             $testimonial
                 ->setAuthor($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
-                ->setProduct($this->faker()->randomElement($products))
                 ->setIsOnline($this->faker()->numberBetween(0, 1))
                 ->setRating($this->faker()->numberBetween(1, 5))
                 ->setName($this->faker()->unique()->sentence(5, true))

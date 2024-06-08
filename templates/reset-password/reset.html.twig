@@ -4,7 +4,7 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-	{% set breadcrumb = [{ "current":(pagetitle) }] %}
+	{% set breadcrumb = [{ "app_forgot_password_request": ('Forgot password'|trans), "current":(pagetitle) }] %}
 	{% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 

@@ -10,7 +10,6 @@ use App\Service\CommentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PostCommentController extends AbstractController
 {
-    #[Route(path: '/post-comment/{slug}/add', name: 'post_comment_add', requirements: ['slug' => Requirement::ASCII_SLUG], methods: ['POST'])]
+    #[Route(path: '/post-comment/{slug}/add', name: 'post_comment_add', methods: ['POST'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     #[IsGranted('IS_AUTHENTICATED')]
     public function postcommentAdd(
         Request $request,
@@ -58,7 +57,7 @@ class PostCommentController extends AbstractController
     }
 
     #[Route(path: '/post-comment/comment/{id<[0-9]+>}', name: 'post_comment_delete', methods: ['POST'])]
-    #[Security("is_granted('ROLE_USER') and user === comment.getAuthor()")]
+    #[IsGranted('delete', subject: 'comment')]
     public function postcommentDeleted(
         Request $request,
         CommentService $commentService,
@@ -67,7 +66,7 @@ class PostCommentController extends AbstractController
     ): Response {
         $params = ['slug' => $comment->getPost()->getSlug()];
 
-        if ($this->isCsrfTokenValid('comment_deletion_'.$comment->getId(), $request->request->get('csrf_token'))) {
+        if ($this->isCsrfTokenValid('comment_deletion_'.$comment->getId(), $request->getPayload()->get('_token'))) {
             $commentService->deletedComment($comment);
             $this->addFlash('success', $translator->trans('Your comment has been successfully deleted.'));
         }

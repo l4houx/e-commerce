@@ -25,31 +25,27 @@
                                     </div>
                                     <hr class="my-4">
                                     {% for comment in lastComments %}
-                                        <div class="d-flex">
-                                            {% include "global/user-avatar.html.twig" with { user: comment.author, type: "md", class: "rounded-circle float-start me-3" } %}
-                                            <div>
-                                                <div class="d-sm-flex justify-content-between mb-2">
-                                                    <div>
-                                                        <span class="me-3 small">{{ 'On'|trans }}</span>
-                                                        <h6 class="m-0">
-                                                            <a href="{{ path(comment.post) }}#c{{ comment.id }}" target="_blank">
-                                                                {{ comment.post.name }}
-                                                            </a>
-                                                        </h6>
-                                                    </div>	
-                                                    <span class="me-3 small mb-0">{{ comment.publishedAt | date('M Y') }}</span>
-                                                </div>
-                                                <p>{{ comment.content | html_markdown_untrusted }}</p>
-                                                <span>Was it helpful?</span>
-                                                <div class="btn-group ms-md-2" role="group" aria-label="Basic radio toggle button group">
-                                                    <input type="radio" class="btn-check" name="btnradio1" id="btnradior1">
-                                                    <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior1"><i class="far fa-thumbs-up me-1"></i> Yes</label>
-                                                    <input type="radio" class="btn-check" name="btnradio1" id="btnradior2">
-                                                    <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior2"> No <i class="far fa-thumbs-down ms-1"></i></label>
+                                        {% if comment.isApproved %}
+                                            {% set link = path('post', { slug : comment.post.slug }) %}
+                                            <div class="d-flex">
+                                                {% include "global/user-avatar.html.twig" with { user: comment.author, type: "md", class: "rounded-circle float-start me-3" } %}
+                                                <div>
+                                                    <div class="d-sm-flex justify-content-between mb-2">
+                                                        <div>
+                                                            <span class="me-3 small">{{ 'On'|trans }}</span>
+                                                            <h6 class="m-0">
+                                                                <a href="{{ link }}#c{{ comment.id }}" target="_blank">
+                                                                    {{ comment.post.name }}
+                                                                </a>
+                                                            </h6>
+                                                        </div>	
+                                                        <span class="me-3 small mb-0">{{ comment.publishedAt | format_date('long') }}</span>
+                                                    </div>
+                                                    <div>{{ comment.content | html_markdown_untrusted }}</div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr class="my-4">
+                                            <hr class="my-4">
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -65,27 +61,22 @@
                                     </div>
                                     <hr class="my-4">
                                     {% for review in lastReviews %}
-                                        <div class="d-flex">
-                                            {% include "global/user-avatar.html.twig" with { user: review.author, type: "md", class: "rounded-circle float-start me-3" } %}
-                                            <div>
-                                                <div class="d-sm-flex justify-content-between mb-2">
-                                                    <div>
-                                                        <h6 class="m-0">{{ review.author.username }}</h6>
-                                                        <span class="me-3 small">{{ review.createdAt | date('M Y') }}</span>
-                                                    </div>	
-                                                    {% include 'global/rating.html.twig' with {'rating' : review.rating} %}
-                                                </div>
-                                                <p>{{ review.content | html_markdown_untrusted }}</p>
-                                                <span>Was it helpful?</span>
-                                                <div class="btn-group ms-md-2" role="group" aria-label="Basic radio toggle button group">
-                                                    <input type="radio" class="btn-check" name="btnradio1" id="btnradior1">
-                                                    <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior1"><i class="far fa-thumbs-up me-1"></i> Yes</label>
-                                                    <input type="radio" class="btn-check" name="btnradio1" id="btnradior2">
-                                                    <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior2"> No <i class="far fa-thumbs-down ms-1"></i></label>
+                                        {% if review.isVisible %}
+                                            <div class="d-flex">
+                                                {% include "global/user-avatar.html.twig" with { user: review.author, type: "md", class: "rounded-circle float-start me-3" } %}
+                                                <div>
+                                                    <div class="d-sm-flex justify-content-between mb-2">
+                                                        <div>
+                                                            <h6 class="m-0">{{ review.author.username }}</h6>
+                                                            <span class="me-3 small">{{ review.createdAt | format_date('long') }}</span>
+                                                        </div>	
+                                                        {% include 'global/rating.html.twig' with {'rating' : review.rating} %}
+                                                    </div>
+                                                    <div>{{ review.content | html_markdown_untrusted }}</div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr class="my-4">
+                                            <hr class="my-4">
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             {% else %}

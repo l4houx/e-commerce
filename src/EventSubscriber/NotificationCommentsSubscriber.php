@@ -9,6 +9,7 @@ use Symfony\Component\Mime\Email;
 use App\Event\CommentCreatedEvent;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -18,23 +19,13 @@ class NotificationCommentsSubscriber implements EventSubscriberInterface
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly TranslatorInterface $translator,
+        #[Autowire('%website_no_reply_email%')]
         private readonly string $sender
     ) {
     }
 
-    /**
-     * @return array<string, string>
-     */
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            CommentCreatedEvent::class => 'onCommentCreated',
-        ];
-    }
-
     public function onCommentCreated(CommentCreatedEvent $event): void
     {
-        /** @var Comment $comment */
         $comment = $event->getComment();
 
         /** @var Post $post */
@@ -65,5 +56,15 @@ class NotificationCommentsSubscriber implements EventSubscriberInterface
         ;
 
         $this->mailer->send($email);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            CommentCreatedEvent::class => 'onCommentCreated',
+        ];
     }
 }

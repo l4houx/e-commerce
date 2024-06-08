@@ -89,7 +89,7 @@ services:
             $dashboardPath: '%website_dashboard_path%'
 
             # Website email
-            string $emailSender: '%website_no_reply_email%'
+            # string $emailSender: '%website_no_reply_email%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -115,5 +115,5 @@ services:
         alias: App\Service\SettingService
 
     # Notification Comment
-    App\EventSubscriber\NotificationCommentsSubscriber:
-        $sender: '%website_no_reply_email%'
+    # App\EventSubscriber\NotificationCommentsSubscriber:
+        # $sender: '%website_no_reply_email%'

@@ -6,10 +6,12 @@ namespace App\Service;
 
 use App\Entity\Post;
 use App\Entity\Comment;
+use App\Event\CommentCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CommentService
 {
@@ -17,6 +19,7 @@ class CommentService
         private readonly EntityManagerInterface $em,
         private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly SecurityService $securityService
     ) {
     }
@@ -45,6 +48,8 @@ class CommentService
 
         $this->em->persist($comment);
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(new CommentCreatedEvent($comment));
     }
 
     public function updatedComment(Comment $comment, string $content): Comment
