@@ -56,7 +56,7 @@ parameters:
     # Language
     locale: '%env(DEFAULT_LOCALE)%'
     # This parameter defines the codes of the locales (languages) enabled in the application
-    app_locales: en|fr
+    #app_locales: en|fr
 
     router.request_context.host: "%website_root_url%"
     router.request_context.scheme: 'https'
@@ -82,7 +82,8 @@ services:
         public: false
         bind:
             # Website locales
-            string $locales: '%app_locales%'
+            #string $locales: '%app_locales%'
+            array $enabledLocales: '%kernel.enabled_locales%'
             string $defaultLocale: '%locale%'
 
             # Website patch

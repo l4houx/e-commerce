@@ -9,20 +9,14 @@ use Twig\TwigFunction;
 class TwigAppLocaleExtension extends AbstractExtension
 {
     /**
-     * @var string[]
-     */
-    private readonly array $localeCodes;
-
-    /**
      * @var list<array{code: string, name: string}>|null
      */
     private ?array $locales = null;
 
-    public function __construct(string $locales)
-    {
-        $localeCodes = explode('|', $locales);
-        sort($localeCodes);
-        $this->localeCodes = $localeCodes;
+    public function __construct(
+        /** @var string[] */
+        private readonly array $enabledLocales,
+    ) {
     }
 
     public function getFunctions(): array
@@ -35,7 +29,7 @@ class TwigAppLocaleExtension extends AbstractExtension
     /**
      * Takes the list of codes of the locales (languages) enabled in the
      * application and returns an array with the name of each locale written
-     * in its own language (e.g. English, Français, Español, etc.).
+     * in its own language (e.g. English, Français, etc.).
      *
      * @return array<int, array<string, string>>
      */
@@ -47,7 +41,7 @@ class TwigAppLocaleExtension extends AbstractExtension
 
         $this->locales = [];
 
-        foreach ($this->localeCodes as $localeCode) {
+        foreach ($this->enabledLocales as $localeCode) {
             $this->locales[] = ['code' => $localeCode, 'name' => Locales::getName($localeCode, $localeCode)];
         }
 
