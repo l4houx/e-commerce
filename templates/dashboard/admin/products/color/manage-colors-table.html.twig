@@ -40,15 +40,11 @@
                     <td>{{ color.updatedAt ? color.updatedAt | format_date('long') : '' }}</td>
                     <td>
 						{% if color.isActive == false %}
-							<span class="badge bg-danger">
-								<i class="fas fa-eye-slash"></i>
-								{{ "Offline"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "Offline"|trans }}
+							<br>
 						{% else %}
-							<span class="badge bg-success">
-								<i class="fas fa-eye"></i>
-								{{ "Online"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Online"|trans }}
+							<br>
 						{% endif %}
                     </td>
 					<td>

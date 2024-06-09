@@ -56,9 +56,13 @@
                                 <tr>
                                     <td wslugth="30%">{{ 'Article'|trans }}</th>
                                     <td>
-                                        <a href="{{ path('post', { slug : comment.post.slug } , "#c" ~ comment.id) }}" target="_blank">
+                                        {% if comment.isApproved == true %}
+                                            <a href="{{ path('post', { slug : comment.post.slug }) }}#c{{ comment.id }}" target="_blank">
+                                                {{ "Article"|trans ~ ": " ~ comment.post }}
+                                            </a>
+                                        {% else %}
                                             {{ "Article"|trans ~ ": " ~ comment.post }}
-                                        </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
@@ -69,7 +73,7 @@
                                     <td wslugth="30%">{{ 'Status'|trans }}</th>
                                     <td>
                                         {% if comment.isApproved == false %}
-                                            <i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "Refused"|trans }}
+                                            <i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "No approved"|trans }}
                                             <br>
                                         {% else %}
                                             <i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Approved"|trans }}

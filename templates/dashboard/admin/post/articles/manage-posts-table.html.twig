@@ -61,27 +61,11 @@
 					</td>
 					#}
 					<td>
-						<span class="badge bg-{{ post.stringifyStatusClass }} me-1 d-inline-block align-middle">
-							{{ post.stringifyStatus|trans }}
-						</span>
-						{#  
-						{% if post.isOnline == false %}
-							<span class="badge bg-danger">
-								<i class="fas fa-eye-slash fa-fw"></i>
-								{{ "Offline"|trans }}
-							</span>
-						{% else %}
-							<span class="badge bg-success">
-								<i class="fas fa-eye fa-fw"></i>
-								{{ "Online"|trans }}
-							</span>
-						{% endif %}
-						#}
+						<i class="fa-solid fa-circle fa-2xs text-{{ post.stringifyStatusClass }} me-2"></i>{{ post.stringifyStatus|trans }}
+						<br>
 						{% if post.deletedAt %}
-							<span class="badge bg-danger-soft">
-								<i class="fas fa-times fa-fw"></i>
-								{{ "Deleted"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-danger-soft me-2"></i>{{ "Deleted"|trans }}
+							<br>
 						{% endif %}
 					</td>
 					<td>

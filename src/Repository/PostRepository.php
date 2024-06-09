@@ -197,4 +197,48 @@ class PostRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return Post[] Returns an array of Post objects
+     */
+    public function findBySearchQuery(string $query, int $maxResults = HasLimit::POST_LIMIT): array
+    {
+        $search = $this->search($query);
+
+        if (0 === \count($search)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('p');
+
+        foreach ($search as $key => $value) {
+            $qb
+                ->orWhere('p.name LIKE :v_'.$key)
+                ->setParameter('v_'.$key, '%'.$value.'%')
+            ;
+        }
+
+        /** @var Post[] $result */
+        $result = $qb
+            ->orderBy('p.publishedAt', 'DESC')
+            ->orWhere('p.isOnline = true')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $result;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function search(string $searchQuery): array
+    {
+        $values = array_unique(u($searchQuery)->replaceMatches('/[[:space:]]+/', ' ')->trim()->split(' '));
+
+        return array_filter($values, static function ($value) {
+            return 2 <= $value->length();
+        });
+    }
 }

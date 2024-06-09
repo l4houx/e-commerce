@@ -30,9 +30,9 @@ class PostController extends AbstractController
     public function posts(Request $request, PaginatorInterface $paginator, string $category = 'all'): Response
     {
         $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
-        $rows = $paginator->paginate($this->settingService->getBlogPosts(['category' => $category, 'keyword' => $keyword])->getQuery(), $request->query->getInt('page', 1), $this->settingService->getSettings('posts_per_page'), ['wrap-queries' => true]);
+        $posts = $paginator->paginate($this->settingService->getBlogPosts(['category' => $category, 'keyword' => $keyword])->getQuery(), $request->query->getInt('page', 1), $this->settingService->getSettings('posts_per_page'), ['wrap-queries' => true]);
 
-        return $this->render('post/posts.html.twig', compact('rows'));
+        return $this->render('post/posts.html.twig', compact('posts'));
     }
 
     #[Route(path: '/post/{slug}', name: 'post', requirements: ['slug' => Requirement::ASCII_SLUG], methods: ['GET'])]

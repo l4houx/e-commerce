@@ -16,21 +16,15 @@
 					<td>{{ type.posts | length }}</td>
 					<td>
 						{% if type.isOnline == false %}
-							<span class="badge bg-danger">
-								<i class="fas fa-eye-slash fa-fw"></i>
-								{{ "Offline"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-danger me-2"></i>{{ "Offline"|trans }}
+							<br>
 						{% else %}
-							<span class="badge bg-success">
-								<i class="fas fa-eye fa-fw"></i>
-								{{ "Online"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-success me-2"></i>{{ "Online"|trans }}
+							<br>
 						{% endif %}
 						{% if type.deletedAt %}
-							<span class="badge bg-danger-soft">
-								<i class="fas fa-times fa-fw"></i>
-								{{ "Deleted"|trans }}
-							</span>
+							<i class="fa-solid fa-circle fa-2xs text-danger-soft me-2"></i>{{ "Deleted"|trans }}
+							<br>
 						{% endif %}
 					</td>
 					<td>

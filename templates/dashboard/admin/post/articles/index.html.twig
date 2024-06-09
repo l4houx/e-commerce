@@ -11,27 +11,25 @@
 {% block body %}
     <section class="pt-0">
         <div class="container">
-            <div class="p-4 row justify-content-between g-3">
-                <div class="col-xxl-5 col-lg-3 col-md-12 col-12 mb-2 mb-lg-0">
-                    <form class="d-flex align-items-center">
-                        <span class="position-absolute ps-3 search-icon">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="search" name="keyword" value="{{ app.request.get('keyword') }}" class="form-control ps-6" placeholder="{{ 'Search...'|trans }}">
+            <div class="row g-3 align-items-center mb-5">
+                <div class="col-xl-6">
+                    <form class="rounded position-relative">
+                        <input class="form-control pe-5" type="search" name="keyword" value="{{ app.request.get('keyword') }}" placeholder="{{ 'Search...'|trans }}" aria-label="Search">
+                        <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit">
+                            <i class="fas fa-search fs-6"></i>
+                        </button>
                     </form>
                 </div>
-                <div class="col-xxl-3 col-lg-5 col-md-12 col-12">
-                    <div class="row justify-content-lg-end">
-                        <label class="col-auto col-form-label" for="sortable-select">{{ "Sort by"|trans }}</label>
-                        <div class="col-auto">
-                            <select class="form-select" aria-label="{{ "Select an option"|trans }}" id="sortable-select">
-                                <option value="">{{ knp_pagination_sortable(rows, "Creation date"|trans ~ ' (' ~ "desc"|trans ~ ')', "p.createdAt", {"direction": "desc", "criteria": "p.createdAt"}) }}</option>
-                                <option value="">{{ knp_pagination_sortable(rows, "Creation date"|trans ~ ' (' ~ "asc"|trans ~ ')', "p.createdAt", {"direction": "asc", "criteria": "p.createdAt"}) }}</option>
-                                <option value="">{{ knp_pagination_sortable(rows, "Popularity"|trans ~ ' (' ~ "desc"|trans ~ ')', "p.views", {"direction": "desc", "criteria": "p.views"}) }}</option>
-                                <option value="">{{ knp_pagination_sortable(rows, "Popularity"|trans ~ ' (' ~ "asc"|trans ~ ')', "p.views", {"direction": "asc", "criteria": "p.views"}) }}</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="col-sm-6 col-xl-3 ms-auto">
+                    <form>
+                        <select class="form-select js-choice" aria-label=".form-select-sm" autocomplete="off">
+                            <option>{{ "Sort by"|trans }}</option>
+                            <option value="">{{ knp_pagination_sortable(rows, "Creation date"|trans ~ ' (' ~ "desc"|trans ~ ')', "p.createdAt", {"direction": "desc", "criteria": "p.createdAt"}) }}</option>
+                            <option value="">{{ knp_pagination_sortable(rows, "Creation date"|trans ~ ' (' ~ "asc"|trans ~ ')', "p.createdAt", {"direction": "asc", "criteria": "p.createdAt"}) }}</option>
+                            <option value="">{{ knp_pagination_sortable(rows, "Popularity"|trans ~ ' (' ~ "desc"|trans ~ ')', "p.views", {"direction": "desc", "criteria": "p.views"}) }}</option>
+                            <option value="">{{ knp_pagination_sortable(rows, "Popularity"|trans ~ ' (' ~ "asc"|trans ~ ')', "p.views", {"direction": "asc", "criteria": "p.views"}) }}</option>
+                        </select>
+                    </form>
                 </div>
             </div>
             <div class="row">

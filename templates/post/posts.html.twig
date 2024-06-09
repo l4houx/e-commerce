@@ -15,41 +15,26 @@
                 <h4 class="mb-3 mb-lg-0">{{ 'Our Blog'|trans }}</h4>
                 <ul class="nav nav-pills gap-1 nav-pills-light">
                     <li class="nav-item">
-                        <a href="{{ path('posts') }}" class="nav-link active">
+                        <a href="{{ path('posts') }}" class="nav-link {% if routename == "posts" %}active{% endif %}">
                             {{ 'All blog'|trans }}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">
-                            {{ 'Marketing'|trans }}
-                        </a>          
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">
-                            {{ 'Design'|trans }}
-                        </a>        
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">
-                            {{ 'Lifestyle'|trans }}
-                        </a>        
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">
-                            {{ 'Technology'|trans }}
-                        </a>        
+                        <a href="{{ path('post_searched') }}" class="nav-link {% if routename == "post_searched" %}active{% endif %}">
+                            {{ 'Search for posts'|trans }}
+                        </a>
                     </li>
                 </ul>
             </div>
-            {% if rows.getTotalItemCount > 0 %}
+            {% if posts.getTotalItemCount > 0 %}
                 <div class="row g-4 g-sm-5 g-xl-7 mt-0">
-                    {% for post in rows %}
+                    {% for post in posts %}
                         {% include "global/post-card.html.twig" with {post: post, thumbnailsize: [397, 397], showdate: 1} %}
                     {% endfor %}
                 </div>
                 <div class="row mt-7">
                     <div class="col-12 mx-auto">
-                        {{ knp_pagination_render(rows, null, {}, {'align': 'center'}) }}
+                        {{ knp_pagination_render(posts, null, {}, {'align': 'center'}) }}
                     </div>
                 </div>
             {% else %}

@@ -81,14 +81,12 @@
                                         <tr>
                                             <td width="30%">{{ 'Status'|trans }}</th>
                                             <td>
-                                                <span class="badge bg-{{ product.stringifyStatusClass }} me-1 d-inline-block align-middle">
-                                                    {{ product.stringifyStatus|trans }}
-                                                </span>
+                                                <i class="fa-solid fa-circle fa-2xs text-{{ product.stringifyStatusClass }} me-2"></i>
+                                                {{ product.stringifyStatus|trans }}
+                                                <br>
                                                 {% if product.deletedAt %}
-                                                    <span class="badge bg-danger-soft">
-                                                        <i class="fas fa-times fa-fw"></i>
-                                                        {{ "Deleted"|trans }}
-                                                    </span>
+                                                    <i class="fa-solid fa-circle fa-2xs text-danger-soft me-2"></i>{{ "Deleted"|trans }}
+                                                    <br>
                                                 {% endif %}
                                             </td>
                                         </tr>
