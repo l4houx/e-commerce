@@ -27,9 +27,9 @@ class TestimonialRepository extends ServiceEntityRepository
     public function findForPagination(int $page): PaginationInterface // TestimonialController
     {
         $builder = $this->createQueryBuilder('t')
-            ->orderBy('t.updatedAt', 'DESC')
+            ->orderBy('t.createdAt', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
-            ->where('t.updatedAt <= :now')
+            ->where('t.createdAt <= :now')
             ->orWhere('t.isOnline = true')
         ;
 
@@ -40,7 +40,7 @@ class TestimonialRepository extends ServiceEntityRepository
             ['wrap-queries' => true],
             [
                 'distinct' => false,
-                'sortFieldAllowList' => ['t.id', 't.name'],
+                'sortFieldAllowList' => ['t.id', 't.rating', 't.createdAt'],
             ]
         );
     }

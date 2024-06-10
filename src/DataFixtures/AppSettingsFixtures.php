@@ -103,6 +103,7 @@ class AppSettingsFixtures extends Fixture
         $settings[] = new Setting('Limit Of Posts Per Page', 'posts_per_page', 9, NumberType::class);
         $settings[] = new Setting('Limit Of Comments Per Page', 'comments_per_page', 4, NumberType::class);
         $settings[] = new Setting('Limit Of Reviews Per Page', 'reviews_per_page', 10, NumberType::class);
+        $settings[] = new Setting('Limit Of Testimonials Per Page', 'testimonials_per_page', 10, NumberType::class);
 
         // Number
         $settings[] = new Setting('Number Of Posts On The homepage', 'homepage_posts_number', 3, NumberType::class);

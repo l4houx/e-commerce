@@ -14,7 +14,14 @@ class TestimonialController extends BaseController
     #[Route('/testimonial', name: 'testimonial', methods: ['GET'])]
     public function testimonial(Request $request, SettingService $settingService, PaginatorInterface $paginator): Response
     {
-        $testimonials = $paginator->paginate($settingService->getTestimonials([]), $request->query->getInt('page', 1), HasLimit::TESTIMONIAL_LIMIT, ['wrap-queries' => true]);
+        $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
+
+        $testimonials = $paginator->paginate(
+            $settingService->getTestimonials(['keyword' => $keyword])->getQuery(), 
+            $request->query->getInt('page', 1), 
+            HasLimit::TESTIMONIAL_LIMIT, 
+            ['wrap-queries' => true]
+        );
 
         return $this->render('testimonial/testimonial-detail.html.twig', compact('testimonials'));
     }

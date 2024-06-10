@@ -13,8 +13,7 @@
         <div class="container">
             <div class="inner-container-small text-center mb-4 mb-sm-5">
                 <h2 class="mb-0">{{ 'What people say about us'|trans }}</h2>
-                {% set testimonialscount = setting.getTestimonials({"count": true}).getQuery().getSingleScalarResult() %}
-                <p>{{ testimonialscount }} {{"Testimonial(s)"|trans|lower}}</p>
+                <p>{{ "%resultsCount% testimonial(s) found"|trans({'%resultsCount%': testimonials.getTotalItemCount}) }}</p>
             </div>
             {% if testimonials.getTotalItemCount > 0 %}
                 <div class="row mt-0">

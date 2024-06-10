@@ -29,39 +29,48 @@ class TestimonialFormType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => t('Name'),
+                //'label' => t('Name'),
+                'label' => false,
                 'required' => true,
+                'attr' => ['placeholder' => t('Name *')],
                 // 'purify_html' => true,
                 'empty_data' => '',
             ])
             ->add('slug', TextType::class, [
-                'label' => t('Slug'),
+                //'label' => t('Slug'),
+                'label' => false,
                 'empty_data' => '',
                 'required' => false,
-                'help' => t('Field must contain an unique value.'),
+                'attr' => ['placeholder' => t('Slug')],
+                //'help' => t('Field must contain an unique value.'),
             ])
             ->add('rating', ChoiceType::class, [
-                'label' => t('Your rating (out of 5 stars)'),
+                //'label' => t('Your rating (out of 5 stars)'),
+                'label' => false,
                 'required' => true,
                 'multiple' => false,
                 'expanded' => false,
-                'choices' => ['5 stars' => 5, '4 stars' => 4, '3 stars' => 3, '2 stars' => 2, '1 star' => 1],
+                'choices' => ['★★★★★ (5/5)' => 5, '★★★★☆ (4/5)' => 4, '★★★☆☆ (3/5)' => 3, '★★☆☆☆ (2/5)' => 2, '★☆☆☆☆ (1/5)' => 1],
                 'label_attr' => ['class' => 'radio-custom radio-inline'],
             ])
             ->add('content', TextareaType::class, [
-                'label' => t('Content'),
+                //'label' => t('Content'),
+                'label' => false,
                 'required' => true,
                 'empty_data' => '',
-                'attr' => ['placeholder' => '', 'rows' => 6],
+                'attr' => ['placeholder' => t('Your content *'), 'rows' => 3],
                 'help' => t(''),
             ])
             ->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
 
-        if ($this->authChecker->isGranted(HasRoles::ADMIN)) {
+        if ($this->authChecker->isGranted(HasRoles::ADMINAPPLICATION)) {
             $builder
-                ->add('author', UserAutocompleteField::class, ['label' => t('Author')])
+                ->add('author', UserAutocompleteField::class, [
+                    //'label' => t('Author')
+                    'label' => false,
+                ])
                 ->add('isOnline', SwitchType::class, ['label' => t('Online')])
             ;
         }
