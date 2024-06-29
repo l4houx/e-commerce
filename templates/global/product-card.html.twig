@@ -4,7 +4,7 @@
 {% if customLink is defined %}
     {% set link = customLink %}
 {% else %}
-    {% set link = path('product', { id : product.id }) %} 
+    {% set link = path('shop_product', { id : product.id }) %} 
 {% endif %}
 <div class="col-sm-6 col-lg-4 col-xl-3">
 	<div class="card border bg-transparent overflow-hidden p-0 h-100">

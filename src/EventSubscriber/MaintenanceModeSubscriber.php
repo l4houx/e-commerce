@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
-use App\Entity\Setting;
+use Twig\Environment;
 use App\Entity\Traits\HasRoles;
 use App\Service\SettingService;
+use App\Entity\Settings\Setting;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class MaintenanceModeSubscriber implements EventSubscriberInterface
 {

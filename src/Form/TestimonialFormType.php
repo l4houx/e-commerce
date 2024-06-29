@@ -3,15 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Testimonial;
-use App\Form\Type\SwitchType;
-use App\Entity\Traits\HasRoles;
+use App\Form\FormListenerFactory;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use function Symfony\Component\Translation\t;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -64,16 +63,6 @@ class TestimonialFormType extends AbstractType
             ->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->slug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;
-
-        if ($this->authChecker->isGranted(HasRoles::ADMINAPPLICATION)) {
-            $builder
-                ->add('author', UserAutocompleteField::class, [
-                    //'label' => t('Author')
-                    'label' => false,
-                ])
-                ->add('isOnline', SwitchType::class, ['label' => t('Online')])
-            ;
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

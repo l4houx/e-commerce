@@ -8,44 +8,61 @@ security:
             entity:
                 class: App\Entity\User
                 property: username
+        app_admin_provider:
+            entity:
+                class: App\Entity\SuperAdministrator
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin:
+            lazy: true
+            provider: app_admin_provider
+            entry_point: App\Security\AuthenticationEntryPoint
+            user_checker: App\Security\UserChecker
+            custom_authenticator: App\Security\AdminAuthenticator
+            logout:
+                path: admin_dashboard_signout
+                target: admin_dashboard_signin
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000 # 1 month in seconds
+                path: /
+                always_remember_me: true
+            #access_denied_handler: App\Security\AccessDeniedHandler
         main:
             lazy: true
             provider: app_user_provider
-            #entry_point: App\Security\AuthenticationEntryPoint
-            #user_checker: App\Security\UserChecker
+            entry_point: App\Security\AuthenticationEntryPoint
+            user_checker: App\Security\UserChecker
             custom_authenticator: App\Security\Authenticator
             logout:
                 path: signout
-                # where to redirect after signout
                 target: home
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 2592000 # 1 month in seconds
                 path: /
                 always_remember_me: true
-
             switch_user: { role: ROLE_USER }
-            #switch_user: true
             #access_denied_handler: App\Security\AccessDeniedHandler
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^(.*?)/signin, roles: PUBLIC_ACCESS }
+        - { path: ^(.*?)/%website_admin_dashboard_path%/signin, roles: PUBLIC_ACCESS }
+        - { path: ^(.*?)/signin$, roles: PUBLIC_ACCESS }
         - { path: ^(.*?)/signup, roles: PUBLIC_ACCESS }
-        - { path: ^(.*?)/%website_dashboard_path%/admin, roles: ROLE_ADMIN }
-        - { path: ^(.*?)/%website_dashboard_path%/editor, roles: ROLE_EDITOR }
-        - { path: ^(.*?)/%website_dashboard_path%/team, roles: ROLE_TEAM }
         - { path: ^(.*?)/%website_dashboard_path%/user, roles: ROLE_USER }
+        - { path: ^(.*?)/%website_admin_dashboard_path%, roles: ROLE_TEAM }
 
     role_hierarchy:
-        ROLE_MODERATOR: [ROLE_TEAM, ROLE_USER]
-        ROLE_ADMIN: [ROLE_MODERATOR, ROLE_APPLICATION, ROLE_EDITOR]
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SALES_PERSON: [ROLE_CLIENT_ACCESS, ROLE_WEBSITE, ROLE_SHOP, ROLE_EMPLOYEE]
+        ROLE_COLLABORATOR: [ROLE_WEBSITE, ROLE_SHOP, ROLE_EMPLOYEE]
+        ROLE_CUSTOMER: [ROLE_WEBSITE, ROLE_SHOP]
+        ROLE_MANAGER: [ROLE_CLIENT_ACCESS, ROLE_CLIENT_ACCESS_CREATE, ROLE_CLIENT_COMPANY, ROLE_WEBSITE, ROLE_SHOP, ROLE_DATA_PURCHASE, ROLE_DATA_TRANSFER, ROLE_EMPLOYEE]
+        ROLE_SUPER_ADMIN: [ROLE_MANAGER, ROLE_TEAM, ROLE_EDITOR, ROLE_ALLOWED_TO_SWITCH]
         ROLE_ADMIN_APPLICATION: ROLE_SUPER_ADMIN
 
 when@test:

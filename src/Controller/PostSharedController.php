@@ -21,7 +21,7 @@ class PostSharedController extends AbstractController
         Request $request,
         Post $post,
         SendMailService $mail,
-        SettingService $settingervice,
+        SettingService $settingService,
         TranslatorInterface $translator
     ): Response {
         if (!$post) {
@@ -34,7 +34,7 @@ class PostSharedController extends AbstractController
 
         $form = $this->createForm(PostSharedFormType::class);
 
-        if (0 == $settingervice->getSettings('google_recaptcha_enabled')) {
+        if (0 == $settingService->getSettings('google_recaptcha_enabled')) {
             $form->remove('recaptcha');
         }
 

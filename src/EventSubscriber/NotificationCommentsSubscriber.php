@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Entity\Comment;
 use Symfony\Component\Mime\Email;
+use App\Entity\SuperAdministrator;
 use App\Event\CommentCreatedEvent;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,7 +32,7 @@ class NotificationCommentsSubscriber implements EventSubscriberInterface
         /** @var Post $post */
         $post = $comment->getPost();
 
-        /** @var User $author */
+        /** @var User|SuperAdministrator $author */
         $author = $post->getAuthor();
 
         /** @var string $emailAddress */

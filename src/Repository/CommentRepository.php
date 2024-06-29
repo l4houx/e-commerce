@@ -43,8 +43,8 @@ class CommentRepository extends ServiceEntityRepository
             $builder,
             $page,
             HasLimit::COMMENT_LIMIT,
-            ['wrap-queries' => true],
             [
+                'wrap-queries' => true,
                 'distinct' => false,
                 'sortFieldAllowList' => ['c.id', 'c.post'],
             ]
@@ -134,7 +134,7 @@ class CommentRepository extends ServiceEntityRepository
      *
      * @return Comment[] Returns an array of Comments objects
      */
-    public function findLastByUser(User $user, int $maxResults): array //  (UserController)
+    public function getLastByUser(User $user, int $limit): array //  (UserController)
     {
         return $this->createQueryBuilder('c')
             ->join('c.post', 'p')
@@ -142,7 +142,7 @@ class CommentRepository extends ServiceEntityRepository
             ->andWhere('c.author = :user')
             ->andWhere('c.isApproved = true')
             ->orderBy('c.publishedAt', 'DESC')
-            ->setMaxResults($maxResults)
+            ->setMaxResults($limit)
             ->setParameter('user', $user)
             ->getQuery()
             ->getResult()

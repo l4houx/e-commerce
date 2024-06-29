@@ -2,23 +2,23 @@
 
 namespace App\Service;
 
-use App\Entity\Setting;
-use App\Entity\Traits\HasRoles;
-use App\Repository\SettingRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use Doctrine\ORM\QueryBuilder;
+use App\Entity\Traits\HasRoles;
+use App\Entity\Settings\Setting;
+use Psr\Cache\CacheItemPoolInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Mailer\MailerInterface;
+use App\Repository\Settings\SettingRepository;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SettingService
 {
@@ -293,7 +293,7 @@ class SettingService
         // $this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
         $slug = array_key_exists('slug', $criterias) ? $criterias['slug'] : 'all';
 
-        return $this->em->getRepository("App\Entity\Page")->getPages($slug);
+        return $this->em->getRepository("App\Entity\Settings\Page")->getPages($slug);
     }
 
     // Returns the reviews after applying the specified search criterias
@@ -313,7 +313,7 @@ class SettingService
         $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'createdAt';
         $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
 
-        return $this->em->getRepository("App\Entity\Review")->getReviews($keyword, $slug, $user, $product, $isVisible, $rating, $minrating, $maxrating, $limit, $count, $sort, $order);
+        return $this->em->getRepository("App\Entity\Shop\Review")->getReviews($keyword, $slug, $user, $product, $isVisible, $rating, $minrating, $maxrating, $limit, $count, $sort, $order);
     }
 
     // Returns the categories after applying the specified search criterias
@@ -327,7 +327,7 @@ class SettingService
         $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : 'c.name';
         $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'ASC';
 
-        return $this->em->getRepository("App\Entity\Category")->getCategories($isOnline, $keyword, $id, $limit, $sort, $order);
+        return $this->em->getRepository("App\Entity\Shop\Category")->getCategories($isOnline, $keyword, $id, $limit, $sort, $order);
     }
 
     // Returns the products after applying the specified search criterias
@@ -349,7 +349,7 @@ class SettingService
         $order = array_key_exists('order', $criterias) ? $criterias['order'] : 'DESC';
         $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
 
-        return $this->em->getRepository("App\Entity\Product")->getProducts($selecttags, $isOnline, $elapsed, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count);
+        return $this->em->getRepository("App\Entity\Shop\Product")->getProducts($selecttags, $isOnline, $elapsed, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count);
     }
 
     // Returns the users after applying the specified search criterias
@@ -449,7 +449,7 @@ class SettingService
         $ccy = \array_key_exists('ccy', $criterias) ? $criterias['ccy'] : 'all';
         $symbol = \array_key_exists('symbol', $criterias) ? $criterias['symbol'] : 'all';
 
-        return $this->em->getRepository("App\Entity\Currency")->getCurrencies($ccy, $symbol);
+        return $this->em->getRepository("App\Entity\Settings\Currency")->getCurrencies($ccy, $symbol);
     }
 
     // Returns the current protocol of the current request
@@ -461,7 +461,7 @@ class SettingService
     // Returns the layout settings entity to be used in the twig templates
     public function getAppLayoutSettings()
     {
-        $appLayoutSettings = $this->em->getRepository("App\Entity\AppLayoutSetting")->find(1);
+        $appLayoutSettings = $this->em->getRepository("App\Entity\Settings\AppLayoutSetting")->find(1);
 
         return $appLayoutSettings;
     }

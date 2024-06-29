@@ -2,37 +2,48 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use App\Entity\Traits\HasRoles;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
-use App\Entity\Traits\HasIsTeamTrait;
+use App\Entity\Data\Account;
+use App\Entity\Shop\Product;
+use App\Entity\Shop\Review;
+use App\Entity\Tickets\Ticket;
 use App\Entity\Traits\HasDeletedAtTrait;
-use function Symfony\Component\String\u;
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Traits\HasTimestampableTrait;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Traits\HasIdTrait;
+use App\Entity\Traits\HasIsTeamTrait;
 use App\Entity\Traits\HasRegistrationDetailsTrait;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Traits\HasRoles;
+use App\Entity\Traits\HasRulesAgreementsTrait;
+use App\Entity\Traits\HasTimestampableTrait;
+use App\Entity\User\Collaborator;
+use App\Entity\User\Customer;
+use App\Entity\User\Manager;
+use App\Entity\User\SalesPerson;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
+#[ORM\DiscriminatorMap(['manager' => Manager::class, 'customer' => Customer::class, 'collaborator' => Collaborator::class, 'sales_person' => SalesPerson::class])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
+    use HasIdTrait;
     use HasRegistrationDetailsTrait;
+    use HasRulesAgreementsTrait;
     use HasIsTeamTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[Assert\Length(min: 2, max: 20)]
     #[Assert\NotBlank]
@@ -83,10 +94,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     private Collection $favorites;
 
     /**
-     * //@var //collection<int, Post>
+     * @var collection<int, Post>
      */
-    //#[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
-    //private Collection $posts;
+    // #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
+    // private Collection $posts;
 
     /**
      * @var collection<int, Comment>
@@ -106,31 +117,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\OneToMany(targetEntity: Testimonial::class, mappedBy: 'author', orphanRemoval: true, cascade: ['remove'])]
     private Collection $testimonials;
 
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Account $account = null;
+
+    /**
+     * @var Collection<int, Ticket>
+     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', orphanRemoval: true, cascade: ['remove'])]
+    private Collection $tickets;
+
     public function __construct()
     {
         $this->isVerified = false;
         $this->favorites = new ArrayCollection();
-        //$this->posts = new ArrayCollection();
+        // $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->testimonials = new ArrayCollection();
+        $this->account = new Account();
+        $this->tickets = new ArrayCollection();
+        $this->rulesAgreements = new ArrayCollection();
     }
 
     public function __toString(): string
     {
         return (string) $this->getFullName();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getFullName(): string
@@ -361,7 +373,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
 
     public function __unserialize(array $data): void
     {
-        if (count($data) === 6) {
+        if (6 === count($data)) {
             [
                 $this->id,
                 $this->username,
@@ -401,7 +413,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     }
 
     /**
-     * //@return Collection<int, Post>
+     * //@return Collection<int, Post>.
      */
     /*public function getPosts(): Collection
     {
@@ -428,7 +440,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         }
 
         return $this;
-    }*/
+    }
+    */
 
     /**
      * @return Collection<int, Comment>
@@ -530,5 +543,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         }
 
         return false;
+    }
+
+    public function getAccount(): Account
+    {
+        return $this->account;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getUser() === $this) {
+                $ticket->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

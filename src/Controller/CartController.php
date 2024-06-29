@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Service\CartService;
-use App\Repository\ProductRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\Shop\ProductRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -127,6 +127,6 @@ class CartController extends AbstractController
         $cartService->removeCartAll();
         $this->addFlash('danger', $this->translator->trans('Cart was deleted successfully.'));
 
-        return $this->redirectToRoute('products');
+        return $this->redirectToRoute('shop');
     }
 }

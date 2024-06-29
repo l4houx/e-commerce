@@ -1,42 +1,121 @@
-//import './vendor/bootstrap/dist/css/bootstrap.min.css';
+import './bootstrap.js';
+
 import '@fortawesome/fontawesome-free/css/all.css';
 import './styles/app.css';
 
-// start the Stimulus application
-import './bootstrap.js';
+import { Tooltip, Toast, Modal, Popover } from 'bootstrap';
 
-import { Toast, Tooltip, Popover } from 'bootstrap';
+Array.from(document.querySelectorAll('.modal-onload'))
+    .map((e) => new Modal(e, { backdrop: false }))
+    .forEach((modal) => modal.show());
 
-const toasts = document.getElementById('liveToast');
-if (toasts) {
-    toasts.forEach((toast) => {
-        (new Toast(toast, { delay: 5000 })).show();
+Array.from(document.querySelectorAll('[data-bs-toggle=tooltip]'))
+    .map((e) => new Tooltip(e));
+
+Array.from(document.querySelectorAll('.input-group-password'))
+    .forEach((e) => {
+        const button = e.querySelector('button');
+        const input = e.querySelector('input');
+        const state = {
+            password: 'text',
+            text: 'password',
+        };
+        button.addEventListener('click', () => {
+            input.setAttribute('type', state[input.getAttribute('type')]);
+        });
     });
-}
 
-/*
-import Tagify from '@yaireo/tagify';
-var input = document.querySelector('input[name=tags]');
-new Tagify(input,
-    {
-        originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+Array.from(document.querySelectorAll('.slider'))
+    .map((slider) => {
+        const min = parseInt(slider.dataset.min);
+        const max = parseInt(slider.dataset.max);
+        const minTarget = document.querySelector(slider.dataset.minTarget);
+        const maxTarget = document.querySelector(slider.dataset.maxTarget);
+        noUiSlider.create(slider, {
+            start: [parseInt(minTarget.value), parseInt(maxTarget.value)],
+            tooltips: true,
+            connect: true,
+            step: 5,
+            range: {
+                'min': min,
+                'max': max,
+            },
+            format: {
+                to: (value) => parseInt(value),
+                from: (value) => parseInt(value),
+            },
+        }).on('update', function (values, handle) {
+            const value = values[handle];
+            if (handle) {
+                maxTarget.value = value;
+            } else {
+                minTarget.value = value;
+            }
+        });
+    });
+
+const sidebarTogglers = Array.from(
+    document.querySelectorAll('.sidebar-toggler'),
+);
+
+sidebarTogglers.map((toggler) => toggler.addEventListener('click', () => {
+    document.querySelector('body').classList.toggle('sidebar-open');
+    sidebarTogglers.map((e) => e
+        .setAttribute('aria-expanded', document.querySelector('body')
+            .classList
+            .contains('sidebar-open')));
+}));
+
+$(document).ready(function () {
+    function Toastr() {
+        Array.from(document.querySelectorAll('.toast'))
+        .map((toast) => (new Toast(toast)).show());
     }
-)
-*/
 
-//import 'bootstrap';
-import 'htmx.org';
+    // Product favorites ajax add and remove
+    $(document).on("click", ".product-favorites-new, .product-favorites-remove", function () {
+        const thisButton = $(this);
+        if (thisButton.attr("data-action-done") == "1") {
+            thisButton.unbind("click");
+            return false;
+        }
+        function ajaxRequest(thisButton) {
+            $.ajax({
+                type: "GET",
+                url: thisButton.data('target'),
+                beforeSend: function () {
+                    thisButton.attr("data-action-done", "1");
+                    thisButton.html("<i class='fas fa-spinner fa-spin'></i>");
+                },
+                success: function (response) {
+                    if (response.hasOwnProperty('success')) {
+                        if (thisButton.hasClass('product-favorites-new')) {
+                            thisButton.html('<i class="fas fa-heart"></i>');
+                        } else {
+                            thisButton.html('<i class="far fa-heart"></i>');
+                        }
+                        thisButton.attr("title", response.success).tooltip("_fixTitle");
+                        Toastr('success', '', response.success);
+                    } else if (response.hasOwnProperty('error')) {
+                        thisButton.html('<i class="far fa-heart"></i>');
+                        thisButton.attr("title", response.error).tooltip("_fixTitle");
+                        Toastr('error', '', response.error);
+                    } else {
+                        thisButton.html('<i class="far fa-heart"></i>');
+                        thisButton.attr("title", 'An error has occured').tooltip("_fixTitle");
+                        Toastr('error', '', 'An error has occured');
+                    }
+                },
+                error: function (xhr, status, error) {
 
-import Like from './like.js';
+                }
+            });
+        }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
-    // Like's system
-    const likeElements = [].slice.call(document.querySelectorAll('a[data-action="like"]'));
-    if (likeElements) {
-        new Like(likeElements);
-    }
+        ajaxRequest(thisButton);
+    });
 });
+
 
 "use strict";
 !function () {
@@ -313,219 +392,3 @@ var e = {
     // END: Back to Top
 };
 e.init();
-
-// js test
-
-import $ from 'jquery';
-window.jQuery = $;
-
-$(function() {
-    // Enable tooltips everywhere via data-toggle attribute
-    function tooltip() {
-        var tooltipTriggerList = [].slice.call(e.selectAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new Tooltip(tooltipTriggerEl)
-        })
-    }
-    window.tooltip = tooltip;
-    // END: Tooltip
-
-    // Initializes bootstrap components
-    //$('[data-bs-toggle="popover"], .has-popover').popover();
-    /*$('[data-bs-toggle="tooltip"], .has-tooltip').tooltip({
-        trigger: 'hover'
-    });
-    */
-
-    // Notyf notification ( success, warning, info, error )
-    function showStackBarTop() {
-        // Create an instance of Notyf
-        const notyf = new Notyf({
-            duration: 8000,
-            position: {
-                x: 'right',
-                y: 'top',
-            },
-            types: [
-                {
-                    type: 'info',
-                    background: '#00bfff',
-                    icon: false
-                },
-                {
-                    type: 'warning',
-                    background: '#ffd700',
-                    icon: false
-                },
-            ]
-        });
-
-        let messages = document.querySelectorAll('notyf');
-
-        messages.forEach(message => {
-            if (message.className === 'success') {
-                notyf.success(message.innerHTML);
-            }
-
-            if (message.className === 'error') {
-                notyf.error(message.innerHTML);
-            }
-
-            if (message.className === 'info') {
-                notyf.open({
-                    type: 'info',
-                    message: '<b>Info</b> - ' + message.innerHTML,
-                });
-            }
-
-            if (message.className === 'warning') {
-                notyf.open({
-                    type: 'warning',
-                    message: '<b>Warning</b> - ' + message.innerHTML
-                });
-            }
-        });
-    }
-    window.showStackBarTop = showStackBarTop;
-
-    // Product favorites ajax new and remove
-    $(document).on("click", ".product-favorites-new, .product-favorites-remove", function () {
-        var $thisButton = $(this);
-        if ($thisButton.attr("data-action-done") == "1") {
-            $thisButton.unbind("click");
-            return false;
-        }
-        $.ajax({
-            type: "GET",
-            url: $thisButton.data('target'),
-            beforeSend: function () {
-                $thisButton.attr("data-action-done", "1");
-                $thisButton.html("<i class='fas fa-spinner fa-spin'></i>");
-            },
-            success: function (response) {
-                if (response.hasOwnProperty('success')) {
-                    if ($thisButton.hasClass('product-favorites-new')) {
-                        $thisButton.html('<i class="fas fa-heart"></i>');
-                    } else {
-                        $thisButton.html('<i class="far fa-heart"></i>');
-                    }
-                    $thisButton.attr("title", response.success).tooltip("_fixTitle");
-                    showStackBarTop('success', '', response.success);
-                } else if (response.hasOwnProperty('error')) {
-                    $thisButton.html('<i class="far fa-heart"></i>');
-                    $thisButton.attr("title", response.error).tooltip("_fixTitle");
-                    showStackBarTop('error', '', response.error);
-                } else {
-                    $thisButton.html('<i class="far fa-heart"></i>');
-                    //$thisButton.attr("title", Translator.trans('An error has occured', {}, 'javascript')).tooltip("_fixTitle");
-                    //showStackBarTop('error', '', Translator.trans('An error has occured', {}, 'javascript'));
-                    $thisButton.attr("title", 'An error has occured').tooltip("title");
-					showStackBarTop('error', '', 'An error has occured');
-                }
-            }
-        });
-    });
-
-    // Initializes Font Awesome picker
-    /*
-    if ($('.icon-picker').length) {
-        $('.icon-picker').iconpicker({
-            animation: false,
-            inputSearch: true
-        });
-    }
-
-    // Initializes wysiwyg editor
-    if ($('.wysiwyg').length) {
-        $('.wysiwyg').summernote({
-            height: 500,
-        });
-    }
-
-    // Jquery Cookie Bar
-    if (typeof $("body").data('cookie-bar-page-link') !== 'undefined') {
-        $.cookieBar('addTranslation', 'fr', {
-            message: 'Nous utilisons des cookies pour fournir nos services. En utilisant ce site Web, vous acceptez cela.',
-            acceptText: 'D\'accord',
-            infoText: 'Plus d\'information'
-        });
-        $.cookieBar('addTranslation', 'es', {
-            message: 'Usamos cookies para brindar nuestros servicios. Al utilizar este sitio web, acepta esto.',
-            acceptText: 'Bueno',
-            infoText: 'Más información'
-        });
-        $.cookieBar('addTranslation', 'ar', {
-            message: 'نحن نستخدم ملفات تعريف الارتباط لتقديم خدماتنا. باستخدام هذا الموقع ، فإنك توافق على ذلك.',
-            acceptText: 'حسنا',
-            infoText: 'المزيد من المعلومات'
-        });
-        $.cookieBar('addTranslation', 'de', {
-            message: 'Wir verwenden Cookies, um unsere Dienste bereitzustellen. Durch die Nutzung dieser Website stimmen Sie dem zu.',
-            acceptText: 'OK',
-            infoText: 'Mehr Informationen'
-        });
-        $.cookieBar('addTranslation', 'pt', {
-            message: 'Usamos cookies para fornecer nossos serviços. Ao usar este site, você concorda com isso.',
-            acceptText: 'OK',
-            infoText: 'Mais Informações'
-        });
-        $.cookieBar('addTranslation', 'br', {
-            message: 'Usamos cookies para fornecer nossos serviços. Ao usar este site, você concorda com isso.',
-            acceptText: 'OK',
-            infoText: 'Mais Informações'
-        });
-        $.cookieBar('addTranslation', 'it', {
-            message: 'Utilizziamo i cookie per fornire i nostri servizi. Utilizzando questo sito Web, accetti questo.',
-            acceptText: 'Va bene',
-            infoText: 'Maggiori informazioni'
-        });
-        $.cookieBar({
-            style: 'bottom',
-            infoLink: $("body").data('cookie-bar-page-link'),
-            language: $("html").attr("lang")
-        });
-    }
-
-    // Color picker
-    $(".color-picker").colorpicker();
-
-    // Get background color of an element
-    function hex(x) {
-        return ("0" + parseInt(x).toString(16)).slice(-2);
-    }
-    function rgb2hex(rgb) {
-        rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*\d+\.*\d+)?\)$/);
-        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-    }
-
-    function getProperty(el, prop) {
-        return $(el).css(prop) || '';
-    }
-
-    $.fn.bgColor = function () {
-        return rgb2hex(getProperty(this.get(0), 'background-color'));
-    };
-
-    $.fn.fgColor = function () {
-        return rgb2hex(getProperty(this.get(0), 'color'));
-    };
-
-    $.fn.hasAttr = function (name) {
-        return this.attr(name) !== undefined;
-    };
-
-    $.fn.rotationInfo = function () {
-        var el = $(this),
-                tr = el.css("-webkit-transform") || el.css("-moz-transform") || el.css("-ms-transform") || el.css("-o-transform") || '',
-                info = {rad: 0, deg: 0};
-        if (tr = tr.match('matrix\\((.*)\\)')) {
-            tr = tr[1].split(',');
-            if (typeof tr[0] != 'undefined' && typeof tr[1] != 'undefined') {
-                info.rad = Math.atan2(tr[1], tr[0]);
-                info.deg = parseFloat((info.rad * 180 / Math.PI).toFixed(1));
-            }
-        }
-        return info;
-    };
-    */
-});

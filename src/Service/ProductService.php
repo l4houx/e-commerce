@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\Product;
+use App\Entity\Shop\Product;
 use App\Event\ProductCreatedEvent;
 use App\Event\PreProductCreatedEvent;
-use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\Shop\ProductRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Psr\EventDispatcher\EventDispatcherInterface;
 

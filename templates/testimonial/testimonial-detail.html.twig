@@ -13,7 +13,7 @@
         <div class="container">
             <div class="inner-container-small text-center mb-4 mb-sm-5">
                 <h2 class="mb-0">{{ 'What people say about us'|trans }}</h2>
-                <p>{{ "%resultsCount% testimonial(s) found"|trans({'%resultsCount%': testimonials.getTotalItemCount}) }}</p>
+                <p>{{ pagetitle }}</p>
             </div>
             {% if testimonials.getTotalItemCount > 0 %}
                 <div class="row mt-0">
@@ -23,7 +23,11 @@
                 </div>
                 {{ knp_pagination_render(testimonials, null, {}, {'align': 'center'}) }}
             {% else %}
-                {% include "global/message.html.twig" with { type: "info", message: ('No testimonials found'|trans), icon: "fas fa-exclamation" } %}
+                {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                    {% block content %}
+                        {{ 'No testimonials found'|trans }}
+                    {% endblock %}
+                {% endcomponent %}
             {% endif %}
         </div>
     </section>

@@ -31,6 +31,7 @@ parameters:
     website_root_url:        '%env(WEBSITE_ROOT_URL)%'
     website_url:             '%env(WEBSITE_URL)%'
     website_dashboard_path:  '%env(WEBSITE_DASHBOARD_PATH)%'
+    website_admin_dashboard_path: '%env(WEBSITE_ADMIN_DASHBOARD_PATH)%'
 
     # Social
     website_facebook_url:    '%env(WEBSITE_FACEBOOK_URL)%'
@@ -55,14 +56,11 @@ parameters:
 
     # Language
     locale: '%env(DEFAULT_LOCALE)%'
-    # This parameter defines the codes of the locales (languages) enabled in the application
-    #app_locales: en|fr
 
     router.request_context.host: "%website_root_url%"
     router.request_context.scheme: 'https'
     asset.request_context.secure: true
-    # router.request_context.base_url: "%website_root_url%"
-    # asset.request_context.base_path: '%router.request_context.base_url%'
+
     container.dumper.inline_factories: true
     container.dumper.inline_class_loader: true
 
@@ -87,7 +85,15 @@ services:
             string $defaultLocale: '%locale%'
 
             # Website patch
-            $dashboardPath: '%website_dashboard_path%'
+            $dashboardPath: '%website_admin_dashboard_path%'
+
+            # SuperAdministratorVoter (Administrator)
+            string $appEnvironment: '%kernel.environment%'
+
+            # Website update
+            string $uploadDirectory: 'uploads'
+            string $publicDirectory: '%kernel.project_dir%/public'
+            #string $tempDirectory: '%kernel.cache_dir%'
 
             # Website email
             # string $emailSender: '%website_no_reply_email%'
@@ -114,7 +120,3 @@ services:
     # Setting
     app.setting:
         alias: App\Service\SettingService
-
-    # Notification Comment
-    # App\EventSubscriber\NotificationCommentsSubscriber:
-        # $sender: '%website_no_reply_email%'

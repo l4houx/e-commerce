@@ -39,8 +39,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $builder,
             $page,
             HasLimit::USER_LIMIT,
-            ['wrap-queries' => true],
             [
+                'wrap-queries' => true,
                 'distinct' => false,
                 'sortFieldAllowList' => ['u.id', 'u.username', 'u.lastname', 'u.firstname'],
             ]

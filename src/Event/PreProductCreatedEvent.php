@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Entity\Product;
+use App\Entity\Shop\Product;
 
 class PreProductCreatedEvent
 {

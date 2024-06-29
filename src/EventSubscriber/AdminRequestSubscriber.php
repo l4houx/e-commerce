@@ -3,18 +3,17 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Traits\HasRoles;
-use App\Http\Admin\Controller\BaseController;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use App\Controller\Dashboard\Admin\AdminBaseController;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AdminRequestSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly string $dashboardPath, 
+        private readonly string $dashboardPath,
         private readonly AuthorizationCheckerInterface $auth
     ) {
     }
@@ -24,11 +23,11 @@ class AdminRequestSubscriber implements EventSubscriberInterface
         if (!$event->isMainRequest()) {
             return;
         }
-        $uri = '/' . trim($event->getRequest()->getRequestUri(), '/') . '/';
-        $path = '/' . trim($this->dashboardPath, '/') . '/';
+        $uri = '/'.trim($event->getRequest()->getRequestUri(), '/').'/';
+        $path = '/'.trim($this->dashboardPath, '/').'/';
         if (
-            substr($uri, 0, mb_strlen($path)) === $path &&
-            !$this->auth->isGranted(HasRoles::TEAM)
+            substr($uri, 0, mb_strlen($path)) === $path
+            && !$this->auth->isGranted(HasRoles::TEAM)
         ) {
             $exception = new AccessDeniedException();
             $exception->setSubject($event->getRequest());
@@ -42,7 +41,7 @@ class AdminRequestSubscriber implements EventSubscriberInterface
             return;
         }
         $controller = $event->getController();
-        if (is_array($controller) && $controller[0] instanceof AdminBaseController && !$this->auth->isGranted(HasRoles::TEAM)) {
+        if (is_array($controller) && $controller[0] instanceof AbstractDashboardController && !$this->auth->isGranted(HasRoles::TEAM)) {
             $exception = new AccessDeniedException();
             $exception->setSubject($event->getRequest());
             throw $exception;

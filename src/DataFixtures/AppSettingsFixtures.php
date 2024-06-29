@@ -2,32 +2,33 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\AppLayoutSetting;
-use App\Entity\Currency;
-use App\Entity\HomepageHeroSetting;
-use App\Entity\Setting;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Settings\Setting;
+use App\Entity\Settings\Currency;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use App\Entity\Settings\AppLayoutSetting;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Settings\HomepageHeroSetting;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AppSettingsFixtures extends Fixture
 {
     use FakerTrait;
 
-    private $counter = 1;
+    private int $autoIncrement;
 
     public function __construct(
         protected readonly ParameterBagInterface $parameter,
         private readonly SluggerInterface $slugger
     ) {
+        $this->autoIncrement = 1;
     }
 
     public function load(ObjectManager $manager): void

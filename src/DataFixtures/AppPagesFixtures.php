@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Page;
 use App\Entity\Question;
+use App\Entity\Settings\Page;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 

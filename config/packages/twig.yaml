@@ -1,7 +1,5 @@
 twig:
     file_name_pattern: '*.twig'
-    #form_themes: ['bootstrap_5_layout.html.twig']
-    #form_themes: ['form/layout.html.twig']
 
     form_themes:
         - 'form/layout.html.twig'
@@ -10,9 +8,6 @@ twig:
     globals:
         # Setting
         setting: '@App\Service\SettingService'
-
-        # Language
-        #locales: "%app_locales%"
 
         # Google
         #google_maps_api_key: "%google_maps_api_key%"

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'SubCategory '|trans ~ subCategory.name %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+	{% set breadcrumb = [{ "shop": "Products"|trans, "current":(pagetitle) }] %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+    <section class="pt-0">
+        <div class="container">
+            <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                <h3>{{ 'Filter by subcategory'|trans }}</h3>
+                <a class="icon-link icon-link-hover text-body-secondary text-primary-hover" href="{{ path('shop') }}">
+                    {{ 'See all products'|trans }}
+                    <i class="fas fa-arrow-right"></i> 
+                </a>
+            </div>
+            {% if products.getTotalItemCount > 0 %}
+                <div class="row g-4 g-sm-5">
+                    {% for product in products %}
+                        {% include "global/product-card.html.twig" with {product: product, thumbnailsize: [241, 241]} %}
+                    {% endfor %}
+                    {{ knp_pagination_render(products, null, {}, {'align': 'right'}) }}
+                </div>
+            {% else %}
+                {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                    {% block content %}
+                        {{ 'No products found'|trans }}
+                    {% endblock %}
+                {% endcomponent %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

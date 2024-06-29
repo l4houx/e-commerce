@@ -2,9 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Size;
-use App\Entity\Brand;
-use App\Entity\Color;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 

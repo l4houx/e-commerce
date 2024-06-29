@@ -5,13 +5,13 @@
 
 {% block breadcrumb %}
     {% if items | length > 0 %}
-        {% set breadcrumb = [{ "products": "All product"|trans, "current":(pagetitle) }] %}
+        {% set breadcrumb = [{ "shop": "All product"|trans, "current":(pagetitle) }] %}
         {% include "global/breadcrumb.html.twig" with breadcrumb %}
     {% endif %}
 {% endblock %}
 
 {% block body %}
-    {% if items | length > 0 %}
+    {% if items|length > 0 %}
         {% set total = null %}
         <section class="pt-0">
             <div class="container">
@@ -39,7 +39,7 @@
                                             <div class="row g-3 g-sm-4">
                                                 <div class="col-xl-5">
                                                     <h6 class="mb-1">
-                                                        <a href="{{ path('product', {id: item.product.id }) }}">
+                                                        <a href="{{ path('shop_product', {id: item.product.id }) }}">
                                                             {{ item.product.name }}
                                                         </a>
                                                         <span class="fw-bold">
@@ -75,7 +75,7 @@
                                     <hr>
                                 {% endfor %}
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ path('products') }}" class="btn btn-primary">
+                                    <a href="{{ path('shop') }}" class="btn btn-primary">
                                         {{ 'Continue Shopping'|trans }}
                                     </a>
                                     <a href="#" class="btn btn-light border mb-0">
@@ -151,19 +151,23 @@
                         <p class="mb-0">{{ 'Perceived end knowledge certainly day sweetness why cordially'|trans }}</p>
                     </div>
                 </div>
-                {% if questions | length > 0 %}
+                {% if questions|length > 0 %}
                     <div class="row g-4 g-md-5">
                         {% for q in questions %}
                             <div class="col-md-6 col-lg-4">
                                 <div class="card card-body border bg-transparent h-100 p-4">
                                     <h6>{{ q.question }}?</h6>
-                                    <p class="mb-0">{{ q.answer | html_markdown }}.</p>
+                                    <p class="mb-0">{{ q.answer|html_markdown }}.</p>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 {% else %}
-                    {% include "global/message.html.twig" with { type: "info", message: ('No questions found'|trans), icon: "bi bi-exclamation-circle" } %}
+                    {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                        {% block content %}
+                            {{ 'No questions found'|trans }}
+                        {% endblock %}
+                    {% endcomponent %}
                 {% endif %}
             </div>
         </section>
@@ -201,7 +205,7 @@
                     <p class="mb-0">
                         {{ 'I think the below button is important. Hit this button and you will find a lot of interesting products on our "Shop" page'|trans }}
                     </p>
-                    <a href="{{ path('products') }}" class="btn btn-primary mt-4 mb-0">{{ 'Back to Shop'|trans }}</a>
+                    <a href="{{ path('shop') }}" class="btn btn-primary mt-4 mb-0">{{ 'Back to Shop'|trans }}</a>
                 </div>
             </div>
         </section>

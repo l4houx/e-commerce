@@ -8,7 +8,7 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-    {% set breadcrumb = [{ "products": "All product"|trans, "cart": ("My cart"|trans), "current":(pagetitle) }] %}
+    {% set breadcrumb = [{ "shop": "All product"|trans, "cart": ("My cart"|trans), "current":(pagetitle) }] %}
     {% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 

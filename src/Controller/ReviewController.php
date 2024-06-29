@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
+use App\Entity\Shop\Product;
 use App\Service\SettingService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReviewController extends BaseController
 {
-    #[Route(path: '/product/{slug}/reviews', name: 'product_reviews', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    #[Route(path: '/shop/{slug}/reviews', name: 'shop_reviews', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function review(
         Request $request,
         PaginatorInterface $paginator,
@@ -32,12 +32,12 @@ class ReviewController extends BaseController
         }
 
         $reviews = $paginator->paginate(
-            $settingService->getReviews(['product' => $product->getId(), 'keyword' => $keyword])->getQuery(),
+            $settingService->getReviews(['shop_product' => $product->getSlug(), 'keyword' => $keyword])->getQuery(),
             $request->query->getInt('page', 1),
             $settingService->getSettings('reviews_per_page'),
             ['wrap-queries' => true]
         );
 
-        return $this->render('product/review.html.twig', compact('product', 'reviews'));
+        return $this->render('shop/review.html.twig', compact('product', 'reviews'));
     }
 }

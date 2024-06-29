@@ -2,21 +2,21 @@
 
 namespace App\Controller;
 
-use App\Entity\Order;
-use App\Entity\Shipping;
-use App\Entity\Traits\HasRoles;
-use App\Form\OrderFormType;
-use App\Repository\OrderRepository;
-use App\Repository\ProductRepository;
+use App\Entity\Shop\Order;
 use App\Service\CartService;
+use App\Entity\Shop\Shipping;
+use App\Entity\Traits\HasRoles;
+use App\Form\Shop\OrderFormType;
+use App\Repository\Shop\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\Shop\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted(HasRoles::DEFAULT)]
 class OrderController extends AbstractController

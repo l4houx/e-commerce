@@ -38,9 +38,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 ->setSlug($this->slugger->slug($post->getName())->lower())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setReadtime(rand(10, 160))
-                // ->setAuthor($this->getReference('Admin'))
-                // ->setTags(mt_rand(0, 1) === 1 ? $this->faker()->unique()->word() : null)
-                // ->setTags(mt_rand(0, 1) === 1 ? $tags : null)
+                ->setAuthor($this->getReference('SuperAdministrator'))
                 ->setMetaTitle($post->getName())
                 ->setMetaDescription($this->faker()->realText(100))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
@@ -72,13 +70,6 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 $post->setTags(1 === mt_rand(0, 1) ? $tag : null);
             }
 
-            // Create Post Like
-            for ($i = 0; $i < mt_rand(0, 15); $i++) {
-                $post->addLike(
-                    $users[mt_rand(0, count($users) - 1)]
-                );
-            }
-
             $manager->persist($post);
             $posts[] = $post;
 
@@ -87,7 +78,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
                 $comment = (new Comment())
                     ->setIp($this->faker()->ipv4)
                     ->setContent($this->faker()->paragraph())
-                    ->setAuthor($this->getReference('user-'.$this->faker()->numberBetween(1, 10)))
+                    ->setAuthor($this->faker()->randomElement($users))
                     ->setPost($post)
                     ->setParent(null)
                     ->setIsApproved($this->faker()->numberBetween(0, 1))
@@ -108,7 +99,7 @@ class AppPostFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            AppAdminTeamUserFixtures::class,
+            AppUserFixtures::class,
             AppPostCategoryFixtures::class,
             AppPostTypeFixtures::class,
         ];

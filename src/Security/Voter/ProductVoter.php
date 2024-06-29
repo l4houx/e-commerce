@@ -2,12 +2,12 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Product;
-use App\Entity\Traits\HasRoles;
 use App\Entity\User;
+use App\Entity\Shop\Product;
+use App\Entity\Traits\HasRoles;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ProductVoter extends Voter
 {
@@ -57,7 +57,7 @@ class ProductVoter extends Voter
 
     private function canManage(User $user, Product $product): bool
     {
-        //return $recipe->getAuthor()->getId() === $user->getId();
+        //return $product->getAuthor()->getId() === $user->getId();
         return $user->isVerified() && $user == $product->getAuthor();
     }
 

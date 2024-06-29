@@ -69,18 +69,9 @@ class Post
     #[ORM\OrderBy(['publishedAt' => 'DESC'])]
     private Collection $comments;
 
-    /*
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
-    */
-
-    /**
-     * @var collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class)]
-    #[ORM\JoinTable('user_post_like')]
-    private Collection $likes;
+    private ?SuperAdministrator $author = null;
 
     public function stringifyStatus(): string
     {
@@ -115,8 +106,8 @@ class Post
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->comments = new ArrayCollection();
-        $this->likes = new ArrayCollection();
     }
 
     /**
@@ -243,54 +234,15 @@ class Post
         return $this;
     }
 
-    /*
-    public function getAuthor(): ?User
+    public function getAuthor(): ?SuperAdministrator
     {
         return $this->author;
     }
 
-    public function setAuthor(?User $author): static
+    public function setAuthor(?SuperAdministrator $author): static
     {
         $this->author = $author;
 
         return $this;
-    }
-    */
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getLikes(): Collection
-    {
-        return $this->likes;
-    }
-
-    public function addLike(User $like): static
-    {
-        if (!$this->likes->contains($like)) {
-            $this->likes->add($like);
-        }
-
-        return $this;
-    }
-
-    public function removeLike(User $like): static
-    {
-        $this->likes->removeElement($like);
-
-        return $this;
-    }
-
-    public function isLikedByUser(User $user): bool
-    {
-        return $this->likes->contains($user);
-    }
-
-    /**
-     * Get the number of likes.
-     */
-    public function howManyLikes(): int
-    {
-        return count($this->likes);
     }
 }

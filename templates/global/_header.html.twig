@@ -1,6 +1,3 @@
-{#  {% set routename = app.request.get('_route') %}
-{% set random = setting.generateReference(5) %} #}
-
 <header class="header-sticky header-absolute">
     {% include "global/user-isverified.html.twig" with { user: app.user } %}
     <nav class="navbar navbar-expand-xl">
@@ -11,8 +8,34 @@
             </a>
             <div class="navbar-collapse collapse" id="navbarCollapse">
                 <ul class="navbar-nav navbar-nav-scroll dropdown-hover mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if routename == "products" or routename == "product" %}active{% endif %}" href="{{ path('products') }}">{{ 'Browse Products'|trans }}</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if routename == "shop" or routename == "cart" or routename == "order" or routename == "sav" %}active{% endif %}" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">{{ 'Browse Shop'|trans }}</a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link {% if routename == "shop" %}active{% endif %}" href="{{ path("shop") }}">
+                                    {{ 'Shop'|trans }}
+                                </a>
+                            </li>
+                            {% if is_granted("ROLE_SHOP") %}
+                                <li class="nav-item">
+                                    <a class="nav-link {% if routename == "cart" %}active{% endif %}" href="{{ path("cart") }}">
+                                        {{ 'Cart'|trans }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if routename == "order" %}active{% endif %}" href="{{ path("order") }}">
+                                        {{ 'Order'|trans }}
+                                    </a>
+                                </li>
+                                {# 
+                                <li class="nav-item">
+                                    <a class="nav-link {% if routename == "sav" %}active{% endif %}" href="{{ path("sav") }}">
+                                        {{ 'Sav'|trans }}
+                                    </a>
+                                </li>
+                                #}
+                            {% endif %}
+                        </ul>
                     </li>
                     {#  
                     {% if categories is defined %}
@@ -41,13 +64,13 @@
                         </li>
                     {% endif %}
                     #}
-                    {% if categories()|length > 0 %}
+                    {% if getSubCategories()|length > 0 %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                                 {{ 'Explore'|trans }}
                             </a>
                             <ul class="dropdown-menu">
-                                {% for category in categories() %}
+                                {% for category in getSubCategories() %}
                                     <li class="dropdown dropend">
                                         <a class="nav-link dropdown-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                                             {{ category.name }}
@@ -55,7 +78,7 @@
                                         {% for subCategory in category.subCategories %}
                                             <ul class="dropdown-menu" data-bs-popper="none">
                                                 <li>
-                                                    <a class="dropdown-item" href="{{ path('subcategory_filter', { id : subCategory.id}) }}">
+                                                    <a class="dropdown-item" href="{{ path('shop_subcategory_filter', { id : subCategory.id}) }}">
                                                         {{ subCategory.name }}
                                                     </a>
                                                 </li>
@@ -67,10 +90,16 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
+                        <a class="nav-link {% if routename == "posts" or routename == "post" or routename == "post_searched" %}active{% endif %}" href="{{ path('posts') }}">
+                            {{ 'Blog'|trans }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if routename == "contact" %}active{% endif %}" href="{{ path('contact') }}">
                             {{ 'Contact'|trans }}
                         </a>
                     </li>
+                    {#  
                     {% if is_granted('ROLE_USER') %}
                         {% if is_granted('ROLE_TEAM') %}
                             {% if is_granted('ROLE_EDITOR') %}
@@ -261,70 +290,44 @@
                             </ul>
                         </li>
                     {% endif %}
-                </ul>
-                {#
-                <div class="d-flex gap-2" role="search">
-                    <div class="dropdown">
-                        <input aria-label="{{ "Search"|trans }}"
-                            autocomplete="off"
-                            class="form-control dropdown-toggle me-2"
-                            data-bs-toggle="dropdown"
-                            hx-get="{{ path('search_index') }}"
-                            hx-target="#searchDropdownMenu"
-                            name="keyword"
-                            placeholder="{{ "Search"|trans }}"
-                            type="text"
-                        >
-                        <div class="dropdown-menu" id="searchDropdownMenu" style="top: 50px; width: 460px;"></div>
-                    </div>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ app.user }}
-                            </button>
+                    #}
+                    {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if routename == "dashboard_main" or routename == "dashboard_account_profile" %}active{% endif %}" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                                {{ 'Hello'|trans }} {{ app.user.getFullName|lower|capitalize }}
+                            </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="{{ path('dashboard_main') }}">
+                                    <a class="dropdown-item {% if routename == "dashboard_main" or routename == "admin_dashboard_index" or routename == "dashboard_account_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
                                         {% if is_granted("ROLE_TEAM") %}
                                             {{ 'Dashboard'|trans }}
                                         {% else %}
-                                            {{ 'My dashboard'|trans }}
+                                            {{ 'My Dashboard'|trans }}
                                         {% endif %}
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ path('dashboard_user_client_index') }}">
-                                        {{ 'My profile'|trans }}
+                                    <a class="dropdown-item {% if routename == "dashboard_account_profile" %}active{% endif %}" href="{{ path('dashboard_account_profile') }}">
+                                        {{ 'My Profile'|trans }}
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('signout') }}">{{ 'Sign out'|trans }}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ 'Account'|trans }}
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('signin', {redirect: app.request.pathInfo}) }}">
-                                        {{ 'Sign in'|trans }}
-                                    </a>
-                                </li>
-                                {% if '1' == settings['users_can_register'] %}
+                                {% if not is_granted('IS_IMPERSONATOR') %}
                                     <li>
-                                        <a class="dropdown-item" href="{{ path('signup') }}">
-                                            {{ 'Sign up'|trans }}
+                                        <a class="dropdown-item" href="{{ path('signout') }}">
+                                            {{ 'Sign Out'|trans }}
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ impersonation_exit_path(path('home')) }}">
+                                            {{ 'Back to my access'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
                             </ul>
-                        </div>
+                        </li>
                     {% endif %}
-                </div>
-                #}
+                </ul>
             </div>
 			<ul class="nav align-items-center dropdown-hover ms-sm-2">
                 {% include "global/dropdown-item-bs-theme-text.html.twig" %}

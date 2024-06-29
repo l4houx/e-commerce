@@ -4,7 +4,7 @@
 {% if customLink is defined %}
     {% set link = customLink %}
 {% else %}
-    {% set link = path('product', { id : product.id }) %} 
+    {% set link = path('shop_product', { id : product.id }) %} 
 {% endif %}
 <div class="col-sm-6 col-lg-4">
 	<div class="card border bg-transparent overflow-hidden p-0 h-100">
@@ -18,11 +18,11 @@
 			{% if (not is_granted('IS_AUTHENTICATED_REMEMBERED') or is_granted('ROLE_USER')) and hideFavoriteButton is not defined %}
 				{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
 					{% if product.isAddedToFavoritesBy(app.user) %}
-						<button data-bs-target="{{ path('dashboard_user_favorites_remove', { id : product.id }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-remove" bs-data-toggle="tooltip" title="{{ "Remove from favorites"|trans }}">
+						<button bs-data-target="{{ path('dashboard_account_favorites_remove', { slug : product.slug }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-remove" bs-data-toggle="tooltip" title="{{ "Remove from favorites"|trans }}">
 							<i class="fas fa-heart"></i>
 						</button>
 					{% else %}
-						<button data-bs-target="{{ path('dashboard_user_favorites_new', { id : product.id }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-new" bs-data-toggle="tooltip" title="{{ "Add to favorites"|trans }}">
+						<button bs-data-target="{{ path('dashboard_account_favorites_new', { slug : product.slug }) }}" class="btn btn-white btn-round border mb-0 ms-auto product-favorites-new" bs-data-toggle="tooltip" title="{{ "Add to favorites"|trans }}">
 							<i class="far fa-heart"></i>
 						</button>
 					{% endif %}
