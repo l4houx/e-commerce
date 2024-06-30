@@ -49,7 +49,7 @@ class TicketController extends BaseController
 
         $tickets = $this->ticketRepository->findForPagination($page, $findAll ? null : $userId);
 
-        return $this->render('dashboard/shared/tickets/index.html.twig', compact("tickets","pages"));
+        return $this->render('dashboard/shared/tickets/index.html.twig', compact("tickets"));
     }
 
     #[Route(path: '/my-tickets/new', name: 'ticket_new', methods: ['GET', 'POST'])]

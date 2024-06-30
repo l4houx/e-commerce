@@ -12,7 +12,7 @@ trait HasRatingTrait
     #[Assert\NotBlank]
     private int $rating;
 
-    public function getRatingPercentage(): int|float
+    public function getRatingPercentage()
     {
         return ($this->rating / 5) * 100;
     }

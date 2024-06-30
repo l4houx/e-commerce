@@ -4,7 +4,7 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-    {% if items | length > 0 %}
+    {% if items|length > 0 %}
         {% set breadcrumb = [{ "shop": "All product"|trans, "current":(pagetitle) }] %}
         {% include "global/breadcrumb.html.twig" with breadcrumb %}
     {% endif %}
@@ -39,7 +39,7 @@
                                             <div class="row g-3 g-sm-4">
                                                 <div class="col-xl-5">
                                                     <h6 class="mb-1">
-                                                        <a href="{{ path('shop_product', {id: item.product.id }) }}">
+                                                        <a href="{{ path('shop_product', {slug: item.product.slug }) }}">
                                                             {{ item.product.name }}
                                                         </a>
                                                         <span class="fw-bold">
@@ -130,7 +130,7 @@
                                     </span>
                                 </div>
                                 <div class="d-grid">
-                                    <a href="{{ path('order') }}" class="btn btn-lg btn-primary mb-0">
+                                    <a href="{{ path('order') }}" class="btn btn-lg btn-primary mb-0" data-turbo="false">
                                         {{ 'Continue to Checkout'|trans }}
                                     </a>
                                     <a href="{{ path('cart_empty') }}" class="btn btn-lg btn-outline-danger mt-4 mb-0" onclick="return confirm('{{"You are about to empty your cart"|trans }}')">

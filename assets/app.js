@@ -3,8 +3,9 @@ import './bootstrap.js';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './styles/app.css';
 
-import { Tooltip, Toast, Modal, Popover } from 'bootstrap';
+import { Tooltip, Toast, Modal, Popover, Dropdown } from 'bootstrap';
 
+/*
 Array.from(document.querySelectorAll('.modal-onload'))
     .map((e) => new Modal(e, { backdrop: false }))
     .forEach((modal) => modal.show());
@@ -65,11 +66,13 @@ sidebarTogglers.map((toggler) => toggler.addEventListener('click', () => {
             .classList
             .contains('sidebar-open')));
 }));
+*/
 
+/*
 $(document).ready(function () {
     function Toastr() {
         Array.from(document.querySelectorAll('.toast'))
-        .map((toast) => (new Toast(toast)).show());
+            .map((toast) => (new Toast(toast)).show());
     }
 
     // Product favorites ajax add and remove
@@ -115,7 +118,7 @@ $(document).ready(function () {
         ajaxRequest(thisButton);
     });
 });
-
+*/
 
 "use strict";
 !function () {
@@ -157,10 +160,13 @@ $(document).ready(function () {
 var e = {
     init: function () {
         e.preLoader(),
-            e.stickyHeader(),
-            e.toolTipFunc(),
-            e.popOverFunc(),
-            e.backTotop()
+        e.dropdownHover(),
+        e.stickyHeader(),
+        e.toolTipFunc(),
+        e.popOverFunc(),
+        e.backTotop(),
+        e.stickyElement(),
+        e.autoTabinput()
     },
     isVariableDefined: function (el) {
         return typeof !!el && (el) != 'undefined' && el != null;
@@ -288,7 +294,6 @@ var e = {
         return document.querySelectorAll(selectors);
     },
 
-
     // START: 01 Preloader
     preLoader: function () {
         window.onload = function () {
@@ -304,28 +309,26 @@ var e = {
     // END: Preloader
 
     // START: 02 Menu Dropdown Hover
-    /*
     dropdownHover: function () {
-      if (window.matchMedia('(min-width: 992px)').matches) {
-        (function($bs) {
-          document.querySelectorAll('.dropdown-hover .dropdown').forEach(function(dd) {
-              dd.addEventListener('mouseenter', function(e) {
-                  let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-                  if (!toggle.classList.contains('show')) {
-                      $bs.Dropdown.getOrCreateInstance(toggle).toggle();
-                  }
-              });
-              dd.addEventListener('mouseleave', function(e) {
-                  let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-                  if (toggle.classList.contains('show')) {
-                      $bs.Dropdown.getOrCreateInstance(toggle).toggle();
-                  }
-              });
-          });
-        })(bootstrap);
-      }
+        if (window.matchMedia('(min-width: 992px)').matches) {
+            (function () {
+                document.querySelectorAll('.dropdown-hover .dropdown').forEach(function (dd) {
+                    dd.addEventListener('mouseenter', function (e) {
+                        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
+                        if (!toggle.classList.contains('show')) {
+                            Dropdown.getOrCreateInstance(toggle).toggle();
+                        }
+                    });
+                    dd.addEventListener('mouseleave', function (e) {
+                        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
+                        if (toggle.classList.contains('show')) {
+                            Dropdown.getOrCreateInstance(toggle).toggle();
+                        }
+                    });
+                });
+            })();
+        }
     },
-    */
     // END: Menu Dropdown Hover
 
     // START: 03 Sticky Header
@@ -390,5 +393,49 @@ var e = {
         }
     },
     // END: Back to Top
+
+    // START: 12 Sticky element
+    /* @required https://github.com/rgalus/sticky-js */
+    stickyElement: function () {
+        var scrollpos = window.scrollY;
+        var sp = e.select('.sticky-element');
+        if (e.isVariableDefined(sp)) {
+            var add_class_on_scroll = () => sp.addClass("sticky-element-sticked");
+            var remove_class_on_scroll = () => sp.removeClass("sticky-element-sticked");
+            window.addEventListener('scroll', function () {
+                scrollpos = window.scrollY;
+                if (scrollpos >= 800) {
+                    add_class_on_scroll()
+                } else {
+                    remove_class_on_scroll()
+                }
+            });
+        }
+    },
+    // END: Sticky element
+
+    // START: 15 Auto tab
+    autoTabinput: function () {
+        var autb = document.getElementsByClassName("autotab")[0];
+        if (e.isVariableDefined(autb)) {
+            autb.onkeyup = function (e) {
+                var target = e.srcElement;
+                var maxLength = parseInt(target.attributes["maxlength"].value, 10);
+                var myLength = target.value.length;
+                if (myLength >= maxLength) {
+                    var next = target;
+                    while (next = next.nextElementSibling) {
+                        if (next == null)
+                            break;
+                        if (next.tagName.toLowerCase() == "input") {
+                            next.focus();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    },
+    // END: Auto tab input
 };
 e.init();

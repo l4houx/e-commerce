@@ -16,21 +16,6 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        admin:
-            lazy: true
-            provider: app_admin_provider
-            entry_point: App\Security\AuthenticationEntryPoint
-            user_checker: App\Security\UserChecker
-            custom_authenticator: App\Security\AdminAuthenticator
-            logout:
-                path: admin_dashboard_signout
-                target: admin_dashboard_signin
-            remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 2592000 # 1 month in seconds
-                path: /
-                always_remember_me: true
-            #access_denied_handler: App\Security\AccessDeniedHandler
         main:
             lazy: true
             provider: app_user_provider

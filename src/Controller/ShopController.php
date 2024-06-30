@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Shop\Product;
 use App\Entity\Traits\HasLimit;
+use App\Entity\Traits\HasRoles;
+use App\Service\SettingService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Shop\ProductRepository;
 use App\Repository\Shop\CategoryRepository;
@@ -21,13 +23,14 @@ class ShopController extends AbstractController
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly CategoryRepository $categoryRepository,
+        private readonly SettingService $settingService,
         private readonly PaginatorInterface $paginator,
         private readonly TranslatorInterface $translator
     ) {
     }
 
     #[Route(path: '/shop', name: 'shop', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function shop(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
         $products = $this->productRepository->findForPagination($page);
@@ -38,16 +41,20 @@ class ShopController extends AbstractController
         return $this->render('shop/index.html.twig', compact('products'));
     }
 
-    #[Route(path: '/shop/product/{id}', name: 'shop_product', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
-    public function product(Request $request, Product $product, EntityManagerInterface $em): Response
+    #[Route(path: '/shop/{slug}', name: 'shop_product', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    public function shopProduct(Request $request, Product $product, EntityManagerInterface $em): Response
     {
         $similarProducts = $this->productRepository->findSimilar($product);
         // $categories = $this->categoryRepository->findAll();
 
+        /** @var Product $product */
+        //$product = $this->settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
+        $product = $this->productRepository->findOneBy(['slug' => $request->get('slug')]);
+
         if (!$product) {
             $this->addFlash('danger', $this->translator->trans('The product not be found'));
 
-            return $this->redirectToRoute('products', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('shop', [], Response::HTTP_SEE_OTHER);
         }
 
         $product->viewed();
@@ -57,7 +64,7 @@ class ShopController extends AbstractController
         return $this->render('shop/product.html.twig', compact('product', 'similarProducts'));
     }
 
-    #[Route(path: '/shop/product/subcategory/{id}/filter', name: 'shop_subcategory_filter', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[Route(path: '/shop/subcategory/{id}/filter', name: 'shop_subcategory_filter', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     public function subCategoryFilter(Request $request, SubCategoryRepository $subCategoryRepository, $id): Response
     {
         $products = $this->paginator->paginate(
@@ -72,20 +79,5 @@ class ShopController extends AbstractController
         // $categories = $this->categoryRepository->findAll();
 
         return $this->render('shop/filter.html.twig', compact('products', 'subCategory'));
-    }
-
-    #[Route(path: '/shop/product/subcategory/{id}', name: 'shop_allsubcategory', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
-    public function allSubCategory(Request $request, SubCategoryRepository $subCategoryRepository, $id): Response
-    {
-        $products = $this->paginator->paginate(
-            $subCategoryRepository->find($id)->getProducts(),
-            $request->query->getInt('page', 1),
-            HasLimit::PRODUCT_LIMIT,
-            ['wrap-queries' => true]
-        );
-
-        $subCategory = $subCategoryRepository->find($id);
-
-        return $this->render('shop/categories.html.twig', compact('products', 'subCategory'));
     }
 }

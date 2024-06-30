@@ -5,20 +5,21 @@ namespace App\Form\Shop;
 use App\Entity\Shop\Order;
 use App\Entity\Shop\Shipping;
 use App\Form\FormListenerFactory;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
+use function Symfony\Component\Translation\t;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class OrderFormType extends AbstractType
 {
@@ -138,9 +139,9 @@ class OrderFormType extends AbstractType
                 ],
             ])
             // ->add('countrycode', CountryAutocompleteField::class)
-            ->add('coupon', CouponAutocompleteField::class)
-            ->add('ref', HiddenType::class, [
-                'label' => t('Reference'),
+            ->add('isPayOnDelivery', CheckboxType::class, [
+                'label' => t('Pay On Delivery'),
+                'required' => false,
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;

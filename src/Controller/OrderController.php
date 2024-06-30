@@ -6,6 +6,7 @@ use App\Entity\Shop\Order;
 use App\Service\CartService;
 use App\Entity\Shop\Shipping;
 use App\Entity\Traits\HasRoles;
+use App\Service\SettingService;
 use App\Form\Shop\OrderFormType;
 use App\Repository\Shop\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,26 +26,31 @@ class OrderController extends AbstractController
         private readonly EntityManagerInterface $em,
         private readonly ProductRepository $productRepository,
         private readonly OrderRepository $orderRepository,
+        private readonly SettingService $settingService,
         private readonly TranslatorInterface $translator
     ) {
     }
 
-    #[Route(path: '/order', name: 'order', methods: ['GET'])]
+    #[Route(path: '/order', name: 'order', methods: ['GET', 'POST'])]
     public function order(Request $request, CartService $cartService): Response
     {
         $order = new Order();
         // $order->setUsers($this->getUser());
-        $order->setRef(uniqid());
+        $order->setRef($this->settingService->generateReference(4));
 
         $form = $this->createForm(OrderFormType::class, $order)->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->em->persist($order);
-                $this->em->flush();
+                if ($order->isPayOnDelivery()) {
+                    $order->setCreatedAt(new \DateTimeImmutable());
+                    $order->setTotalPrice($cartService->getTotal());
+                    $this->em->persist($order);
+                    $this->em->flush();
+                }
 
                 $this->addFlash('success', $this->translator->trans('Content was created successfully.'));
 
-                return $this->redirectToRoute('order', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
             } else {
                 $this->addFlash('danger', $this->translator->trans('The form contains invalid data'));
             }

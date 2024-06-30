@@ -20,148 +20,48 @@
                         </div>
                         <div class="offcanvas-body flex-column p-3 p-xl-0">
                             <div class="accordion accordion-alt" id="accordionExample">
-                                <!-- Availability -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                            Availability
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                        <form
-                                            class="accordion-body">
-
-                                            <!-- Availability group -->
-                                            <div class="form-check">
-                                                <input class="form-check-input focus-shadow-none" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked="">
-                                                <label class="form-check-label" for="flexRadioDefault1">
-                                                    All
-                                                </label>
-                                            </div>
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input focus-shadow-none" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                                                <label class="form-check-label" for="flexRadioDefault2">
-                                                    New Arrival
-                                                </label>
-                                            </div>
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input focus-shadow-none" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                                                <label class="form-check-label" for="flexRadioDefault3">
-                                                    On Stock Only
-                                                </label>
-                                            </div>
-
-                                        </form>
+                                {% if settings["show_category_filter"] == "1" %}
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button fs-6 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#filter-category" aria-expanded="true" aria-controls="filter-category">
+                                                {{ "Category"|trans }}
+                                            </button>
+                                        </h2>
+                                        <div id="filter-category" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                            <form class="accordion-body">
+                                                <select id="category" name="category" class="form-select" aria-label="Default select example" data-sort-options="1">
+                                                    <option value="">&nbsp;</option>
+                                                    {% for category in setting.getCategories({}).getQuery().getResult() %}
+                                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Categories -->
+                                {% endif %}
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button fs-6 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                                            Categories
+                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filter-price" aria-expanded="false" aria-controls="filter-price">
+                                            {{ "Price"|trans }}
                                         </button>
                                     </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                        <form
-                                            class="accordion-body">
-
-                                            <!-- Checkbox -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="category1">
-                                                <label class="form-check-label heading-color" for="category1">Fashion</label>
-                                                <span class="small float-end">(215)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category2">
-                                                <label class="form-check-label heading-color" for="category2">Electronics</label>
-                                                <span class="small float-end">(142)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category3">
-                                                <label class="form-check-label heading-color" for="category3">Games</label>
-                                                <span class="small float-end">(25)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category4">
-                                                <label class="form-check-label heading-color" for="category4">Books</label>
-                                                <span class="small float-end">(81)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category5">
-                                                <label class="form-check-label heading-color" for="category5">Mobile</label>
-                                                <span class="small float-end">(354)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category6">
-                                                <label class="form-check-label heading-color" for="category6">Bags</label>
-                                                <span class="small float-end">(41)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category7">
-                                                <label class="form-check-label heading-color" for="category7">Beauty products</label>
-                                                <span class="small float-end">(35)</span>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="category8">
-                                                <label class="form-check-label heading-color" for="category8">Grocery</label>
-                                                <span class="small float-end">(41)</span>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- Price -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                            Price
-                                        </button>
-                                    </h2>
-                                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                        <form
-                                            class="accordion-body">
-
-                                            <!-- Checkbox -->
+                                    <div id="filter-price" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <form class="accordion-body">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="" id="price1">
                                                 <label class="form-check-label heading-color" for="price1">$0 to $200</label>
                                             </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="price2">
-                                                <label class="form-check-label heading-color" for="price2">$200 to $500</label>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="price3">
-                                                <label class="form-check-label heading-color" for="price3">$500 to $1500</label>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="price4">
-                                                <label class="form-check-label heading-color" for="price4">$1500 to more</label>
-                                            </div>
                                         </form>
                                     </div>
                                 </div>
-                                <!-- Color -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                            Color
+                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filter-color" aria-expanded="false" aria-controls="filter-color">
+                                            {{ "Color"|trans }}
                                         </button>
                                     </h2>
-                                    <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                        <form
-                                            class="accordion-body">
-                                            <!-- Radio color tabs -->
+                                    <div id="filter-color" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <form class="accordion-body">
                                             <div class="color-check-radio">
                                                 <input class="form-check-input" type="radio" name="flexRadiocolor" id="flexRadiocolor1" style="background-color: #9a0a0a;">
                                                 <label class="form-check-label" for="flexRadiocolor1"></label>
@@ -178,45 +78,18 @@
                                         </form>
                                     </div>
                                 </div>
-                                <!-- Rating star -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                            Rating star
+                                        <button class="accordion-button fs-6 fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filter-star" aria-expanded="false" aria-controls="filter-star">
+                                            {{ "Rating star"|trans }}
                                         </button>
                                     </h2>
-                                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                    <div id="filter-star" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                         <form class="accordion-body">
-                                            <ul
-                                                class="list-inline mb-0 g-3">
-                                                <!-- Item -->
+                                            <ul class="list-inline mb-0 g-3">
                                                 <li class="list-inline-item mb-0">
                                                     <input type="checkbox" class="btn-check" id="btn-check-6">
                                                     <label class="btn btn-sm btn-light btn-primary-soft-check" for="btn-check-6">1<i class="bi bi-star-fill"></i>
-                                                    </label>
-                                                </li>
-                                                <!-- Item -->
-                                                <li class="list-inline-item mb-0">
-                                                    <input type="checkbox" class="btn-check" id="btn-check-7">
-                                                    <label class="btn btn-sm btn-light btn-primary-soft-check" for="btn-check-7">2<i class="bi bi-star-fill"></i>
-                                                    </label>
-                                                </li>
-                                                <!-- Item -->
-                                                <li class="list-inline-item mb-0">
-                                                    <input type="checkbox" class="btn-check" id="btn-check-8">
-                                                    <label class="btn btn-sm btn-light btn-primary-soft-check" for="btn-check-8">3<i class="bi bi-star-fill"></i>
-                                                    </label>
-                                                </li>
-                                                <!-- Item -->
-                                                <li class="list-inline-item mb-0">
-                                                    <input type="checkbox" class="btn-check" id="btn-check-15">
-                                                    <label class="btn btn-sm btn-light btn-primary-soft-check" for="btn-check-15">4<i class="bi bi-star-fill"></i>
-                                                    </label>
-                                                </li>
-                                                <!-- Item -->
-                                                <li class="list-inline-item mb-0">
-                                                    <input type="checkbox" class="btn-check" id="btn-check-16">
-                                                    <label class="btn btn-sm btn-light btn-primary-soft-check" for="btn-check-16">5<i class="bi bi-star-fill"></i>
                                                     </label>
                                                 </li>
                                             </ul>
@@ -235,19 +108,19 @@
                     <form class="row g-2 g-xl-4 mb-4">
                         <div class="col-md-6">
                             <div class="rounded position-relative">
-                                <input class="form-control bg-light pe-5" type="search" placeholder="{{ 'Search products by name or keyword...'|trans }}" aria-label="{{ 'Search'|trans }}">
+                                <input class="form-control bg-light pe-5" type="search" placeholder="{{ 'Search...'|trans }}" aria-label="{{ 'Search'|trans }}">
                                 <button class="btn bg-transparent border-0 px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit">
                                     <i class="fab fa-searchengin"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-3 ms-auto">
-                            <select class="form-select" aria-label="{{ 'Default select example'|trans }}">
-                                <option selected="">{{ 'Sort by'|trans }}</option>
-                                <option value="1">{{ 'Name'|trans }}</option>
-                                <option value="2">{{ 'Low to High Price'|trans }}</option>
-                                <option value="3">{{ 'Heigh to Low Price'|trans }}</option>
-                            </select>
+                        <div class="col-sm-6 col-md-3 d-grid ms-auto text-end">
+                            {% if settings["show_rss_feed_button"] == "1" %}
+                                <a href="{{ setting.getSettings("website_url")~"/rss" }}" class="btn btn-dark mb-0" data-bs-toggle="tooltip" title="{{"Products RSS feed"|trans}}" target="_blank">
+									<i class="fas fa-rss fa-fw"></i>
+                                    {{"RSS feed"|trans}}
+								</a>
+                            {% endif %}
                         </div>
                         <div class="col-sm-6 col-md-3 d-grid d-xl-none">
                             <button class="btn btn-dark mb-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
@@ -257,6 +130,13 @@
                         </div>
                     </form>
                     {% if products.getTotalItemCount > 0 %}
+                        <div class="row">
+                            <div class="col">
+                                <p class="mb-2">
+                                    {{ "%resultsCount% product(s) found"|trans({'%resultsCount%': products.getTotalItemCount}) }}
+                                </p>
+                            </div>
+                        </div>
                         <div class="row g-4 g-lg-5">
                             {% for product in products %}
                                 {% include "global/product-card-item.html.twig" with {product: product, thumbnailsize: [241, 241]} %}
@@ -264,12 +144,14 @@
                         </div>
                         {{ knp_pagination_render(products, null, {}, {'align': 'right'}) }}
                     {% else %}
-                        {% include "global/message.html.twig" with { type: "dark", message: ('No products found'|trans), icon: "fas fa-exclamation", class: "my-2" } %}
+                        {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                            {% block content %}
+                                {{ 'No products found'|trans }}
+                            {% endblock %}
+                        {% endcomponent %}
                     {% endif %}
                 </div>
             </div>
         </div>
     </section>
 {% endblock %}
-
-

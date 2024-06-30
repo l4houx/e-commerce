@@ -61,22 +61,32 @@
 
 						</div>
 					{% else %}
-						<div class="row">
-							<div class="col-xl-6 offset-xl-3 mb-4">
-								<div class="card border-0 h-100">
-									<div class="card-body p-10">
-										<div class="text-center">
-											<img src="{{ asset('images/svg/survey-img.svg') }}" alt="welcome" class="img-fluid">
-											<div class="px-lg-8">
-												<h1>{{ 'Welcome !'|trans }} {{ user.username }}</h1>
-												<p class="mb-0">
-													{{ 'Post all your favorite products here, so that as many people as possible can benefit from them.'|trans }}
-												</p>
-												<a href="" class="btn btn-primary mt-4">{{ 'Create'|trans }}</a>
-											</div>
-										</div>
-									</div>
+						<div class="card bg-transparent rounded-3 mb-0">
+							<div class="card-header bg-transparent border-bottom p-0 pb-3">
+								<h6 class="card-header-title mb-0">
+									{{ 'Welcome !'|trans }} {{ user.username }}
+								</h6>
+							</div>
+							<div class="card-body px-0">
+								<span class="heading-color fw-bold">
+									{{ 'Before you go...'|trans }}
+								</span>
+								<ul class="mt-2">
+									<li>{{ 'Take a backup of your data'|trans }} <a href="#">{{ 'Here'|trans }}</a> </li>
+									<li>{{ 'If you delete your account, you will lose your all data.'|trans }}</li>
+								</ul>
+								<div class="form-check form-check-md my-4">
+									<input class="form-check-input" type="checkbox" value="" id="deleteaccountCheck">
+									<label class="form-check-label" for="deleteaccountCheck">
+										{{ "Yes, I'd like to delete my account"|trans }}
+									</label>
 								</div>
+								<a href="{{ path('dashboard_account_ticket_new') }}" class="btn btn-success-soft mb-2 mb-sm-0">
+									{{ 'Create New Ticket'|trans }}
+								</a>
+								<a href="#" class="btn btn-danger mb-0">
+									{{ 'Delete my account'|trans }}
+								</a>
 							</div>
 						</div>
 					{% endif %}

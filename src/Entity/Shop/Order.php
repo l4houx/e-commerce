@@ -3,7 +3,7 @@
 namespace App\Entity\Shop;
 
 use App\Entity\Traits\HasIdTrait;
-use App\Entity\Traits\HasReferenceTrait;
+use App\Entity\Traits\HasIsPayOnDeliveryTrait;
 use App\Entity\Traits\HasTimestampableTrait;
 use App\Repository\Shop\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,11 +20,16 @@ use function Symfony\Component\String\u;
 class Order
 {
     use HasIdTrait;
-    // use HasReferenceTrait;
+    use HasIsPayOnDeliveryTrait;
     use HasTimestampableTrait;
 
     #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
     private $ref = '';
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\Positive()]
+    #[Assert\LessThan(1001)]
+    private ?float $totalPrice = null;
 
     /** -2: failed / -1: cancel / 0: waiting for payment / 1: paid */
     #[ORM\Column(type: Types::INTEGER)]
@@ -88,34 +93,18 @@ class Order
     #[ORM\OneToMany(targetEntity: Line::class, mappedBy: 'order', cascade: ['persist'])]
     private Collection $lines;
 
+    /**
+     * @var Collection<int, OrderDetail>
+     */
+    #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'order', orphanRemoval: true)]
+    private Collection $orderDetails;
+
     public function __construct()
     {
         $this->status = 0;
+        $this->createdAt = new \DateTimeImmutable();
         $this->lines = new ArrayCollection();
-    }
-
-    public function getRef(): string
-    {
-        return $this->ref;
-    }
-
-    public function setRef(string $ref): static
-    {
-        $this->ref = $ref;
-
-        return $this;
-    }
-
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): static
-    {
-        $this->status = $status;
-
-        return $this;
+        $this->orderDetails = new ArrayCollection();
     }
 
     // -2: failed / -1: cancel / 0: waiting for payment / 1: paid
@@ -124,16 +113,16 @@ class Order
         switch ($this->status) {
             case -2:
                 return 'danger';
-                //break;
+                // break;
             case -1:
                 return 'danger';
-                //break;
+                // break;
             case 0:
                 return 'warning';
-                //break;
+                // break;
             case 1:
                 return 'success';
-                //break;
+                // break;
             default:
                 return 'danger';
         }
@@ -144,16 +133,16 @@ class Order
         switch ($this->status) {
             case -2:
                 return 'Failed';
-                //break;
+                // break;
             case -1:
                 return 'Canceled';
-                //break;
+                // break;
             case 0:
                 return 'Awaiting payment';
-                //break;
+                // break;
             case 1:
                 return 'Paid';
-                //break;
+                // break;
             default:
                 return 'Unknown';
         }
@@ -178,6 +167,42 @@ class Order
         } elseif ('unknown' == $status) {
             return 'danger';
         }
+    }
+
+    public function getRef(): string
+    {
+        return $this->ref;
+    }
+
+    public function setRef(string $ref): static
+    {
+        $this->ref = $ref;
+
+        return $this;
+    }
+
+    public function getTotalPrice(): ?float
+    {
+        return $this->totalPrice;
+    }
+
+    public function setTotalPrice(float $totalPrice): static
+    {
+        $this->totalPrice = $totalPrice;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): static
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function getFirstname(): ?string
@@ -370,5 +395,35 @@ class Order
     public function getNumberOfProducts(): int
     {
         return intval(array_sum($this->lines->map(fn (Line $line) => $line->getQuantity())->toArray()));
+    }
+
+    /**
+     * @return Collection<int, OrderDetail>
+     */
+    public function getOrderDetails(): Collection
+    {
+        return $this->orderDetails;
+    }
+
+    public function addOrderDetail(OrderDetail $orderDetail): static
+    {
+        if (!$this->orderDetails->contains($orderDetail)) {
+            $this->orderDetails->add($orderDetail);
+            $orderDetail->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderDetail(OrderDetail $orderDetail): static
+    {
+        if ($this->orderDetails->removeElement($orderDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($orderDetail->getOrder() === $this) {
+                $orderDetail->setOrder(null);
+            }
+        }
+
+        return $this;
     }
 }

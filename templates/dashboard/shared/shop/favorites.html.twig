@@ -46,7 +46,7 @@
                                                     <small class="text-danger">{{ 'Not in stock'|trans }}</small>
                                                 {% endif %}
                                                 <ul class="nav nav-divider small align-items-center mt-1">
-                                                    <li class="nav-item">{{ 'Category'|trans }}: {{ product.category.name }}</li>
+                                                    <li class="nav-item">{{ 'Category'|trans }}: {{ product.subCategories[0].name }}</li>
                                                     <li class="nav-item">{{ 'Brand'|trans }}: {{ product.brand.name }}</li>
                                                 </ul>
                                             </div>
@@ -66,11 +66,10 @@
                                             </div>
                                             <div class="col-md-6 col-xl-3 text-md-end">
                                                 <h5 class="mb-2">
-                                                    {{ product.amount }}
-                                                    <i class="fas fa-key me-2"></i>
+                                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                                                 </h5>
                                                 {% if product.stock > 0 %}
-                                                    <a href="{{ path("cart_add", { slug: product.slug }) }}" class="btn btn-sm btn-dark mb-0">
+                                                    <a href="{{ path("cart_add", { id: product.id }) }}" class="btn btn-sm btn-dark mb-0">
                                                         <i class="fas fa-cart-shopping me-2"></i>{{ 'Add to cart'|trans }}
                                                     </a>
                                                 {% else %}
@@ -86,7 +85,7 @@
                             {% endfor %}
                         </div>
                         <div class="card-footer bg-transparent text-end p-0">
-                            <a href="{{ path("shop_index") }}" class="btn btn-light border mb-0">
+                            <a href="{{ path("shop") }}" class="btn btn-light border mb-0">
                                 {{ 'Continue shopping'|trans }}
                             </a>
                         </div>

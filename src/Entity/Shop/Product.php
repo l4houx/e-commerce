@@ -168,6 +168,12 @@ class Product
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'product', orphanRemoval: true, cascade: ['remove'])]
     private Collection $reviews;
 
+    /**
+     * @var Collection<int, OrderDetail>
+     */
+    #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'product')]
+    private Collection $orderDetails;
+
     public function stringifyStatus(): string
     {
         if (!$this->isOnline) {
@@ -208,6 +214,7 @@ class Product
         $this->addedtofavoritesby = new ArrayCollection();
         $this->features = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->orderDetails = new ArrayCollection();
     }
 
     public function hasContactAndSocialMedia(): bool
@@ -802,5 +809,35 @@ class Product
         }
 
         return $count;
+    }
+
+    /**
+     * @return Collection<int, OrderDetail>
+     */
+    public function getOrderDetails(): Collection
+    {
+        return $this->orderDetails;
+    }
+
+    public function addOrderDetail(OrderDetail $orderDetail): static
+    {
+        if (!$this->orderDetails->contains($orderDetail)) {
+            $this->orderDetails->add($orderDetail);
+            $orderDetail->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderDetail(OrderDetail $orderDetail): static
+    {
+        if ($this->orderDetails->removeElement($orderDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($orderDetail->getProduct() === $this) {
+                $orderDetail->setProduct(null);
+            }
+        }
+
+        return $this;
     }
 }

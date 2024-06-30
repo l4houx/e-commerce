@@ -241,9 +241,9 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @param string               $selecttags
      * @param bool                 $isOnline
-     * @param \DateTimeImmutable   $elapsed
      * @param string               $keyword
      * @param int                  $id
+     * @param string               $slug
      * @param Collection           $addedtofavoritesby
      * @param ?HomepageHeroSetting $isOnHomepageSlider
      * @param Collection           $subCategories
@@ -255,7 +255,7 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @return QueryBuilder<Product>
      */
-    public function getProducts($selecttags, $isOnline, $elapsed, $keyword, $id, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count): QueryBuilder
+    public function getProducts($selecttags, $isOnline, $keyword, $id, $slug, $addedtofavoritesby, $isOnHomepageSlider, $subCategories, $ref, $limit, $sort, $order, $otherthan, $count): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -270,27 +270,16 @@ class ProductRepository extends ServiceEntityRepository
                 $qb->andWhere('p.isOnline = :isOnline')->setParameter('isOnline', $isOnline);
             }
 
-            if ('all' !== $elapsed) {
-                $qb
-                    ->orderBy('p.createdAt', 'DESC')
-                    ->andWhere('p.createdAt <= :now')
-                    ->setParameter('now', new \DateTimeImmutable())
-                ;
-                /*
-                if (true === $elapsed || '1' == $elapsed) {
-                    $qb->andWhere('p.createdAt < CURRENT_TIMESTAMP()');
-                } elseif (false === $elapsed || '0' == $elapsed) {
-                    $qb->andWhere('p.createdAt >= CURRENT_TIMESTAMP()');
-                }
-                */
-            }
-
             if ('all' !== $keyword) {
                 $qb->andWhere('p.name LIKE :keyword or :keyword LIKE p.name or :keyword LIKE p.content or p.content LIKE :keyword or :keyword LIKE p.tags or p.tags LIKE :keyword')->setParameter('keyword', '%'.$keyword.'%');
             }
 
             if ('all' !== $id) {
                 $qb->andWhere('p.id = :id')->setParameter('id', $id);
+            }
+
+            if ('all' !== $slug) {
+                $qb->andWhere('p.slug = :slug')->setParameter('slug', $slug);
             }
 
             if ('all' !== $addedtofavoritesby) {

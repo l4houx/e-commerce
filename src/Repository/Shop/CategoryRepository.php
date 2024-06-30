@@ -82,14 +82,14 @@ class CategoryRepository extends ServiceEntityRepository
      * 
      * @return QueryBuilder<Category>
      */
-    public function getCategories($isOnline, $keyword, $id, $limit, $sort, $order): QueryBuilder
+    public function getCategories(/*$isOnline,*/ $keyword, $id, $limit, $sort, $order): QueryBuilder
     {
         $qb = $this->createQueryBuilder('c');
         $qb->select('DISTINCT c');
 
-        if ($isOnline !== "all") {
+        /*if ($isOnline !== "all") {
             $qb->andWhere('c.isOnline = :isOnline')->setParameter('isOnline', $isOnline);
-        }
+        }*/
 
         if ($keyword !== "all") {
             $qb->andWhere('c.name LIKE :keyword or :keyword LIKE c.name')->setParameter('keyword', '%'.$keyword.'%');

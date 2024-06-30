@@ -31,7 +31,6 @@
         <div class="container">
             <div class="row mt-7">
                 <div class="col-md-5 mb-5 mb-md-0">
-                    <!-- Slider START -->
 					<div id="carouselProductIndicators" class="carousel slide" data-bs-ride="carousel">
 						<div class="carousel-inner">
 							<div class="carousel-item active">
@@ -72,56 +71,32 @@
                                 </li>
                             </ul>
                             <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
-                            <span>{{ reviewscount }} {{"Review(s)"|trans|lower}}</span>
+                            <span>
+                                {{ reviewscount }}
+                                {{ reviewscount > 1 ? "reviews"|trans|lower : "review"|trans|lower }}
+                            </span>
                             <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
                         {% endif %}
                         <span>86 sold</span>
                         <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
-                        <span>{{ "Ref"|trans }}: {{ product.ref }}</span>
+                        <span>{{ "Reference"|trans }}: {{ product.ref }}</span>
                     </div>
                     <h4 class="text-success mb-4">
                         {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
                     </h4>
-                    {#  
-                    <div class="d-flex align-items-center gap-1 gap-sm-3 flex-wrap mt-2 mb-4">
-                        <span class="d-block">Memory storage:</span>
-                        <!-- First button -->
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" checked="">
-                        <label class="btn btn-sm btn-light border btn-primary-soft-check mb-0" for="btnradio1">256 GB</label>
-                        <!-- Second button -->
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2">
-                        <label class="btn btn-sm btn-light border btn-primary-soft-check mb-0" for="btnradio2">512 GB</label>
-                        <!-- Third button -->
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3">
-                        <label class="btn btn-sm btn-light border btn-primary-soft-check mb-0" for="btnradio3">1 TB</label>
-                    </div>
-                    <div class="color-check-radio d-flex align-items-center gap-3 mt-2 mb-4">
-                        <span class="d-block">Select color:</span>
-                        <div>
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" style="background-color: #9a0a0a;">
-                            <label class="form-check-label" for="flexRadioDefault1"></label>
-
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" style="background-color: #32C7F5;">
-                            <label class="form-check-label" for="flexRadioDefault2"></label>
-
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" style="background-color: #F7C32E;">
-                            <label class="form-check-label" for="flexRadioDefault3"></label>
-
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4" checked="" style="background-color: #333369;">
-                            <label class="form-check-label" for="flexRadioDefault4"></label>
+                    {% if product.content %}
+                        <div class="mb-4">{{ product.content|html_markdown() }}</div>
+                    {% endif %}
+                    {% if product.tags %}
+                        <div class="d-flex align-items-center gap-1 gap-sm-3 flex-wrap mt-2 mb-4">
+                            <span class="d-block">{{ 'Tag'|trans }}:</span>
+                            {% for tag in product.tags|split(',') %}
+                                <a href="{{ path('shop', { keyword : tag }) }}" class="btn btn-sm btn-light border btn-primary-soft-check mb-0">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="d-flex align-items-center gap-3 mt-2 mb-4">
-                        <span class="d-block">{{ "Select quantity"|trans }}:</span>
-                        <div class="col-md-2">
-                            <div class="input-group input-spinner">
-                                <a href="{{ path('cart_remove', {id: product.id}) }}" type="button" class="button-minus btn btn-sm" data-field="quantity">-</a>
-                                <a href="{{ path('cart_add', {id: product.id}) }}" type="button" class="button-plus btn btn-sm" data-field="quantity">+</a>
-                            </div>
-                        </div>
-                    </div>
-                    #}
-                    <div class="mb-4">{{ product.content|html_markdown_excerpt(164) }}</div>
+                    {% endif %}
                     <div class="d-grid">
                         {% if product.stock > 0 %}
                             <a href="{{ path('cart_add', { id : product.id }) }}" class="btn btn-primary mb-0 w-100">
@@ -211,7 +186,10 @@
                         <div class="border rounded-2 p-4">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <h2 class="mb-0">{{ reviewscount }} {{ "review"|trans|lower }}</h2>
+                                    <h2 class="mb-0">
+                                        {{ reviewscount }} 
+                                        {{ reviewscount > 1 ? "reviews"|trans|lower : "review"|trans|lower }}
+                                    </h2>
                                     <div class="rating-wrap">
                                         <ul class="list-inline mb-2 rating-stars">
                                             <li style="width:{{product.getRatingPercentage}}%" class="list-inline-item me-0 stars-active">
@@ -275,7 +253,7 @@
                         </div>
                         <div class="mt-5">
                             {% if product.images|length > 0 %}
-                                <h5 class="mb-4">{{ "Reviews with images"|trans }}</h5>
+                                <h5 class="mb-4">{{"Photos"|trans}}</h5>
                                 <div class="row g-4">
                                     {% for image in product.images %}
                                         <div class="col-4 col-sm-2 col-lg-3">

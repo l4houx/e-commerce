@@ -30,7 +30,7 @@ class Review
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]

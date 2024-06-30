@@ -62,7 +62,7 @@
                             </a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="">
+							<a class="nav-link {% if activerd == 'order_index' %}active{% endif %}" href="{{ path('dashboard_account_order_index') }}">
 								<i class="fas fa-basket-shopping fa-fw me-2"></i>{{ 'Order history'|trans }}
                             </a>
 						</li>

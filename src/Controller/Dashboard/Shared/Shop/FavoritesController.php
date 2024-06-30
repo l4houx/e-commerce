@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Controller\Dashboard\Shared;
+namespace App\Controller\Dashboard\Shared\Shop;
 
+use App\Controller\BaseController;
 use App\Entity\Shop\Product;
 use App\Entity\Traits\HasRoles;
-use App\Service\SettingService;
-use App\Controller\BaseController;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Shop\ProductRepository;
+use App\Service\SettingService;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/%website_dashboard_path%/account', name: 'dashboard_account_')]
 #[IsGranted(HasRoles::DEFAULT)]
@@ -35,8 +35,8 @@ class FavoritesController extends BaseController
         $user = $this->getUserOrThrow();
 
         $products = $this->productRepository->findForFavoritesPagination(
-            //$addedtofavoritesby,
-            $request->query->getInt("page", 1),
+            // $addedtofavoritesby,
+            $request->query->getInt('page', 1),
         );
 
         /*$products = $paginator->paginate(
@@ -46,7 +46,7 @@ class FavoritesController extends BaseController
             ['wrap-queries' => true]
         );*/
 
-        return $this->render('dashboard/shared/product/favorites.html.twig', compact("products", "user"));
+        return $this->render('dashboard/shared/shop/favorites.html.twig', compact('products', 'user'));
     }
 
     #[Route(path: '/my-favorites/new/{slug}', name: 'favorites_new', requirements: ['slug' => Requirement::ASCII_SLUG])]
@@ -54,7 +54,7 @@ class FavoritesController extends BaseController
     public function newRemove(string $slug): JsonResponse
     {
         /** @var Product $product */
-        //$product = $this->productRepository->find(['slug' => $slug]);
+        // $product = $this->productRepository->find(['slug' => $slug]);
         $product = $this->settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
         if (!$product) {
             return new JsonResponse(['danger' => $this->translator->trans('The product can not be found')]);

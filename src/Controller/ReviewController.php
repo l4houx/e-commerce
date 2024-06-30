@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Shop\Product;
 use App\Service\SettingService;
+use App\Repository\Shop\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,21 +15,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ReviewController extends BaseController
 {
     #[Route(path: '/shop/{slug}/reviews', name: 'shop_reviews', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
-    public function review(
+    public function productreviews(
         Request $request,
         PaginatorInterface $paginator,
         TranslatorInterface $translator,
+        ProductRepository $productRepository,
         SettingService $settingService,
         string $slug
     ): Response {
         $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
 
         /** @var Product $product */
-        $product = $settingService->getProducts(['slug' => $slug, 'elapsed' => 'all'])->getQuery()->getOneOrNullResult();
+        //$product = $settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
+        $product = $productRepository->findOneBy(['slug' => $request->get('slug')]);
         if (!$product) {
             $this->addFlash('danger', $translator->trans('The product not be found'));
 
-            return $this->redirectToRoute('products', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('shop', [], Response::HTTP_SEE_OTHER);
         }
 
         $reviews = $paginator->paginate(
@@ -38,6 +41,6 @@ class ReviewController extends BaseController
             ['wrap-queries' => true]
         );
 
-        return $this->render('shop/review.html.twig', compact('product', 'reviews'));
+        return $this->render('shop/review.html.twig', compact("product'","reviews"));
     }
 }
