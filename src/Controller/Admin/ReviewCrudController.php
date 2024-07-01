@@ -134,7 +134,7 @@ class ReviewCrudController extends AbstractCrudController
         /** @var Review $entity */
         $entity = $context->getEntity()->getInstance();
 
-        return $this->redirectToRoute('review_show', [
+        return $this->redirectToRoute('shop_reviews', [
             'slug' => $entity->getSlug(),
         ]);
     }

@@ -2,30 +2,37 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\Field\RolesField;
-use App\Controller\Admin\Traits\CreateEditTrait;
-use App\Entity\Traits\HasRoles;
 use App\Entity\User\Customer;
+use App\Service\AvatarService;
+use App\Entity\Traits\HasRoles;
+use App\Controller\Admin\Field\RolesField;
+use function Symfony\Component\Translation\t;
+use App\Controller\Admin\Traits\CreateEditTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Symfony\Component\Validator\Constraints\Email;
+use App\Controller\Admin\Field\RulesAgreementField;
+use Symfony\Component\Validator\Constraints\Length;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Validator\Constraints\NotNull;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
-use function Symfony\Component\Translation\t;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class CustomerCrudController extends AbstractCrudController
 {
     use CreateEditTrait;
+
+    public function __construct(
+        private readonly AvatarService $avatarService
+    ) {
+    }
 
     public static function getEntityFqcn(): string
     {
@@ -35,7 +42,7 @@ class CustomerCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel(t('Avatar'))->hideOnForm();
-        yield TextField::new('avatar')->hideOnForm();
+        yield TextField::new('avatar', t('Avatar'))->hideOnForm();
 
         yield FormField::addPanel(t('User (client)'));
         yield TextField::new('firstname', t('Firstname'))
@@ -76,30 +83,24 @@ class CustomerCrudController extends AbstractCrudController
             ->hideOnForm()
         ;
 
-        /*
-        yield ChoiceField::new('roles', t('Roles'))
-            ->renderExpanded()
-            ->renderAsBadges([
-                HasRoles::TEAM => 'primary',
-            ])
-            ->setChoices([
-                'Team' => HasRoles::TEAM
-            ])
-            ->allowMultipleChoices()
-            ->setRequired(isRequired: false)
-        ;
-        */
-
         yield FormField::addPanel(t('Team'));
         yield BooleanField::new('isTeam', t('Team'))->hideOnIndex();
         yield TextareaField::new('about', t('About'))->hideOnIndex();
         yield TextareaField::new('designation', t('Designation'))->hideOnIndex();
 
         yield FormField::addPanel(t('Details'));
-        yield BooleanField::new('suspended', t('Suspended'))->hideOnIndex();
+        yield BooleanField::new('isVerified', t('Verified'));
+        yield BooleanField::new('isAgreeTerms', t('Agree terms'))->hideOnIndex();
+        yield BooleanField::new('isSuspended', t('Suspended'))->hideOnIndex();
         yield DateTimeField::new('bannedAt', t('Banner'))->hideOnForm();
         yield DateTimeField::new('lastLogin', t('Last connection'))->hideOnForm();
         yield TextField::new('lastLoginIp', t('IP'))->hideOnForm();
+
+        yield RulesAgreementField::new('lastRulesAgreement', t('Rule'))->hideOnForm();
+        yield AssociationField::new('rulesAgreements', t('Rule'))
+            ->setTemplatePath("admin/field/user_rules_agreements.html.twig")
+            ->onlyOnDetail()
+        ;
 
         yield AssociationField::new('client', t('Client'))
             ->setCrudController(ClientCrudController::class)

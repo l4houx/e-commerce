@@ -2,29 +2,29 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Shop\SubCategory;
-use App\Entity\Traits\HasRoles;
+use App\Controller\Admin\Traits\CreateTrait;
+use App\Entity\Shop\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use function Symfony\Component\Translation\t;
 
-class SubCategoryCrudController extends AbstractCrudController
+class CategoryCrudController extends AbstractCrudController
 {
+    use CreateTrait;
+
     public static function getEntityFqcn(): string
     {
-        return SubCategory::class;
+        return Category::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -38,37 +38,26 @@ class SubCategoryCrudController extends AbstractCrudController
                 new Length(min: 4, max: 128),
             ])
         ;
-        yield ColorField::new('color', t('Color'))
-            ->setFormTypeOption('constraints', [
-                new NotBlank(),
-                new Length(min: 4, max: 12),
-            ])
-        ;
-        yield AssociationField::new('products', t('Products'))
+        yield AssociationField::new('subCategories', t('Sub categories'))
             ->autocomplete()
             ->onlyOnIndex()
         ;
-        ArrayField::new('products', t('Products'))->onlyOnDetail();
-        yield AssociationField::new('category', t('Category'))
-            ->setCrudController(CategoryCrudController::class)
-        ;
+        ArrayField::new('subCategories', t('Sub categories'))->onlyOnDetail();
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityPermission(HasRoles::ADMINAPPLICATION)
-            ->setEntityLabelInSingular(t('Sub Category'))
-            ->setEntityLabelInPlural(t('Sub Categories'))
-            ->setDefaultSort(['name' => 'ASC'])
+            ->setEntityLabelInSingular(t('Categorie'))
+            ->setEntityLabelInPlural(t('Categories'))
+            ->setDefaultSort(['name' => 'DESC'])
+            ->setDateFormat('dd/MM/YYYY')
+            ->setDateTimeFormat('dd/MM/YYYY HH:mm')
         ;
     }
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters
-            ->add(TextFilter::new('name', t('Name')))
-            ->add(EntityFilter::new('categories', t('Categories')))
-        ;
+        return $filters->add(TextFilter::new('name', t('Name')));
     }
 }

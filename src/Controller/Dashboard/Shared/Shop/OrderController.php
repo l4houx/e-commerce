@@ -30,6 +30,9 @@ class OrderController extends AbstractController
     #[Route(path: '/my-orders', name: 'order_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->render('dashboard/shared/shop/order/index.html.twig');
+        $page = $request->query->getInt('page', 1);
+        $orders = $this->orderRepository->findForPagination($page);
+
+        return $this->render('dashboard/shared/shop/order/index.html.twig', compact("orders"));
     }
 }

@@ -66,7 +66,7 @@ class DashboardController extends AbstractDashboardController
     #[IsGranted(HasRoles::TEAM)]
     public function index(): Response
     {
-        $controller = $this->isGranted(HasRoles::ADMIN) ? SettingCrudController::class : ProductCrudController::class;
+        $controller = $this->isGranted(HasRoles::ADMIN) ? TicketCrudController::class : ProductCrudController::class;
 
         $url = $this->adminUrlGenerator
             ->setController($controller)
@@ -112,12 +112,12 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud(t('Products'), 'fa fa-shopping-cart', Product::class),
                 MenuItem::linkToCrud(t('Features'), 'fa fa-bookmark', Feature::class),
                 MenuItem::linkToCrud(t('Brands'), 'fas fa-b', Brand::class),
-                MenuItem::linkToCrud(t('Sub Categories'), 'fa fa-tags', SubCategory::class),
-                // MenuItem::linkToCrud(t('Category'), 'fab fa-delicious', Category::class),
+                MenuItem::linkToCrud(t('Sub Categories'), 'fab fa-delicious', SubCategory::class),
+                MenuItem::linkToCrud(t('Category'), 'fab fa-delicious', Category::class),
                 MenuItem::linkToCrud(t('Sizes'), 'fas fa-file', Size::class),
                 MenuItem::linkToCrud(t('Colors'), 'fas fa-file', Color::class),
-                // MenuItem::linkToCrud(t('Shippings'), 'fas fa-truck', Shipping::class),
-                // MenuItem::linkToCrud(t('Shippings'), 'fas fa-ticket-simple', Coupon::class),
+                MenuItem::linkToCrud(t('Shippings'), 'fas fa-truck', Shipping::class),
+                MenuItem::linkToCrud(t('Coupons'), 'fas fa-copy', Coupon::class),
                 MenuItem::linkToCrud(t('Orders'), 'fa fa-bell', Order::class),
                 MenuItem::linkToCrud(t('Review'), 'fas fa-star', Review::class),
             ]);
@@ -219,10 +219,10 @@ class DashboardController extends AbstractDashboardController
             ->setName($user->getUsername())
             ->displayUserName(false)
             ->addMenuItems([
-                MenuItem::linkToRoute('My Profile', 'fa fa-id-card', '...', ['...' => '...']),
-                MenuItem::linkToRoute('Settings', 'fa fa-user-cog', '...', ['...' => '...']),
-                // MenuItem::section(),
-                // MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
+                MenuItem::linkToRoute(t('My Profile'), 'fa fa-id-card', 'dashboard_account_profile'),
+                MenuItem::linkToRoute(t('Settings'), 'fa fa-user-cog', '...', ['...' => '...']),
+                MenuItem::section(),
+                MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
             ])
         ;
     }

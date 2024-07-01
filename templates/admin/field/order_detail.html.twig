@@ -5,28 +5,51 @@
 	<table class="table table-bordered bg-white mb-0">
 		<thead>
 			<tr>
-				<th class="text-center">{{ 'Product'|trans }}</th>
-				<th class="text-center">{{ 'Shipping (country)'|trans }}</th>
+				<th class="text-center">{{ 'Order no'|trans }}</th>
+				<th class="text-center">{{ 'Product picture'|trans }}</th>
+				<th class="text-center">{{ 'Product name'|trans }}</th>
+				<th class="text-center">{{ 'Product content'|trans }}</th>
+				<th class="text-center">{{ 'Unit price'|trans }}</th>
 				<th class="text-center">{{ 'Quantity'|trans }}</th>
-				<th class="text-center">{{ 'Total'|trans }}</th>
+				<th class="text-center">{{ 'Price total'|trans }}</th>
+				{#  
+				<th class="text-center">{{ 'Shipping cost'|trans }}</th>
+				<th class="text-center">{{ 'Total to pay'|trans }}</th>
+				#}
 			</tr>
 		</thead>
 		<tbody>
 			{% for orderDetail in field.value %}
 				<tr>
 					<td class="text-center">
+						#{{ orderDetail.order.id }}
+					</td>
+					<td class="text-center">
+						<img style="max-height: 80px;max-width: 80px" src="{{ orderDetail.product.imageName ? (orderDetail.product.getImagePath) : orderDetail.product.getImagePlaceholder }}" alt="{{ orderDetail.product.brand.name }} - {{ orderDetail.product.name }}">
+					</td>
+					<td class="text-center">
 						{{ orderDetail.product.name }}
 					</td>
 					<td class="text-center">
-						{{ orderDetail.order.countrycode.name }}
-						({{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.order.countrycode.shippingCost ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }})
+						{{ orderDetail.product.content|html_markdown_excerpt(100) }}
+					</td>
+					<td class="text-center">
+						{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
 					</td>
 					<td class="text-center">
 						{{ orderDetail.quantity }}
 					</td>
 					<td class="text-center">
+						{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price * orderDetail.quantity ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+					</td>
+					{#  
+					<td class="text-center">
+						{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.order.countrycode.shippingCost ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+					</td>
+					<td class="text-center">
 						{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
 					</td>
+					#}
 				</tr>
 			{% else %}
 				<tr>

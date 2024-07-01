@@ -24,10 +24,11 @@ class OrderRepository extends ServiceEntityRepository
     public function findForPagination(int $page): PaginationInterface
     {
         $builder = $this->createQueryBuilder('o')
+            ->addSelect('od')
+            ->leftJoin('o.orderDetails','od')
             ->orderBy('o.id', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
             ->where('o.updatedAt <= :now')
-            // ->orWhere('s.isOnline = true')
         ;
 
         return $this->paginator->paginate(
@@ -37,7 +38,7 @@ class OrderRepository extends ServiceEntityRepository
             [
                 'wrap-queries' => true,
                 'distinct' => false,
-                'sortFieldAllowList' => ['o.id', 'o.firstname', 'o.lastname', 'o.reference'],
+                'sortFieldAllowList' => ['o.id', 'o.firstname', 'o.lastname', 'o.ref'],
             ]
         );
     }
