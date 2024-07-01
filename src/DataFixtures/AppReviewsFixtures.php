@@ -23,14 +23,14 @@ class AppReviewsFixtures extends Fixture implements DependentFixtureInterface
 
     private function createTestimonials(ObjectManager $manager): void
     {
-        /** @var array<Customer> $customers */
-        $customers = $manager->getRepository(Customer::class)->findAll();
+        /** @var array<int, User> $users */
+        $users = $manager->getRepository(User::class)->findAll();
 
         // Create 20 Testimonial by User
         for ($i = 1; $i <= 20; ++$i) {
             $testimonial = new Testimonial();
             $testimonial
-                ->setAuthor($this->faker()->randomElement($customers))
+                ->setAuthor($this->faker()->randomElement($users))
                 ->setIsOnline($this->faker()->numberBetween(0, 1))
                 ->setRating($this->faker()->numberBetween(1, 5))
                 ->setName($this->faker()->unique()->sentence(5, true))

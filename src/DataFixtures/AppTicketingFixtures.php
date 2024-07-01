@@ -94,7 +94,7 @@ class AppTicketingFixtures extends Fixture implements DependentFixtureInterface
             $response = (new Response())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setTicket($this->faker()->randomElement($tickets))
-                ->setUser($this->faker()->randomElement($users))
+                ->setUser($this->getReference('SuperAdministrator'))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;

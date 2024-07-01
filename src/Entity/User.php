@@ -36,12 +36,12 @@ use function Symfony\Component\String\u;
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\DiscriminatorMap([
-    //'superadministrator' => SuperAdministrator::class, 
-    'manager' => Manager::class, 
-    'customer' => Customer::class, 
-    'collaborator' => Collaborator::class, 
-    'sales_person' => SalesPerson::class
-    ]
+    'superadministrator' => SuperAdministrator::class,
+    'manager' => Manager::class,
+    'customer' => Customer::class,
+    'collaborator' => Collaborator::class,
+    'sales_person' => SalesPerson::class,
+]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
@@ -261,7 +261,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     public function getRole(): string
     {
         if ($this->hasRole(HasRoles::SUPERADMIN) || $this->hasRole(HasRoles::ADMINAPPLICATION)) {
-            return '<span class="badge me-2 bg-danger">Administrator</span>';
+            return '<span class="badge me-2 bg-danger">Super Administrator</span>';
         } elseif ($this->hasRole(HasRoles::ADMIN)) {
             return '<span class="badge me-2 bg-dark">Admin</span>';
         } elseif ($this->hasRole(HasRoles::MODERATOR)) {
