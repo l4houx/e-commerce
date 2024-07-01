@@ -2,30 +2,39 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Traits\HasRoles;
-use App\Entity\SuperAdministrator;
 use App\Controller\Admin\Field\RolesField;
-use function Symfony\Component\Translation\t;
-use App\Controller\Admin\MemberCrudController;
-
 use App\Controller\Admin\Traits\CreateEditTrait;
+use App\Entity\SuperAdministrator;
+use App\Entity\Traits\HasRoles;
+use App\Entity\User;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Length;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Validator\Constraints\NotNull;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Regex;
 
+use function Symfony\Component\Translation\t;
+
+/**
+ * @method User getUser()
+ */
 class SuperAdministratorCrudController extends AbstractCrudController
 {
     use CreateEditTrait;
@@ -35,7 +44,12 @@ class SuperAdministratorCrudController extends AbstractCrudController
         return SuperAdministrator::class;
     }
 
-    /*
+    public function __construct(
+        private readonly EntityRepository $entityRepo,
+        private readonly UserPasswordHasherInterface $hasher
+    ) {
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel(t('Avatar'))->hideOnForm();
@@ -86,20 +100,6 @@ class SuperAdministratorCrudController extends AbstractCrudController
             ->hideOnForm()
         ;
 
-        /*
-        yield ChoiceField::new('roles', t('Roles'))
-            ->renderExpanded()
-            ->renderAsBadges([
-                HasRoles::TEAM => 'primary',
-            ])
-            ->setChoices([
-                'Team' => HasRoles::TEAM
-            ])
-            ->allowMultipleChoices()
-            ->setRequired(isRequired: false)
-        ;
-        /
-
         yield FormField::addPanel(t('Team'));
         yield BooleanField::new('isTeam', t('Team'))->hideOnIndex();
         yield TextareaField::new('about', t('About'))->hideOnIndex();
@@ -114,18 +114,31 @@ class SuperAdministratorCrudController extends AbstractCrudController
         yield AssociationField::new('member', t('Member (main)'))
             ->setCrudController(MemberCrudController::class)
         ;
-        yield AssociationField::new('members', t('Members'))
+        /*yield AssociationField::new('members', t('Members'))
             ->setCrudController(MemberCrudController::class)
             ->setTemplatePath('admin/field/manager_members.html.twig')
             ->hideOnIndex()
-        ;
+        ;*/
 
         yield FormField::addPanel(t('Date'))->hideOnForm();
         yield DateTimeField::new('createdAt', t('Creation date'))->hideOnForm()->onlyOnDetail();
         yield DateTimeField::new('updatedAt', t('Last modification'))->hideOnForm()->onlyOnDetail();
         yield DateTimeField::new('deletedAt', t('Deleted At'))->hideOnForm()->hideOnIndex();
     }
-    */
+
+    public function createIndexQueryBuilder(
+        SearchDto $searchDto,
+        EntityDto $entityDto,
+        FieldCollection $fields,
+        FilterCollection $filters
+    ): QueryBuilder {
+        $userId = $this->getUser()->getId();
+
+        $response = $this->entityRepo->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $response->andWhere('entity.id != :userId')->setParameter('userId', $userId);
+
+        return $response;
+    }
 
     public function configureCrud(Crud $crud): Crud
     {

@@ -2,53 +2,58 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Post;
-use App\Entity\User;
 use App\Entity\Comment;
-use App\Entity\PostType;
-use App\Entity\Question;
-use App\Entity\Shop\Size;
-use App\Entity\Shop\Brand;
-use App\Entity\Shop\Color;
-use App\Entity\Shop\Review;
-use App\Entity\Testimonial;
-use App\Entity\PostCategory;
-use App\Entity\Shop\Feature;
-use App\Entity\Shop\Product;
-use App\Entity\User\Manager;
-use App\Entity\HelpCenterFaq;
-use App\Entity\Settings\Page;
-use App\Entity\Tickets\Level;
-use App\Entity\User\Customer;
 use App\Entity\Company\Client;
 use App\Entity\Company\Member;
+use App\Entity\Company\Organization;
+use App\Entity\HelpCenterArticle;
+use App\Entity\HelpCenterCategory;
+use App\Entity\HelpCenterFaq;
+use App\Entity\Post;
+use App\Entity\PostCategory;
+use App\Entity\PostType;
+use App\Entity\Question;
+use App\Entity\Rules;
+use App\Entity\Settings\AppLayoutSetting;
+use App\Entity\Settings\Currency;
+use App\Entity\Settings\HomepageHeroSetting;
+use App\Entity\Settings\Page;
+use App\Entity\Settings\Setting;
+use App\Entity\Shop\Brand;
+use App\Entity\Shop\Category;
+use App\Entity\Shop\Color;
+use App\Entity\Shop\Coupon;
+use App\Entity\Shop\Feature;
+use App\Entity\Shop\Order;
+use App\Entity\Shop\Product;
+use App\Entity\Shop\Review;
+use App\Entity\Shop\Shipping;
+use App\Entity\Shop\Size;
+use App\Entity\Shop\SubCategory;
+use App\Entity\SuperAdministrator;
+use App\Entity\Testimonial;
+use App\Entity\Tickets\Level;
+use App\Entity\Tickets\Response as TicketsResponse;
 use App\Entity\Tickets\Status;
 use App\Entity\Tickets\Ticket;
 use App\Entity\Traits\HasRoles;
-use App\Entity\Settings\Setting;
-use App\Entity\Shop\SubCategory;
-use App\Entity\User\SalesPerson;
-use App\Entity\HelpCenterArticle;
-use App\Entity\Settings\Currency;
+use App\Entity\User;
 use App\Entity\User\Collaborator;
-use App\Entity\HelpCenterCategory;
-use App\Entity\SuperAdministrator;
-
-use App\Entity\Company\Organization;
-use App\Entity\Settings\AppLayoutSetting;
-use App\Entity\Settings\HomepageHeroSetting;
-use function Symfony\Component\Translation\t;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\User\Customer;
+use App\Entity\User\Manager;
+use App\Entity\User\SalesPerson;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use App\Entity\Tickets\Response as TicketsResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+
+use function Symfony\Component\Translation\t;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -108,24 +113,17 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud(t('Features'), 'fa fa-bookmark', Feature::class),
                 MenuItem::linkToCrud(t('Brands'), 'fas fa-b', Brand::class),
                 MenuItem::linkToCrud(t('Sub Categories'), 'fa fa-tags', SubCategory::class),
+                // MenuItem::linkToCrud(t('Category'), 'fab fa-delicious', Category::class),
                 MenuItem::linkToCrud(t('Sizes'), 'fas fa-file', Size::class),
                 MenuItem::linkToCrud(t('Colors'), 'fas fa-file', Color::class),
-                //MenuItem::linkToCrud(t('Orders'), 'fa fa-bell', Order::class),
+                // MenuItem::linkToCrud(t('Shippings'), 'fas fa-truck', Shipping::class),
+                // MenuItem::linkToCrud(t('Shippings'), 'fas fa-ticket-simple', Coupon::class),
+                MenuItem::linkToCrud(t('Orders'), 'fa fa-bell', Order::class),
+                MenuItem::linkToCrud(t('Review'), 'fas fa-star', Review::class),
             ]);
 
-            /*yield MenuItem::section(t('Points Settings'));
-            yield MenuItem::subMenu(t('Points Management'), 'fas fa-user')->setSubItems([
-                MenuItem::linkToCrud(t('Point Accounts'), 'fa fa-balance-scale', Account::class),
-                MenuItem::linkToCrud(t('Point Purchases'), 'fa fa-bell', Purchase::class),
-                MenuItem::linkToCrud(t('Wallets'), 'fa fa-bank', Wallet::class),
-                MenuItem::linkToCrud(t('Transactions'), 'fa fa-list', Transaction::class),
-                MenuItem::linkToCrud(t('Transferts'), 'fa fa-exchange', Transfer::class),
-            ]);*/
-
             yield MenuItem::section(t('Review Settings'));
-            yield MenuItem::subMenu(t('Testimonial Settings'), 'fas fa-star')->setSubItems([
-                MenuItem::linkToCrud(t('Review'), 'fas fa-star', Review::class),
-                MenuItem::linkToCrud(t('Add'), 'fas fa-plus', Review::class)->setAction(Crud::PAGE_NEW),
+            yield MenuItem::subMenu(t('Testimonial'), 'fas fa-star')->setSubItems([
                 MenuItem::linkToCrud(t('Testimonial'), 'fas fa-star', Testimonial::class),
                 MenuItem::linkToCrud(t('Add'), 'fas fa-plus', Testimonial::class)->setAction(Crud::PAGE_NEW),
             ]);
@@ -170,8 +168,8 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud(t('Users'), 'fas fa-user-friends', User::class),
                 MenuItem::linkToExitImpersonation(t('Stop impersonation'), 'fas fa-door-open'),
                 MenuItem::linkToCrud(t('Add'), 'fas fa-plus', User::class)->setAction(Crud::PAGE_NEW),
-                //MenuItem::linkToCrud(t('Rules'), 'fa fa-file', Rules::class),
-                //MenuItem::linkToCrud(t('Add'), 'fas fa-plus', Rules::class)->setAction(Crud::PAGE_NEW),
+                MenuItem::linkToCrud(t('Rules'), 'fa fa-file', Rules::class),
+                MenuItem::linkToCrud(t('Add'), 'fas fa-plus', Rules::class)->setAction(Crud::PAGE_NEW),
             ]);
 
             yield MenuItem::section(t('Tickets Settings'));

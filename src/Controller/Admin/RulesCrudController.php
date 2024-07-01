@@ -28,6 +28,7 @@ class RulesCrudController extends AbstractCrudController
     {
         yield FormField::addPanel(t('Rule'));
         yield IdField::new('id')->onlyOnIndex();
+
         yield DateTimeField::new('publishedAt', t('Date of publication'))
             ->setFormTypeOption('constraints', [
                 new NotBlank(),

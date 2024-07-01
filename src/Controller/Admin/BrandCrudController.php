@@ -4,21 +4,21 @@ namespace App\Controller\Admin;
 
 use App\Entity\Shop\Brand;
 use App\Entity\Traits\HasRoles;
-use function Symfony\Component\Translation\t;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Symfony\Component\Validator\Constraints\Length;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use function Symfony\Component\Translation\t;
 
 class BrandCrudController extends AbstractCrudController
 {
@@ -27,7 +27,6 @@ class BrandCrudController extends AbstractCrudController
         return Brand::class;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel(t('Information'));
@@ -52,7 +51,6 @@ class BrandCrudController extends AbstractCrudController
         yield DateTimeField::new('updatedAt', t('Last modification'))->hideOnForm()->onlyOnDetail();
         yield DateTimeField::new('deletedAt', t('Deletion date'))->hideOnForm()->onlyOnDetail();
     }
-    */
 
     public function configureCrud(Crud $crud): Crud
     {

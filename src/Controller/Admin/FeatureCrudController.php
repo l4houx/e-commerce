@@ -4,14 +4,17 @@ namespace App\Controller\Admin;
 
 use App\Entity\Shop\Feature;
 use App\Entity\Traits\HasRoles;
-use function Symfony\Component\Translation\t;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use function Symfony\Component\Translation\t;
 
 class FeatureCrudController extends AbstractCrudController
 {
@@ -25,7 +28,12 @@ class FeatureCrudController extends AbstractCrudController
         yield FormField::addPanel(t('Information'));
         yield IdField::new('id')->onlyOnIndex();
 
-        yield TextField::new('name', t('Name'));
+        yield TextField::new('name', t('Name'))
+            ->setFormTypeOption('constraints', [
+                new NotBlank(),
+                new Length(min: 4, max: 128),
+            ])
+        ;
     }
 
     public function configureCrud(Crud $crud): Crud

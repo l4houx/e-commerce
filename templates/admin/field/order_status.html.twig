@@ -1,0 +1,11 @@
+{% if field.value == "-2" %}
+	<span class="badge badge-danger">{{ 'Failed'|trans }}</span>
+{% elseif field.value == "-1" %}
+	<span class="badge badge-warning">{{ 'Canceled'|trans }}</span>
+{% elseif field.value == "0" %}
+	<span class="badge badge-warning">{{ 'Awaiting payment'|trans }}</span>
+{% elseif field.value == "1" %}
+	<span class="badge badge-success">{{ 'Paid'|trans }}</span>
+{% else %}
+	<span class="badge badge-danger">{{ 'Unknown'|trans }}</span>
+{% endif %}

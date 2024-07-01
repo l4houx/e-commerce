@@ -1,0 +1,38 @@
+{% set settings = setting.findAll %}
+
+<div class="card">
+	<div class="card-header">{{ 'Order Details'|trans }}</div>
+	<table class="table table-bordered bg-white mb-0">
+		<thead>
+			<tr>
+				<th class="text-center">{{ 'Product'|trans }}</th>
+				<th class="text-center">{{ 'Shipping (country)'|trans }}</th>
+				<th class="text-center">{{ 'Quantity'|trans }}</th>
+				<th class="text-center">{{ 'Total'|trans }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for orderDetail in field.value %}
+				<tr>
+					<td class="text-center">
+						{{ orderDetail.product.name }}
+					</td>
+					<td class="text-center">
+						{{ orderDetail.order.countrycode.name }}
+						({{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.order.countrycode.shippingCost ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }})
+					</td>
+					<td class="text-center">
+						{{ orderDetail.quantity }}
+					</td>
+					<td class="text-center">
+						{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td class="text-center" colspan="4">{{ 'No result'|trans }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>

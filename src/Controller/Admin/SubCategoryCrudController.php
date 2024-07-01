@@ -2,23 +2,23 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Traits\HasRoles;
 use App\Entity\Shop\SubCategory;
-use function Symfony\Component\Translation\t;
+use App\Entity\Traits\HasRoles;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Symfony\Component\Validator\Constraints\Length;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use function Symfony\Component\Translation\t;
 
 class SubCategoryCrudController extends AbstractCrudController
 {
@@ -27,7 +27,6 @@ class SubCategoryCrudController extends AbstractCrudController
         return SubCategory::class;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel(t('Information'));
@@ -39,25 +38,20 @@ class SubCategoryCrudController extends AbstractCrudController
                 new Length(min: 4, max: 128),
             ])
         ;
-        yield SlugField::new('slug')
-            ->setTargetFieldName('name')
-            ->hideOnIndex()
-            ->hideOnForm()
-        ;
         yield ColorField::new('color', t('Color'))
             ->setFormTypeOption('constraints', [
                 new NotBlank(),
                 new Length(min: 4, max: 12),
             ])
         ;
-        yield CollectionField::new('categories', t('Categories'))
+        yield AssociationField::new('products', t('Products'))->autocomplete();
+        yield CollectionField::new('category', t('Category'))
             ->setEntryIsComplex(true)
-            //->setEntryType(CategoryFormType::class)
+            // ->setEntryType(CategoryFormType::class)
             ->allowDelete()
             ->allowAdd()
         ;
     }
-    */
 
     public function configureCrud(Crud $crud): Crud
     {
