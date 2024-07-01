@@ -2,6 +2,7 @@
 
 namespace App\Entity\Shop;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\HasIdTrait;
 use App\Repository\Shop\OrderDetailRepository;
@@ -19,7 +20,7 @@ class OrderDetail
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::INTEGER)]
     private ?int $quantity = null;
 
     public function getOrder(): ?Order

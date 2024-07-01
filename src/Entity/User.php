@@ -35,7 +35,14 @@ use function Symfony\Component\String\u;
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
-#[ORM\DiscriminatorMap(['manager' => Manager::class, 'customer' => Customer::class, 'collaborator' => Collaborator::class, 'sales_person' => SalesPerson::class])]
+#[ORM\DiscriminatorMap([
+    //'superadministrator' => SuperAdministrator::class, 
+    'manager' => Manager::class, 
+    'customer' => Customer::class, 
+    'collaborator' => Collaborator::class, 
+    'sales_person' => SalesPerson::class
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     use HasIdTrait;

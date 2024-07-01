@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Shop;
 
-use App\Service\CartService;
 use App\Repository\QuestionRepository;
 use App\Repository\Shop\ProductRepository;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use App\Service\CartService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CartController extends AbstractController
 {
@@ -69,10 +69,10 @@ class CartController extends AbstractController
     #[Route(path: '/cart', name: 'cart', methods: ['GET'])]
     public function cart(CartService $cartService): Response
     {
-        return $this->render('cart/cart.html.twig', [
+        return $this->render('shop/cart/cart.html.twig', [
             'items' => $cartService->getCart(),
-            'total'=> $cartService->getTotal(),
-            'questions' => $this->questionRepository->findResults(6)
+            'total' => $cartService->getTotal(),
+            'questions' => $this->questionRepository->findResults(6),
         ]);
     }
 

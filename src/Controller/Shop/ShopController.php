@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Shop;
 
 use App\Entity\Shop\Product;
 use App\Entity\Traits\HasLimit;
-use App\Entity\Traits\HasRoles;
+use App\Repository\Shop\CategoryRepository;
+use App\Repository\Shop\ProductRepository;
+use App\Repository\Shop\SubCategoryRepository;
 use App\Service\SettingService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\Shop\ProductRepository;
-use App\Repository\Shop\CategoryRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use App\Repository\Shop\SubCategoryRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ShopController extends AbstractController
 {
@@ -48,7 +47,7 @@ class ShopController extends AbstractController
         // $categories = $this->categoryRepository->findAll();
 
         /** @var Product $product */
-        //$product = $this->settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
+        // $product = $this->settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
         $product = $this->productRepository->findOneBy(['slug' => $request->get('slug')]);
 
         if (!$product) {

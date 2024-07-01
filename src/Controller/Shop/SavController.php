@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Shop;
 
+use App\Controller\BaseController;
 use App\DataTransferObject\SavFormDTO;
 use App\Entity\Shop\Order;
 use App\Entity\Traits\HasRoles;
@@ -26,10 +27,10 @@ class SavController extends BaseController
     #[Route('/sav', name: 'sav', methods: ['GET'])]
     public function index(OrderRepository $orderRepository): Response
     {
-        $user = $this->getUserOrThrow();
+        // $user = $this->getUserOrThrow();
 
-        return $this->render('sav/index.html.twig', [
-            'orders' => $orderRepository->findBy(['user' => $user], ['createdAt' => 'desc']),
+        return $this->render('shop/sav/index.html.twig', [
+            'orders' => $orderRepository->findBy([/* 'user' => $user */], ['createdAt' => 'desc']),
         ]);
     }
 
@@ -96,6 +97,6 @@ class SavController extends BaseController
             return $this->redirectToRoute('sav', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('sav/trigger.html.twig', compact('form', 'order'));
+        return $this->render('shop/sav/trigger.html.twig', compact('form', 'order'));
     }
 }

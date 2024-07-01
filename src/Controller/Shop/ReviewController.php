@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Shop;
 
+use App\Controller\BaseController;
 use App\Entity\Shop\Product;
-use App\Service\SettingService;
 use App\Repository\Shop\ProductRepository;
+use App\Service\SettingService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +27,7 @@ class ReviewController extends BaseController
         $keyword = '' == $request->query->get('keyword') ? 'all' : $request->query->get('keyword');
 
         /** @var Product $product */
-        //$product = $settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
+        // $product = $settingService->getProducts(['slug' => $slug])->getQuery()->getOneOrNullResult();
         $product = $productRepository->findOneBy(['slug' => $request->get('slug')]);
         if (!$product) {
             $this->addFlash('danger', $translator->trans('The product not be found'));
@@ -41,6 +42,6 @@ class ReviewController extends BaseController
             ['wrap-queries' => true]
         );
 
-        return $this->render('shop/review.html.twig', compact("product'","reviews"));
+        return $this->render('shop/review/review.html.twig', compact("product'", 'reviews'));
     }
 }
