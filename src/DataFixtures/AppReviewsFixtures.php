@@ -55,8 +55,8 @@ class AppReviewsFixtures extends Fixture implements DependentFixtureInterface
         $this->createTestimonials($manager);
         $manager->flush();
 
-        // Create 20 Review by Product
-        for ($i = 0; $i <= 20; ++$i) {
+        // Create 40 Review by Product
+        for ($i = 0; $i <= 40; ++$i) {
             $review = new Review();
             $review
                 ->setAuthor($this->faker()->randomElement($users))

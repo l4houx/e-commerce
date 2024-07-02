@@ -13,6 +13,7 @@ class AppOrderFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Create 6 Shippings
+        /*
         $shippings = [
             [
                 'name' => 'France',
@@ -50,6 +51,18 @@ class AppOrderFixtures extends Fixture
             $this->setReference($shipping['name'], $newshipping);
 
             $manager->persist($newshipping);
+            $shippings[] = $shipping;
+        }
+        */
+
+        // Create 20 Add Shipping
+        $shippings = [];
+        for ($i = 0; $i <= 330; ++$i) {
+            $shipping = (new Shipping())
+                ->setName($this->faker()->country)
+                ->setShippingCost(rand(10, 100))
+            ;
+            $manager->persist($shipping);
             $shippings[] = $shipping;
         }
 

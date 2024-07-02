@@ -73,16 +73,6 @@ class Product
     #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
     private $ref = '';
 
-    // #[ORM\Column(type: Types::INTEGER)]
-    // private ?int $price = null;
-
-    #[ORM\Column(type: Types::FLOAT)]
-    #[Assert\GreaterThan(0)]
-    private ?float $discount = null;
-
-    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
-    private ?string $discountType = null;
-
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\Positive()]
     #[Assert\LessThan(1001)]
@@ -107,14 +97,6 @@ class Product
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
     #[Assert\NotNull]
     private bool $isFeaturedProduct = false;
-
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    #[Assert\NotNull]
-    private bool $isBestSelling = false;
-
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    #[Assert\NotNull]
-    private bool $isNewArrival = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
     #[Assert\NotNull(groups: ['create', 'update'])]
@@ -359,44 +341,6 @@ class Product
         return number_format($this->salePrice / 100, 0, '', ' ');
     }
 
-    /*
-    public function getPrice(): ?int
-    {
-        return $this->price;
-    }
-
-    public function setPrice(int $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-    */
-
-    public function getDiscount(): ?float
-    {
-        return $this->discount;
-    }
-
-    public function setDiscount(float $discount): static
-    {
-        $this->discount = $discount;
-
-        return $this;
-    }
-
-    public function getDiscountType(): ?string
-    {
-        return $this->discountType;
-    }
-
-    public function setDiscountType(?string $discountType): static
-    {
-        $this->discountType = $discountType;
-
-        return $this;
-    }
-
     public function getPrice(): ?float
     {
         return $this->price;
@@ -475,40 +419,6 @@ class Product
     public function setIsFeaturedProduct(bool $isFeaturedProduct): static
     {
         $this->isFeaturedProduct = $isFeaturedProduct;
-
-        return $this;
-    }
-
-    public function isBestSelling(): bool
-    {
-        return $this->isBestSelling;
-    }
-
-    public function getIsBestSelling(): bool
-    {
-        return $this->isBestSelling;
-    }
-
-    public function setIsBestSelling(bool $isBestSelling): static
-    {
-        $this->isBestSelling = $isBestSelling;
-
-        return $this;
-    }
-
-    public function isNewArrival(): bool
-    {
-        return $this->isNewArrival;
-    }
-
-    public function getIsNewArrival(): bool
-    {
-        return $this->isNewArrival;
-    }
-
-    public function setIsNewArrival(bool $isNewArrival): static
-    {
-        $this->isNewArrival = $isNewArrival;
 
         return $this;
     }

@@ -2,23 +2,33 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Shop\Order;
+use App\Repository\Shop\OrderRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use function Symfony\Component\Translation\t;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Controller\Admin\Field\OrderDetailField;
 use App\Controller\Admin\Field\OrderStatusField;
 use App\Controller\Admin\Traits\DetailOnlyTrait;
-use App\Entity\Shop\Order;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 
-use function Symfony\Component\Translation\t;
+use App\Controller\Admin\Field\OrderIsCompletedField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class OrderCrudController extends AbstractCrudController
 {
@@ -36,6 +46,13 @@ class OrderCrudController extends AbstractCrudController
         yield DateTimeField::new('createdAt', t('Order date'));
         yield IntegerField::new('totalPrice', t('Total price'));
         yield OrderStatusField::new('status', t('Status'));
+
+        if (Crud::PAGE_INDEX === $pageName) {
+            yield BooleanField::new('isCompleted', t('Completed'));
+        } else {
+            yield OrderIsCompletedField::new('isCompleted', t('Completed'))->onlyOnDetail();
+        }
+
         yield OrderDetailField::new('orderDetails', t('Command details'))->onlyOnDetail();
         yield AssociationField::new('coupon', t('Coupon'))->onlyOnDetail();
 
@@ -67,5 +84,46 @@ class OrderCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters->add(DateTimeFilter::new('createdAt', t('Creation date')));
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $isCompleted = Action::new('isCompleted', t('Mark as delivered'))
+            ->addCssClass("text-success")
+            ->displayAsLink()
+            ->linkToRoute('admin_dashboard_order_completed', fn (Order $order) => ['order' => $order->getId()])
+        ;
+
+        return $actions
+            ->add(Crud::PAGE_INDEX, $isCompleted)
+            ->add(Crud::PAGE_DETAIL, $isCompleted)
+
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->remove(Crud::PAGE_DETAIL, Action::DELETE)
+        ;
+    }
+
+    #[Route(path: '/%website_admin_dashboard_path%/order/{id}/completed/edit', name: 'admin_dashboard_order_completed', methods: ['GET'])]
+    public function IsCompleted(
+        int $id,
+        TranslatorInterface $translator,
+        OrderRepository $orderRepository, 
+        EntityManagerInterface $em,
+        AdminUrlGenerator $adminUrlGenerator
+    ): Response {
+        $order = $orderRepository->find($id);
+        $order->setCompleted(true);
+        $em->flush();
+
+        $this->addFlash('success', $translator->trans('Modification made successfully.'));
+
+        return $this->redirect(
+            $adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->setEntityId($order->getId())
+                ->generateUrl()
+        );
     }
 }

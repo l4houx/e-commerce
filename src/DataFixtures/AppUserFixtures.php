@@ -22,7 +22,7 @@ class AppUserFixtures extends Fixture implements DependentFixtureInterface
         private readonly AvatarService $avatarService,
         private readonly SluggerInterface $slugger
     ) {
-        $this->autoIncrement = 16;
+        $this->autoIncrement = 118;
     }
 
     public function load(ObjectManager $manager): void

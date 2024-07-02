@@ -173,8 +173,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; ++$i) {
             /** @var Feature $feature */
             $feature = (new Feature())
-                ->setId($i)
-                ->setName(sprintf("Feature %d", $i))
+                ->setName($this->faker()->unique()->sentence(1, true))
             ;
             $this->features[$i] = $feature;
             $manager->persist($feature);
@@ -540,7 +539,6 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setRef(sprintf("REF_%d", $p))
                 ->setPrice(rand(100, 1600))
                 ->setSalePrice(rand(100, 1600))
-                ->setDiscount(rand(100, 1600))
                 ->setTax(0.2)
                 ->setStock(rand(100, 1600))
                 ->setViews(rand(100, 1600))
@@ -558,8 +556,6 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setLinkedinUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setIsOnline($this->faker()->numberBetween(0, 1))
                 ->setIsFeaturedProduct($this->faker()->numberBetween(0, 1))
-                ->setIsBestSelling($this->faker()->numberBetween(0, 1))
-                ->setIsNewArrival($this->faker()->numberBetween(0, 1))
                 ->setIsOnSale($this->faker()->numberBetween(0, 1))
                 ->setEnablereviews($this->faker()->numberBetween(0, 1))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
@@ -614,11 +610,8 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            //AppAdminTeamUserFixtures::class,
-            //AppAdministratorTeamFixtures::class,
             AppUserFixtures::class,
             AppSettingsFixtures::class,
-            //AppCategoryFixtures::class,
         ];
     }
 }

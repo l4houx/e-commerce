@@ -99,6 +99,12 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'order', orphanRemoval: true)]
     private Collection $orderDetails;
 
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $isCompleted = false;
+
+    //#[ORM\Column(type: Types::STRING)]
+    //private string $state = 'cart';
+
     public function __construct()
     {
         $this->status = 0;
@@ -203,6 +209,11 @@ class Order
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return u(sprintf('%s %s', $this->firstname, $this->lastname))->upper()->toString();
     }
 
     public function getFirstname(): ?string
@@ -426,4 +437,30 @@ class Order
 
         return $this;
     }
+
+    public function isCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function setCompleted(?bool $isCompleted): static
+    {
+        $this->isCompleted = $isCompleted;
+
+        return $this;
+    }
+
+    /*
+    public function getState(): string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): static
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+    */
 }
