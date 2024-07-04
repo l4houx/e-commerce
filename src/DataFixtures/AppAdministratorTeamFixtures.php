@@ -85,6 +85,8 @@ class AppAdministratorTeamFixtures extends Fixture implements FixtureGroupInterf
             ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
         ;
 
+        $this->setReference('Admin', $admin);
+
         $manager->persist(
             $admin->setPassword(
                 $this->hasher->hashPassword($admin, 'admin')

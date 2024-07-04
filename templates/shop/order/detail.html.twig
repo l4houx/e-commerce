@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Order details'|trans %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+	{% set breadcrumb = [{ "order": "Orders"|trans, "current":(pagetitle) }] %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+	<section class="pt-0">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 mb-6 mb-lg-0">
+					<div class="card bg-transparent mb-6">
+						<div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center px-0">
+							<h5>
+								<span class="badge bg-{{ order.getStatusClass }} bg-opacity-15 text-{{ order.getStatusClass }} mb-0">
+									{{ order.stringifyStatus|trans }}
+								</span>
+								{{ "Order"|trans ~ " #" ~ order.ref ~ " " ~ ("placed on"|trans) ~ " " ~ order.createdAt|format_date('long') }}
+							</h5>
+						</div>
+						<div class="card-body px-0 pb-0">
+							<div class="card-body p-0">
+								<div class="row g-3">
+									<div class="col-lg-12">
+										<div class="table-responsive border-0">
+											<table class="table align-middle p-4 mb-0 table-hover">
+												<thead class="thead-dark">
+													<tr>
+														<th scope="col" class="border-0 text-white rounded-start">
+															{{ 'Picture'|trans }}
+														</th>
+														<th scope="col" class="border-0 text-white">{{ 'Product'|trans }}</th>
+														<th scope="col" class="border-0 text-white">{{ 'Unit price'|trans }}</th>
+														<th scope="col" class="border-0 text-white">{{ 'Quantity'|trans }}</th>
+														<th scope="col" class="border-0 text-white">{{ 'Price total'|trans }}</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% for orderDetail in order.orderDetails %}
+														<tr>
+															<td>
+																<img src="{{ orderDetail.product.imageName ? (orderDetail.product.getImagePath) : orderDetail.product.getImagePlaceholder }}" class="h-60px" alt="">
+															</td>
+															<td>
+																{{ orderDetail.product.name }} - {{ orderDetail.product.brand.name }}
+															</td>
+															<td>
+																{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+															</td>
+															<td>{{ orderDetail.quantity }}</td>
+															<td>
+																{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price * orderDetail.quantity ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+															</td>
+														</tr>
+													{% else %}
+														<tr>
+															<td class="text-center" colspan="6">{{ 'No result'|trans }}</td>
+														</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 ps-xl-6">
+					<div class="card border p-4">
+						<div class="card-header p-0 pb-3">
+							<h5 class="card-title mb-0">{{ 'Detail'|trans }}</h5>
+						</div>
+						<div class="card-body p-0 pb-3 mt-2">
+							<ul class="list-group list-group-borderless">
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Reference'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">{{ order.ref }}</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Order Date'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">{{ order.createdAt|format_date('long') }}</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Number of products'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">
+										{{ order.numberOfProducts }} {{ order.numberOfProducts  > 1 ? "products"|trans : "product"|trans }}
+									</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Total'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">
+										{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+									</span>
+								</li>
+								<li class="list-group-item d-flex flex-column">
+									<span>{{ 'Delivery address'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">
+										{{ order.fullName }}
+										<br/>
+										{{ order.street }}
+										{% if order.street2 is not null and order.street2 is not empty %}
+											<br/>
+											{{ order.street2 }}
+										{% endif %}
+										<br/>{{ order.postalcode }} {{ order.city }} {{ order.countrycode.name }}
+									</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Status'|trans }}</span>
+									<span class="badge bg-{{ order.getStatusClass }} bg-opacity-15 text-{{ order.getStatusClass }} mb-0">
+										{{ order.stringifyStatus|trans }}
+									</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ 'Order'|trans }}</span>
+									<span class="heading-color fw-semibold mb-0">
+										{% if order.isCompleted == true %}
+											{{ 'Delivered'|trans }}
+											{{ order.createdAt|format_date('long') }}
+										{% else %}
+											{{ 'Not delivered'|trans }}
+											{{ order.createdAt|format_date('long') }}
+										{% endif %}
+									</span>
+								</li>
+							</ul>
+						</div>
+						<div class="card-footer bg-transparent border-top p-0 pt-3">
+							<div>
+								<a href="{{ path("dashboard_account_order_index") }}" class="btn btn-light border btn-round me-1 mb-1 mb-md-0" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'My orders'|trans }}" data-bs-original-title="{{ 'My orders'|trans }}">
+									<i class="fas fa-cart-shopping"></i>
+								</a>
+								{% if order.status == 1 %}
+									<a href="{{ path("dashboard_orders_invoice", {id: order.id}) }}" class="btn btn-light border btn-round me-1 mb-1 mb-md-0" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'Print invoice'|trans }}" data-bs-original-title="{{ 'Print invoice'|trans }}" target="_blank">
+										<i class="fas fa-print"></i>
+									</a>
+								{% endif %}
+								<a href="{{ path("sav_trigger", {id: order.id}) }}" class="btn btn-light border btn-round me-1 mb-1 mb-md-0" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'Trigger a service request'|trans }}" data-bs-original-title="{{ 'Trigger a service request'|trans }}">
+									<i class="fas fa-ticket"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}

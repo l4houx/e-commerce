@@ -4,7 +4,7 @@
 {% block title pagetitle %}
 
 {% block breadcrumb %}
-	{% set breadcrumb = [{ "shop": "Products"|trans, (path('shop_product', { slug : product.name })): (product.name), "current":(pagetitle) }] %}
+	{% set breadcrumb = [{ "shop": "Products"|trans, (path('shop_product', { slug : product.slug })): (product.name), "current":(pagetitle) }] %}
 	{% include "global/breadcrumb.html.twig" with breadcrumb %}
 {% endblock %}
 

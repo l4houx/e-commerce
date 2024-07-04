@@ -65,9 +65,9 @@ class AppTicketingFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($closedStatu);
         $closedStatus[] = $closedStatu;
 
-        // Create 10 Tickets
+        // Create 20 Tickets
         $tickets = [];
-        for ($i = 0; $i <= 10; ++$i) {
+        for ($i = 0; $i <= 20; ++$i) {
             $ticket = (new Ticket())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setSubject($this->faker()->word())
@@ -88,13 +88,14 @@ class AppTicketingFixtures extends Fixture implements DependentFixtureInterface
             $tickets[] = $ticket;
         }
 
-        // Create 10 Responses
+        // Create 20 Responses
         $responses = [];
-        for ($i = 0; $i <= 10; ++$i) {
+        for ($i = 0; $i <= 20; ++$i) {
             $response = (new Response())
                 ->setContent($this->faker()->paragraphs(10, true))
                 ->setTicket($this->faker()->randomElement($tickets))
-                ->setUser($this->getReference('SuperAdministrator'))
+                //->setUser($this->getReference('SuperAdministrator'))
+                ->setUser($this->faker()->boolean(50) ? $this->getReference('Admin') : $this->getReference('SuperAdministrator'))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;

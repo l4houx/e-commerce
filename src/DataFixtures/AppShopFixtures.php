@@ -537,11 +537,11 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setSlug($this->slugger->slug($product->getName())->lower())
                 ->setContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
                 ->setRef(sprintf("REF_%d", $p))
-                ->setPrice(rand(100, 1600))
-                ->setSalePrice(rand(100, 1600))
+                ->setPrice(intval(ceil(rand(10, 1600) / 5) * 5))
+                ->setSalePrice(rand(10, 1600))
                 ->setTax(0.2)
-                ->setStock(rand(100, 1600))
-                ->setViews(rand(100, 1600))
+                ->setStock(rand(10, 1600))
+                ->setViews(rand(10, 1600))
                 ->setMetaTitle($product->getName())
                 ->setMetaDescription($this->faker()->realText(100))
                 ->setExternallink(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
@@ -577,11 +577,19 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 );
             }
 
+            if ($p === 1600) {
+                $product->setPrice(1600);
+            }
+
             $this->addReference('product-'.$p, $product);
             $this->createFeature($manager);
 
             $manager->persist($product);
             $products[] = $product;
+
+            if ($p > 1600 - count($this->categories)) {
+                $this->categories[$p % count($this->categories)]->setName($product);
+            }
         }
 
         $this->createProductImages($manager);
@@ -601,7 +609,10 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         }
         //$this->createProductHistory($manager);
 
-        $manager->flush();
+
+        if ($p % 400 === 0) {
+            $manager->flush();
+        }
     }
 
     /**

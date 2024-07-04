@@ -42,6 +42,6 @@ class ReviewController extends BaseController
             ['wrap-queries' => true]
         );
 
-        return $this->render('shop/review/review.html.twig', compact("product'", 'reviews'));
+        return $this->render('shop/review/review.html.twig', compact("product", 'reviews'));
     }
 }

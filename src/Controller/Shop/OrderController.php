@@ -3,22 +3,24 @@
 namespace App\Controller\Shop;
 
 use App\Entity\Shop\Order;
-use App\Entity\Shop\OrderDetail;
+use App\Service\CartService;
 use App\Entity\Shop\Shipping;
 use App\Entity\Traits\HasRoles;
-use App\Form\Shop\OrderFormType;
-use App\Repository\Shop\ProductRepository;
-use App\Service\CartService;
 use App\Service\SettingService;
+use App\Entity\Shop\OrderDetail;
+use App\Form\Shop\OrderFormType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\Shop\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[IsGranted(HasRoles::DEFAULT)]
+#[IsGranted(HasRoles::SHOP)]
 class OrderController extends AbstractController
 {
     public function __construct(
@@ -61,7 +63,7 @@ class OrderController extends AbstractController
 
                 // $this->addFlash('success', $this->translator->trans('Order was created successfully.'));
 
-                return $this->redirectToRoute('order_ok_message', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('order_success', [], Response::HTTP_SEE_OTHER);
             } else {
                 $this->addFlash('danger', $this->translator->trans('The form contains invalid data'));
             }
@@ -77,10 +79,10 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/order-ok-message', name: 'order_ok_message', methods: ['GET'])]
-    public function orderOkMessage(): Response
+    #[Route(path: '/order-success', name: 'order_success', methods: ['GET'])]
+    public function orderSuccess(): Response
     {
-        return $this->render('shop/order/order-ok-message.html.twig');
+        return $this->render('shop/order/order-success.html.twig');
     }
 
     #[Route(path: '/order/country/{id}/shipping-cost', name: 'order_shipping_cost')]
@@ -90,5 +92,19 @@ class OrderController extends AbstractController
 
         return new Response(json_encode(['status' => 200, 'message' => 'on',  'content' => $shippingPrice]));
         // return new JsonResponse(['status' => 200, "message" => "on",  "content" => $shippingPrice]);
+    }
+
+    // TEST
+    #[Route('/order/{id}/download', name: 'order_download', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    public function download(Order $order, string $publicDirectory): BinaryFileResponse
+    {
+        return $this->file(sprintf('%s/pdf/%s.pdf', $publicDirectory, $order->getRef()));
+    }
+
+    #[Route('/order/{id}/detail', name: 'order_detail', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    //#[IsGranted('show', subject: 'order')]
+    public function detail(Order $order): Response
+    {
+        return $this->render('shop/order/detail.html.twig', compact('order'));
     }
 }

@@ -2,37 +2,37 @@
 
 namespace App\Form\Shop;
 
-use App\Entity\Shop\Line;
-use App\Entity\Shop\Order;
-use Doctrine\ORM\EntityRepository;
 use App\DataTransferObject\SavFormDTO;
-use Symfony\Component\Form\AbstractType;
-use Symfony\UX\Dropzone\Form\DropzoneType;
-use function Symfony\Component\Translation\t;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Entity\Shop\Order;
+use App\Entity\Shop\OrderDetail;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\Dropzone\Form\DropzoneType;
+
+use function Symfony\Component\Translation\t;
 
 class SavFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('line', EntityType::class, [
+            ->add('orderDetail', EntityType::class, [
                 'label' => t('Product concerned'),
-                'class' => Line::class,
-                'choice_label' => fn (Line $line) => sprintf(
+                'class' => OrderDetail::class,
+                'choice_label' => fn (OrderDetail $orderDetail) => sprintf(
                     '%s - %s - %s',
-                    $line->getOrder()->getCreatedAt()->format('d/m/Y'),
-                    $line->getProduct()->getName(),
-                    $line->getProduct()->getBrand()->getName()
+                    $orderDetail->getOrder()->getCreatedAt()->format('d/m/Y'),
+                    $orderDetail->getProduct()->getName(),
+                    $orderDetail->getProduct()->getBrand()->getName()
                 ),
-                'query_builder' => fn (EntityRepository $repository) => $repository->createQueryBuilder('l')
-                    ->where('l.order = :order')
+                'query_builder' => fn (EntityRepository $repository) => $repository->createQueryBuilder('od')
+                    ->where('od.order = :order')
                     ->setParameter('order', $options['order']),
                 'row_attr' => [
                     'class' => 'mb-3',
@@ -52,9 +52,9 @@ class SavFormType extends AbstractType
                 'entry_type' => HiddenType::class,
                 'allow_add' => true,
             ])
-            ->add('description', TextareaType::class, [
-                'label' => t('Accurate description of the fault'),
-                'attr' => ['placeholder' => 'Description here', 'rows' => 4],
+            ->add('content', TextareaType::class, [
+                'label' => t('Accurate content of the fault'),
+                'attr' => ['placeholder' => 'Content here', 'rows' => 4],
                 'row_attr' => [
                     'class' => 'mb-3',
                 ],

@@ -2,18 +2,19 @@
 
 namespace App\Entity\Shop;
 
-use App\Entity\Traits\HasIdTrait;
-use App\Entity\Traits\HasIsPayOnDeliveryTrait;
-use App\Entity\Traits\HasTimestampableTrait;
-use App\Repository\Shop\OrderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\HasIdTrait;
 use Symfony\Component\Intl\Countries;
-use Symfony\Component\Validator\Constraints as Assert;
-
+use App\Repository\Shop\OrderRepository;
 use function Symfony\Component\String\u;
+use Doctrine\Common\Collections\Collection;
+use App\Entity\Traits\HasTimestampableTrait;
+use App\Entity\Traits\HasIsPayOnDeliveryTrait;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -34,6 +35,13 @@ class Order
     /** -2: failed / -1: cancel / 0: waiting for payment / 1: paid */
     #[ORM\Column(type: Types::INTEGER)]
     private int $status;
+
+    //#[ORM\Column(type: Types::STRING)]
+    //private string $state = 'cart';
+
+    //#[ORM\ManyToOne]
+    //#[ORM\JoinColumn(nullable: false)]
+    //private ?User $user = null;
 
     #[ORM\Column(type: Types::STRING, length: 20)]
     #[Assert\Length(min: 2, max: 20)]
@@ -88,10 +96,10 @@ class Order
     private ?Coupon $coupon = null;
 
     /**
-     * @var Collection<int, Line>
+     * //@var Collection<int, Line>
      */
-    #[ORM\OneToMany(targetEntity: Line::class, mappedBy: 'order', cascade: ['persist'])]
-    private Collection $lines;
+    //#[ORM\OneToMany(targetEntity: Line::class, mappedBy: 'order', cascade: ['persist'])]
+    //private Collection $lines;
 
     /**
      * @var Collection<int, OrderDetail>
@@ -102,14 +110,11 @@ class Order
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $isCompleted = false;
 
-    //#[ORM\Column(type: Types::STRING)]
-    //private string $state = 'cart';
-
     public function __construct()
     {
         $this->status = 0;
         $this->createdAt = new \DateTimeImmutable();
-        $this->lines = new ArrayCollection();
+        //$this->lines = new ArrayCollection();
         $this->orderDetails = new ArrayCollection();
     }
 
@@ -210,6 +215,32 @@ class Order
 
         return $this;
     }
+
+    /*
+    public function getState(): string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): static
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+    */
+
+    /*public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }*/
 
     public function getFullName(): string
     {
@@ -369,9 +400,9 @@ class Order
     }
 
     /**
-     * @return Collection<int, Line>
+     * //@return Collection<int, Line>
      */
-    public function getLines(): Collection
+    /*public function getLines(): Collection
     {
         return $this->lines;
     }
@@ -407,6 +438,7 @@ class Order
     {
         return intval(array_sum($this->lines->map(fn (Line $line) => $line->getQuantity())->toArray()));
     }
+    */
 
     /**
      * @return Collection<int, OrderDetail>
@@ -438,6 +470,39 @@ class Order
         return $this;
     }
 
+    // ADD 2 JUIL
+    public function addProduct(Product $product): static
+    {
+        $orderDetails = $this->orderDetails->filter(fn (OrderDetail $orderDetail) => $orderDetail->getProduct() === $product);
+
+        $orderDetail = $orderDetails->first();
+
+        if (false === $orderDetail) {
+            $orderDetail = new OrderDetail();
+            $orderDetail->setOrder($this);
+            $orderDetail->setProduct($product);
+            $this->orderDetails->add($orderDetail);
+        }
+
+        $orderDetail->increaseQuantity();
+
+        return $this;
+    }
+
+    public function getTotal(): int
+    {
+        return intval(
+            array_sum(
+                $this->orderDetails->map(fn (OrderDetail $orderDetail) => $orderDetail->getTotal())->toArray()
+            )
+        );
+    }
+
+    public function getNumberOfProducts(): int
+    {
+        return intval(array_sum($this->orderDetails->map(fn (OrderDetail $orderDetail) => $orderDetail->getQuantity())->toArray()));
+    }
+
     public function isCompleted(): ?bool
     {
         return $this->isCompleted;
@@ -449,18 +514,4 @@ class Order
 
         return $this;
     }
-
-    /*
-    public function getState(): string
-    {
-        return $this->state;
-    }
-
-    public function setState(string $state): static
-    {
-        $this->state = $state;
-
-        return $this;
-    }
-    */
 }

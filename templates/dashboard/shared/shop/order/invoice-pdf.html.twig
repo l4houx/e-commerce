@@ -1,0 +1,196 @@
+{% set settings = setting.findAll %}
+
+{% if app.request.locale == "ar" %}
+    {% set locale = "en" %}
+{% else %}
+    {% set locale = app.request.locale %}
+{% endif %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ "Order"|trans({}, "messages", locale) }} {{ "#" ~ order.ref }}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style>
+			* {
+				font-family: DejaVu Sans !important;
+			}
+			table.bordered,
+			table.bordered th,
+			table.bordered td {
+				padding: 10px;
+				border: 1px solid #eee;
+				border-collapse: collapse;
+			}
+			table tr {
+				vertical-align: top;
+			}
+			table td {
+				word-wrap: break-word;
+				overflow-wrap: break-word;
+			}
+            .d-flex {
+                display: -webkit-box !important;
+                display: -ms-flexbox !important;
+                display: flex !important;
+            }
+            .justify-content-between {
+                -webkit-box-pack: justify !important;
+                -ms-flex-pack: justify !important;
+                justify-content: space-between !important;
+            }
+            .px-0 {
+                padding-right: 0 !important;
+                padding-left: 0 !important;
+            }
+            .pt-0 {
+                padding-top: 0 !important;
+            }
+            .mb-0 {
+                margin-bottom: 0 !important;
+            }
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+			.text-center {
+				text-align: center !important
+			}
+			.text-end {
+				text-align: right !important;
+			}
+			.text-start {
+				text-align: left !important;
+			}
+			.invoices-container .invoice-wrapper {
+				page-break-inside: avoid;
+			}
+			.invoices-container .invoice-wrapper:not(:last-child) {
+				page-break-after: always;
+			}
+			.invoices-container .invoice-wrapper:not(:first-child) {
+				page-break-before: always;
+			}
+			.text-muted {
+				color: #777;
+			}
+			.footer {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+			}
+			.scanned-invoice-stamp {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			.qr-barcode-wrapper > div {
+				width: fit-content;
+				margin: 0 auto;
+			}
+		</style>
+    </head>
+    <body>
+        <div class="invoices-container">
+            <div class="invoice-wrapper">
+                <div class="text-center text-muted">
+                    <h3>{{ 'Purchase order No. '|trans ~ order.ref }}</h3>
+                    <span>{{ 'Order Date'|trans }} {{ order.createdAt|format_date('long') }}</span>
+                </div>
+                <div class="footer text-center text-muted">
+                    <div class="qr-barcode-wrapper">
+                        {{ barcode({code: order.ref, type: 'c128', format: 'html'}) }}
+                    </div>
+                    <br>
+                    {{ settings['website_url'] }}
+                    <br>
+                    {{ settings['website_name'] }}
+                    <br>
+                    {{ setting.getSettings("website_description_" ~ locale) }}
+                </div>
+                <br/>
+                <table width="100%" class="bordered">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Number'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Order Date'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Customer account'|trans({}, "messages", locale) }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ order.ref }}</td>
+                            <td>{{ order.createdAt|format_date('long') }}</td>
+                            <td>{{ "CL%06d"|format(order.id) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" class="bordered">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h4>{{ 'Delivery address'|trans({}, "messages", locale) }}</h4>
+                                {{ order.fullName }}
+                                <br/>
+                                {{ order.street }}
+                                <br/>
+                                {% if order.street2 is not null %}
+                                    {{ order.street2 }}
+                                    <br/>
+                                {% endif %}
+                                {{ order.postalcode }} {{ order.city }} {{ order.countrycode.name }}
+                                <br/>
+                                {{ 'Phone'|trans({}, "messages", locale) }} : {{ order.phone }}
+                                <br/>
+                                {{ 'E-mail'|trans({}, "messages", locale) }} : {{ order.email }}
+                                <br/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" class="bordered">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Reference'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Product'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Unit price'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Quantity'|trans({}, "messages", locale) }}</th>
+                            <th>{{ 'Price total'|trans({}, "messages", locale) }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orderDetail in order.orderDetails %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('shop_product', {slug: orderDetail.product.slug }) }}" target="_blank">
+                                        {{ "#" ~ orderDetail.product.ref }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ orderDetail.product.name }} - {{ orderDetail.product.brand.name }}
+                                </td>
+                                <td>
+                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                </td>
+                                <td>{{ orderDetail.quantity }}</td>
+                                <td>
+                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price * orderDetail.quantity ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="text-end" colspan="4">{{ 'Shipping cost'|trans({}, "messages", locale) }}</th>
+                            <td class="text-center">{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.countrycode.shippingCost ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end" colspan="4">{{ 'Total to pay'|trans({}, "messages", locale) }}</th>
+                            <td class="text-center">{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

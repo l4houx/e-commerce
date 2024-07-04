@@ -305,7 +305,7 @@
                                 {% endfor %}
                                 {% if reviewscount > 8 %}
                                     <div class="mt-4 text-end">
-                                        <a href="{{ path('shop_reviews') }}" class="btn btn-primary-soft mb-0">
+                                        <a href="{{ path('shop_reviews', {slug: product.slug }) }}" class="btn btn-primary-soft mb-0">
                                             <i class="far fa-star-half-full"></i>
                                             {{ "See all %reviewscount% reviews"|trans({'%reviewscount%': reviewscount}) }}
                                         </a>

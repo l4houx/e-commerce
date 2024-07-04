@@ -2,13 +2,13 @@
 
 namespace App\DataTransferObject;
 
-use App\Entity\Shop\Line;
+use App\Entity\Shop\OrderDetail;
 
 class SavFormDTO
 {
-    public Line $line;
+    public OrderDetail $orderDetail;
 
-    public string $description = '';
+    public string $content = '';
 
     public ?string $comment = null;
 

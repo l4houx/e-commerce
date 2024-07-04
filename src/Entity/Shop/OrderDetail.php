@@ -21,7 +21,12 @@ class OrderDetail
     private ?Product $product = null;
 
     #[ORM\Column(type: Types::INTEGER)]
-    private ?int $quantity = null;
+    private int $quantity = 0;
+
+    //#[ORM\Column(type: Types::FLOAT)]
+    //#[Assert\Positive()]
+    //#[Assert\LessThan(1001)]
+    //private ?float $price = null;
 
     public function getOrder(): ?Order
     {
@@ -44,10 +49,12 @@ class OrderDetail
     {
         $this->product = $product;
 
+        //$this->price = $product->getPrice();
+
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
@@ -58,4 +65,37 @@ class OrderDetail
 
         return $this;
     }
+
+    // ADD 2 JUIL
+    public function decreaseQuantity(): static
+    {
+        --$this->quantity;
+
+        return $this;
+    }
+
+    public function increaseQuantity(): static
+    {
+        ++$this->quantity;
+
+        return $this;
+    }
+
+    public function getTotal(): int
+    {
+        //return $this->quantity * $this->price;
+        return $this->quantity;
+    }
+
+    /*public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(float $price): static
+    {
+        $this->price = $price;
+
+        return $this;
+    }*/
 }
