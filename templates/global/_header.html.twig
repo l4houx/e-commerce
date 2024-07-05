@@ -18,12 +18,12 @@
                             </li>
                             {% if is_granted("ROLE_SHOP") %}
                                 <li class="nav-item">
-                                    <a class="nav-link {% if routename == "cart" %}active{% endif %}" href="{{ path("cart") }}">
+                                    <a class="nav-link {% if routename == "dashboard_customer_cart" %}active{% endif %}" href="{{ path("dashboard_customer_cart") }}">
                                         {{ 'Cart'|trans }}
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link {% if routename == "sav" %}active{% endif %}" href="{{ path("sav") }}">
+                                    <a class="nav-link {% if routename == "dashboard_customer_sav" %}active{% endif %}" href="{{ path("dashboard_customer_sav") }}">
                                         {{ 'Sav'|trans }}
                                     </a>
                                 </li>

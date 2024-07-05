@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Order history'|trans %}
+{% block title pagetitle %}
+
+{% block body %}
+    <section class="pt-sm-7">
+        <div class="container pt-3 pt-xl-5">
+            <div class="row">
+                {% include "global/dashboard-items-navbar-vertical.html.twig" with {activerd: 'order_index'} %}
+                <div class="col-lg-8 col-xl-9 ps-lg-4 ps-xl-6">
+                    <div class="d-flex justify-content-between align-items-center mb-5 mb-sm-6">
+                        <h1 class="h3 mb-0">{{ pagetitle }}</h1>
+                        <button class="btn btn-primary d-lg-none flex-shrink-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+                            <i class="fas fa-sliders-h"></i> {{ 'Menu'|trans }}
+                        </button>
+                    </div>
+                    <div class="card bg-transparent">
+                        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center p-0 pb-3">
+                            <div>
+                                <h6 class="card-title mb-2">{{ 'Recent orders'|trans }}</h6>
+                                <p class="heading-color fw-normal small mb-0">
+                                    <span class="text-muted">
+                                        {{ "%resultsCount% result(s) found"|trans({'%resultsCount%': orders.getTotalItemCount}) }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-3 ms-auto">
+                                <div>
+                                    <select class="form-select js-choice" aria-label=".form-select-sm">
+                                        <option>{{ "Sort by"|trans }}</option>
+                                        <option selected="">All</option>
+                                        <option>Delivered</option>
+                                        <option>Processing</option>
+                                        <option>Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0 pt-5">
+                            {% if orders.getTotalItemCount %}
+                                {% include "dashboard/shared/shop/order/manage-orders.html.twig" with {orders: orders} %}
+                            {% else %}
+                                {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                                    {% block content %}
+                                        {{ 'No orders found'|trans }}
+                                    {% endblock %}
+                                {% endcomponent %}
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent text-end p-0">
+                            {{ knp_pagination_render(orders, null, {}, {'align': 'center'}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            if (getURLParameter("ref")) {
+                $("#ref").val("{{ app.request.get('ref') }}");
+            }
+            if (getURLParameter('status') != "null") {
+                $('input[type="radio"][name="status"][value="' + getURLParameter('status') + '"]').attr("checked", "checked");
+            }
+        });
+    </script>
+{% endblock %}

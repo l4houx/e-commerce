@@ -75,7 +75,7 @@
 				{% endif %}
 			</div>
 			{% if product.stock > 0 %}
-				<a href="{{ path('cart_add', { id : product.id }) }}" class="btn btn-dark mb-0 z-index-2">
+				<a href="{{ path('dashboard_customer_cart_add', { id : product.id }) }}" class="btn btn-dark mb-0 z-index-2">
 					<i class="fas fa-cart-shopping"></i>
 				</a>
 			{% else %}

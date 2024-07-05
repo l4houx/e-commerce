@@ -2,13 +2,19 @@
 
 namespace App\Service;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use App\Entity\User;
 use Twig\Environment;
+use App\Entity\Shop\Order;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Traits\HasRoles;
 use App\Entity\Settings\Setting;
+use Symfony\Component\Mime\Address;
 use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Repository\Settings\SettingRepository;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -94,7 +100,7 @@ class SettingService
     }
 
     // Updates the .env name with the choosen value
-    public function updateEnv(string $name, string $value): void
+    function updateEnv(string $name, string $value): void
     {
         if (0 == strlen($name)) {
             return;
@@ -124,7 +130,7 @@ class SettingService
     }
 
     // Gets the value with the entered name from the .env file
-    public function getEnv(string $name)
+    function getEnv(string $name)
     {
         if (0 == strlen($name)) {
             return;
@@ -219,6 +225,65 @@ class SettingService
         if ($authChecker->isGranted(HasRoles::ADMINAPPLICATION)) {
             $em->getFilters()->disable('softdeleteable');
         }
+    }
+
+    // Removes all the specified user cart elements
+    public function emptyCart(User $user): void
+    {
+
+    }
+
+    // Sends the orders to the customer
+    public function sendOrderConfirmationEmail(Order $order, string $emailTo): int
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($pdfOptions);
+        $html = $this->templating->render('dashboard/shared/shop/order/customers-pdf.html.twig', [
+            'order' => $order,
+        ]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $ordersPdfFile = $dompdf->output();
+
+        $this->mailer->send(
+            (new TemplatedEmail())
+                ->from(new Address(
+                    $this->parameter->get('website_no_reply_email'),
+                    $this->parameter->get('website_name'),
+                ))
+                ->subject($this->translator->trans('Your orders bought from') . ' ' . $this->parameter->get('website_name'))
+                ->to(new Address($emailTo))
+                ->htmlTemplate('mails/order-confirmation-email.html.twig')
+                ->attach(
+                    $ordersPdfFile,
+                    $this->parameter->get('website_name'),
+                    $this->translator->trans("invoice-").$order->getId().'.pdf',
+                )
+                ->context(['order' => $order])
+        );
+
+        return 1;
+    }
+
+    // Returns the orders after applying the specified search criterias
+    public function getOrders($criterias): QueryBuilder
+    {
+        //$this->disableSofDeleteFilterForAdmin($this->em, $this->authChecker);
+        $status = array_key_exists('status', $criterias) ? $criterias['status'] : 1;
+        $ref = array_key_exists('ref', $criterias) ? $criterias['ref'] : "all";
+        //$user = array_key_exists('user', $criterias) ? $criterias['user'] : "all";
+        $orderDetails = array_key_exists('orderDetails', $criterias) ? $criterias['orderDetails'] : "all";
+        $sort = array_key_exists('sort', $criterias) ? $criterias['sort'] : "createdAt";
+        $order = array_key_exists('order', $criterias) ? $criterias['order'] : "DESC";
+        $limit = array_key_exists('limit', $criterias) ? $criterias['limit'] : "all";
+        $count = array_key_exists('count', $criterias) ? $criterias['count'] : false;
+
+        return $this->em->getRepository("\App\Entity\Shop\Order")->getOrders($status, $ref/*, $user*/, $orderDetails, $sort, $order, $limit, $count);
     }
 
     // Returns the blog posts after applying the specified search criterias

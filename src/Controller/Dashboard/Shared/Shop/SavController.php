@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Shop;
+namespace App\Controller\Dashboard\Shared\Shop;
 
 use App\Controller\BaseController;
 use App\DataTransferObject\SavFormDTO;
@@ -22,6 +22,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted(HasRoles::SHOP)]
+#[Route(path: '/%website_dashboard_path%/customer', name: 'dashboard_customer_')]
 class SavController extends BaseController
 {
     #[Route('/sav', name: 'sav', methods: ['GET'])]
@@ -29,7 +30,7 @@ class SavController extends BaseController
     {
         // $user = $this->getUserOrThrow();
 
-        return $this->render('shop/sav/index.html.twig', [
+        return $this->render('dashboard/customer/sav/index.html.twig', [
             'orders' => $orderRepository->findBy([/* 'user' => $user */], ['createdAt' => 'desc']),
         ]);
     }
@@ -94,9 +95,9 @@ class SavController extends BaseController
                 $translator->trans('Your after-sales service request has been sent. We will respond as soon as possible.')
             );
 
-            return $this->redirectToRoute('sav', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('dashboard_customer_sav', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('shop/sav/trigger.html.twig', compact('form', 'order'));
+        return $this->render('dashboard/customer/sav/trigger.html.twig', compact('form', 'order'));
     }
 }

@@ -90,7 +90,12 @@
                                 </div>
                                 <div class="card-footer p-0 pt-3">
                                     <a class="icon-link icon-link-hover" href="{{ path('help_center_category', { slug: category.slug }) }}">
-                                        {{ 'See more articles'|trans }}<i class="fas fa-arrow-right"></i> 
+                                        {{ 'See more articles'|trans }}
+                                        {% if app.request.locale == 'ar' %}
+                                            <i class="fas fa-arrow-left"></i>
+                                        {% else %}
+                                            <i class="fas fa-arrow-right"></i>
+                                        {% endif %}
                                     </a>
                                 </div>
                             </article>
@@ -104,7 +109,7 @@
         <div class="container inner-container">
             <h3 class="text-center">{{ 'Frequently Asked Questions'|trans }}</h3>
             {% set faqs = setting.getHelpCenterFaqs({"isOnline": "all", "limit": 6}).getQuery().getResult() %}
-            {% if faqs | length > 0 %}
+            {% if faqs|length > 0 %}
                 <div class="accordion accordion-icon accordion-border-bottom mt-5" id="accordionFaq">
                     {% for faq in faqs %}
                         <div class="accordion-item mb-3">
@@ -115,71 +120,20 @@
                             </div>
                             <div id="collapse-{{ faq.id }}" class="accordion-collapse collapse {{ (loop.first ) ? 'show' : '' }}" aria-labelledby="heading-{{ faq.id }}" data-bs-parent="#accordionFaq">
                                 <div class="accordion-body">
-                                    {{ faq.answer | html_markdown }}
+                                    {{ faq.answer|html_markdown }}
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                {% include "global/message.html.twig" with { type: "dark", message: ('No faqs found'|trans), icon: "fas fa-exclamation" } %}
+                {% component alert with {type: 'info', closeButton: false, class: 'my-2'} %}
+                    {% block content %}
+                        {{ 'No faqs found'|trans }}
+                    {% endblock %}
+                {% endcomponent %}
             {% endif %}
         </div>
     </section>
-    <section class="pt-0">
-        <div class="container">
-            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 g-lg-6">
-                <div class="col">
-                    <div class="card card-body card-hover-shadow border p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <h4 class="mb-0 text-primary"><i class="fas fa-headset"></i></h4>
-                                <div class="mx-3">
-                                    <h6 class="mb-0">{{ 'Contact Support'|trans }}</h6>
-                                    <small>{{ 'Not finding the help you need?'|trans }}</small>
-                                </div>
-                            </div>
-                            <a class="icon-link icon-link-hover text-body stretched-link" href="{{ path('help_center_support') }}">
-                                <i class="fas fa-arrow-right fs-5"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card card-body card-hover-shadow border p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <h4 class="mb-0 text-primary"><i class="fas fa-ticket"></i></h4>
-                                <div class="mx-3">
-                                    <h6 class="mb-0">{{ 'Submit a Ticket'|trans }}</h6>
-                                    <small>{{ 'Prosperous impression had delay'|trans }}</small>
-                                </div>
-                            </div>
-                            <a class="icon-link icon-link-hover text-body stretched-link" href="#">
-                                <i class="fas fa-arrow-right fs-5"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card card-body card-hover-shadow border p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <h4 class="mb-0 text-primary"><i class="fas fa-envelope-open"></i></h4>
-                                <div class="mx-3">
-                                    <h6 class="mb-0">{{ 'Email us'|trans }}</h6>
-                                    <small>
-                                        {{ 'Reach us at'|trans }} <a href="javascript:void;" class="heading-color">{{ email }}</a>
-                                    </small>
-                                </div>
-                            </div>
-                            <a class="icon-link icon-link-hover text-body stretched-link" href="{{ path('contact') }}">
-                                <i class="fas fa-arrow-right fs-5"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {% include "global/support-box.html.twig" %}
 {% endblock %}

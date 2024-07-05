@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'After sales service'|trans %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+	{% set breadcrumb = [{ "dashboard_main": ("Dashboard"|trans), "current":(pagetitle) }] %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+	<section class="pt-0">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="card bg-transparent">
+						<div class="card-header bg-transparent border-bottom p-0 pb-3">
+							<h6 class="card-title mb-0">
+								{{ 'List of commands'|trans }}
+							</h6>
+						</div>
+						<div class="table-responsive overflow-y-hidden">
+							<table class="table mb-0 text-nowrap table-hover table-centered" data-role="accessList">
+								<thead class="">
+									<tr>
+										<th>{{ 'Reference'|trans}}</th>
+										<th>{{ 'Order Date'|trans }}</th>
+										<th>{{ 'Number of products'|trans }}</th>
+										<th>{{ 'Total'|trans }}</th>
+										<th>{{ 'Status'|trans }}</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for order in orders %}
+										{% if order.state != "cart" %}
+											<tr>
+												<td>{{ order.ref }}</td>
+												<td>{{ order.createdAt|format_date('long') }}</td>
+												<td>{{ order.numberOfProducts }}</td>
+												<td>
+                                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                                </td>
+												<td>
+													{% if order.state == "pending" %}
+														<span class="badge bg-primary">{{ 'In process'|trans }}</span>
+													{% elseif order.state == "on_delivery" %}
+														<span class="badge bg-info">{{ 'In transit'|trans }}</span>
+													{% elseif order.state == "delivered" %}
+														<span class="badge bg-success">{{ 'Delivered'|trans }}</span>
+													{% elseif order.state == "canceled" %}
+														<span class="badge bg-warning">{{ 'Canceled'|trans }}</span>
+													{% else %}
+														<span class="badge bg-danger">{{ 'Delivery incident'|trans }}</span>
+													{% endif %}
+												</td>
+												<td>
+													<div class="dropdown dropstart">
+														<a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button" id="Dropdown-{{ order.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+															<i class="fas fa-ellipsis-v"></i>
+														</a>
+														<div class="dropdown-menu" aria-labelledby="Dropdown-{{ order.id }}" style="">
+															<span class="dropdown-header">{{ 'Settings'|trans }}</span>
+															<a class="dropdown-item" href="{{ path("dashboard_customer_sav_trigger", {id: order.id}) }}">
+																<i class="fas fa-message fa-fw dropdown-item-icon"></i>
+																{{ 'Trigger a service request'|trans }}
+															</a>
+														</div>
+													</div>
+												</td>
+											</tr>
+										{% endif %}
+									{% else %}
+										<tr>
+											<td class="text-center" colspan="8">{{ 'No result'|trans }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}

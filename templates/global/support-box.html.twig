@@ -1,0 +1,56 @@
+<section class="pt-0">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 g-lg-6">
+            <div class="col">
+                <div class="card card-body card-hover-shadow border p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex">
+                            <h4 class="mb-0 text-primary"><i class="fas fa-headset"></i></h4>
+                            <div class="mx-3">
+                                <h6 class="mb-0">{{ 'Contact Support'|trans }}</h6>
+                                <small>{{ 'Not finding the help you need?'|trans }}</small>
+                            </div>
+                        </div>
+                        <a class="icon-link icon-link-hover text-body stretched-link" href="{{ path('help_center_support') }}">
+                            <i class="fas fa-arrow-right fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card card-body card-hover-shadow border p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex">
+                            <h4 class="mb-0 text-primary"><i class="fas fa-ticket"></i></h4>
+                            <div class="mx-3">
+                                <h6 class="mb-0">{{ 'Submit a Ticket'|trans }}</h6>
+                                <small>{{ 'Prosperous impression had delay'|trans }}</small>
+                            </div>
+                        </div>
+                        <a class="icon-link icon-link-hover text-body stretched-link" href="#">
+                            <i class="fas fa-arrow-right fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card card-body card-hover-shadow border p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex">
+                            <h4 class="mb-0 text-primary"><i class="fas fa-envelope-open"></i></h4>
+                            <div class="mx-3">
+                                <h6 class="mb-0">{{ 'Email us'|trans }}</h6>
+                                <small>
+                                    {{ 'Reach us at'|trans }} <a href="javascript:void;" class="heading-color">{{ email }}</a>
+                                </small>
+                            </div>
+                        </div>
+                        <a class="icon-link icon-link-hover text-body stretched-link" href="{{ path('contact') }}">
+                            <i class="fas fa-arrow-right fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

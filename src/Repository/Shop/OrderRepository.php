@@ -5,6 +5,7 @@ namespace App\Repository\Shop;
 use App\Entity\Shop\Order;
 use App\Entity\Traits\HasLimit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -25,7 +26,7 @@ class OrderRepository extends ServiceEntityRepository
     {
         $builder = $this->createQueryBuilder('o')
             ->addSelect('od')
-            ->leftJoin('o.orderDetails','od')
+            ->leftJoin('o.orderDetails', 'od')
             ->orderBy('o.id', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
             ->where('o.updatedAt <= :now')
@@ -41,5 +42,45 @@ class OrderRepository extends ServiceEntityRepository
                 'sortFieldAllowList' => ['o.id', 'o.firstname', 'o.lastname', 'o.ref'],
             ]
         );
+    }
+
+    public function getOrders($status, $ref, /* $user, */ $orderDetails, $sort, $order, $limit, $count): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        if ($count) {
+            $qb->select('COUNT(o)');
+        } else {
+            $qb->select('o');
+        }
+
+        if ('all' !== $status) {
+            $qb->andWhere('o.status = :status')->setParameter('status', $status);
+        }
+
+        /*
+        if ($user !== "all") {
+            $qb->leftJoin("o.user", "user");
+            $qb->andWhere("user.slug = :user")->setParameter("user", $user);
+        }
+        */
+
+        if ('all' !== $orderDetails) {
+            $qb->leftJoin('o.orderDetails', 'orderDetails');
+        }
+
+        if ('all' !== $ref) {
+            $qb->andWhere('o.ref = :ref')->setParameter('ref', $ref);
+        }
+
+        if ('all' !== $limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        if ($sort) {
+            $qb->orderBy('o.'.$sort, $order);
+        }
+
+        return $qb;
     }
 }

@@ -19,18 +19,17 @@ class SendMailService
     /** @throws TransportExceptionInterface */
     public function send(
         string $to,
-        string $from,
         string $subject,
         string $template,
         array $context
     ): void {
         // We create the email
         $email = (new TemplatedEmail())
-            ->to(new Address(
-                $to,
+            ->from(new Address(
+                $this->parameter->get('website_no_reply_email'),
                 $this->parameter->get('website_name'),
             ))
-            ->from(new Address($from))
+            ->to(new Address($to))
             ->subject($subject)
             ->htmlTemplate("mails/$template.html.twig")
             ->context($context)

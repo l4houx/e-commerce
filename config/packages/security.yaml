@@ -39,8 +39,8 @@ security:
         - { path: ^(.*?)/%website_admin_dashboard_path%/signin, roles: PUBLIC_ACCESS }
         - { path: ^(.*?)/signin$, roles: PUBLIC_ACCESS }
         - { path: ^(.*?)/signup, roles: PUBLIC_ACCESS }
-        - { path: ^(.*?)/%website_dashboard_path%/user, roles: ROLE_USER }
-        - { path: ^(.*?)/%website_admin_dashboard_path%, roles: ROLE_TEAM }
+        - { path: ^(.*?)/%website_dashboard_path%/account, roles: ROLE_USER }
+        - { path: ^(.*?)/%website_admin_dashboard_path%/, roles: ROLE_TEAM }
 
     role_hierarchy:
         ROLE_SALES_PERSON: [ROLE_CLIENT_ACCESS, ROLE_WEBSITE, ROLE_SHOP, ROLE_EMPLOYEE]

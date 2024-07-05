@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Checkout'|trans %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+    {% set breadcrumb = [{
+        "dashboard_main": "Dashboard"|trans,
+        "shop": "All product"|trans, 
+        "cart": ("My cart"|trans), 
+        "current":(pagetitle) 
+        }] 
+    %}
+    {% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+    <section class="pt-0">
+        <div class="container">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'row needs-validation'} }) }}
+                <div class="col-lg-8 mb-6 mb-lg-0">
+                    <div class="card bg-transparent mb-6">
+                        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center px-0">
+                            <h5>{{ 'Billing information'|trans }}</h5>
+                            <a href="{{ path('cart') }}" class="btn btn-sm btn-light border mb-0">
+                                <i class="fas fa-plus me-1"></i>{{ 'Add new'|trans }}
+                            </a>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <div class="card-body p-0">
+                                <div class="row g-3">
+                                    {{ form_widget(form._token) }}
+                                    {{ form_errors(form) }}
+                                    <div class="col-md-6">
+                                        {{ form_row(form.firstname) }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form_row(form.lastname) }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form_row(form.email) }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form_row(form.phone) }}
+                                    </div>
+                                    <div class="col-12">
+                                        {{ form_row(form.street) }}
+                                    </div>
+                                    <div class="col-12">
+                                        {{ form_row(form.street2) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.countrycode) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.city) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.postalcode) }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ form_row(form.isPayOnDelivery) }}
+                                    </div>
+                                </div>
+                            </div>	
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 ps-xl-6">
+                    <div class="card border p-4">
+                        <div class="card-body p-0 pb-3 mt-2">
+                            <ul class="list-group list-group-borderless">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ 'Subtotal'|trans }}</span>
+                                    <span class="heading-color fw-semibold mb-0">
+                                        <span id="subtotal" class="heading-color fw-semibold mb-0">
+                                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ total ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                        </span>
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ 'Shipping Cost'|trans }}</span>
+                                    <span class="heading-color fw-semibold mb-0">
+                                        <span id="shippingcost" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ 'Promotional code'|trans }}</span>
+                                    <span class="heading-color fw-semibold mb-0">
+                                        <span id="coupon" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ 'Tax'|trans }}</span>
+                                    <span class="heading-color fw-semibold mb-0">
+                                        <span id="tax" class="heading-color fw-semibold mb-0"></span>
+                                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent border-top p-0 pt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="heading-color fw-normal">{{ 'Payable Now'|trans }}</span>
+                                <span class="h6 mb-0">
+                                    <span id="totalprice" class="h6 mb-0"></span>
+                                    {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                                </span>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-lg btn-primary mb-0">
+                                    {{ "Place order"|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent mt-5">
+                        <div class="card-header bg-transparent border-bottom px-0">
+                            <h6 class="mb-0">Arrives by Wed, Jan 25</h6>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <div class="d-flex align-items-start border-bottom pb-4 mb-4">
+                                <div class="bg-light p-2 rounded-2 w-25">
+                                    <img src="assets/images/shop/02.png" alt="">
+                                </div>
+                                <div class="ms-3">
+                                    <p class="fw-semibold mb-1"><a href="#" class="heading-color text-primary-hover">Round neck cotton t-shirt</a></p>
+                                    <ul class="list-group list-group-borderless small">
+                                        <li class="list-group-item mb-0 pb-0">Item: #2458644</li>
+                                        <li class="list-group-item mb-0 pb-0">Color: Midblue</li>
+                                        <li class="list-group-item mb-0 pb-0">Size: L</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start border-bottom pb-4">
+                                <div class="bg-light p-2 rounded-2 w-25">
+                                    <img src="assets/images/shop/08.png" alt="">
+                                </div>
+                                <div class="ms-3">
+                                    <p class="fw-semibold mb-1"><a href="#" class="heading-color text-primary-hover">Mizz dunk low shoes</a></p>
+                                    <ul class="list-group list-group-borderless small">
+                                        <li class="list-group-item mb-0 pb-0">Item: #2458644</li>
+                                        <li class="list-group-item mb-0 pb-0">Size: 42</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            const selector = $('#order_form_countrycode');
+            const value = selector.val();
+            const url = `https://127.0.0.1:8001/fr/dashboard/order-shipping-cost/${value}`;
+            //const url = "{{ absolute_url((path('dashboard_shipping_cost', { id: "id" })))|raw }}";
+
+            function ajaxRequest(url) {
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function (response) {
+                        const newResponse = JSON.parse(response);
+                        $("#shippingcost").text(newResponse.content);
+                        const subTotal = parseFloat($('#subtotal').text());
+                        const shippingCost = parseInt($('#shippingcost').text());
+                        $('#totalprice').text(subTotal + shippingCost);
+
+                        if (parseInt(newResponse.status === 200)) {
+                            $("#shippingCost").text(newResponse.content);
+                            const subTotal = parseFloat($('#subtotal').text());
+                            const shippingCost = parseInt($('#shippingcost').text());
+                            $('#totalprice').text(subTotal + shippingCost);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+
+                    }
+                });
+            }
+
+            ajaxRequest(url);
+
+            selector.on('change', function () {
+                const urlUpdate = `https://127.0.0.1:8001/fr/dashboard/order-shipping-cost/${$(this).val()}`;
+                ajaxRequest(urlUpdate);
+            });
+        });
+    </script>
+{% endblock %}

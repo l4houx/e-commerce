@@ -1,0 +1,94 @@
+{% for order in orders %}
+    <div class="row align-items-md-center">
+        <div class="col-10 col-md-11">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <p class="heading-color fw-normal small mb-2">
+                        {{ 'Reference'|trans }}: 
+                        <span class="text-primary">{{ order.ref }}</span>
+                        {{ 'Order date'|trans }}
+                        <span class="text-primary">{{ order.createdAt|format_date('long') }}</span>
+                    </p>
+                    <h6 class="mb-2">
+                        <a href="{{ path("dashboard_customer_order_details", {id: order.id}) }}">
+                            {{ 'Order details'|trans }}
+                        </a>
+                    </h6>
+                    <ul class="list-group list-group-borderless small">
+                        {% for orderDetail in order.orderDetails %}
+                            <li class="list-group-item mb-0 pb-0">{{ 'Name'|trans }}: 
+                                <b>
+                                    <a href="{{ path('shop_product', {slug: orderDetail.product.slug }) }}" class="heading-color text-primary-hover fw-semibold small" target="_blank">
+                                        {{ orderDetail.product.name }}
+                                    </a>
+                                </b>
+                            </li>
+                            <li class="list-group-item mb-0 pb-0">
+                                {{ orderDetail.quantity > 1 ? "Quantities"|trans : "Quantity"|trans }}:
+                                <b>{{ orderDetail.quantity }}</b>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-4 text-md-end ms-auto">
+                    <p class="text-{{ order.getStatusClass }} fw-semibold mb-1 mb-md-3">
+                        <i class="fas fa-check me-1"></i>{{ order.stringifyStatus|trans }}
+                    </p>
+                    <small>{{ 'Total price'|trans }}</small>
+                    <h5 class="mt-1 mb-0">
+                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 col-md-1">
+            <div class="d-flex pb-4 mb-4">
+                <div class="dropdown ms-auto">
+                    <a href="#" class="text-primary-hover fs-6" role="button" id="dropdownAction1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end min-w-auto shadow" aria-labelledby="dropdownAction1">
+                        {% if order.status == 1 %}
+                            <li>
+                                <a class="dropdown-item" href="{{ path("dashboard_customer_invoice", {id: order.id}) }}" target="_blank">
+                                    <i class="fas fa-print fa-fw me-2"></i>{{ "Print orders"|trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if order.status == -2 or order.status == 1 %}
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-file-alt fa-fw me-2"></i>{{ "Payment details"|trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN_APPLICATION') %}
+
+                        {% elseif is_granted('ROLE_USER') %}
+                            {# {% if not order.deletedAt %} #}
+                                {% if order.status == 0 %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path("dashboard_customer_checkout", {id: order.id}) }}">
+                                            <i class="fas fa-money-check fa-fw me-2"></i>{{ "Checkout"|trans }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-envelope fa-fw me-2"></i>{{ "Contact"|trans }}
+                                    </a>
+                                </li>
+                            {# {% endif %} #}
+                        {% endif %}
+                        <li>
+                            <a class="dropdown-item" href="{{ path("dashboard_customer_order_details", {id: order.id}) }}">
+                                <i class="fas fa-file-invoice fa-fw me-2"></i>{{ "Details"|trans }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="my-5">
+{% endfor %}

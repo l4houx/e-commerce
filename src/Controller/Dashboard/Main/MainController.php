@@ -21,6 +21,8 @@ class MainController extends BaseController
             return $this->redirectToRoute('dashboard_client_access_index');
         } elseif ($authChecker->isGranted(HasRoles::CLIENTCOMPANY)) {
             return $this->redirectToRoute('dashboard_client_company_index');
+        } elseif ($authChecker->isGranted(HasRoles::CUSTOMER)) {
+            return $this->redirectToRoute('dashboard_customer_index');
         } elseif ($authChecker->isGranted(HasRoles::DEFAULT)) {
             return $this->redirectToRoute('dashboard_account_index');
         }
