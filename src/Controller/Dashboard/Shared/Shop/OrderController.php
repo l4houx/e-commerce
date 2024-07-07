@@ -11,21 +11,18 @@ use App\Entity\Traits\HasRoles;
 use App\Service\SettingService;
 use App\Entity\Shop\OrderDetail;
 use App\Form\Shop\OrderFormType;
-use App\Service\SendMailService;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Address;
+use App\Service\StripeApiService;
 use App\Repository\Shop\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Event\OrderConfirmationEmailEvent;
 use App\Repository\Shop\ProductRepository;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -36,7 +33,6 @@ class OrderController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly MailerInterface $mailer,
         private readonly ProductRepository $productRepository,
         private readonly OrderRepository $orderRepository,
         private readonly SettingService $settingService,
@@ -44,7 +40,6 @@ class OrderController extends AbstractController
     ) {
     }
 
-    /** @throws TransportExceptionInterface */
     #[Route(path: '/%website_dashboard_path%/customer/checkout', name: 'dashboard_customer_checkout', methods: ['GET', 'POST'])]
     public function checkout(Request $request, CartService $cartService, EventDispatcherInterface $eventDispatcher): Response
     {
@@ -74,29 +69,21 @@ class OrderController extends AbstractController
                     }
 
                     $cartService->removeCartAll();
+
+                    $eventDispatcher->dispatch(new OrderConfirmationEmailEvent($order));
+
+                    return $this->redirectToRoute('dashboard_customer_success', [], Response::HTTP_SEE_OTHER);
                 }
 
-                /*
-                $html = $this->renderView('mails/order-confirmation-email.html.twig', [
-                    'order' => $order,
-                ]);
+                $shippingCost = $order->getCountrycode()->getShippingCost();
 
-                $email = (new Email())
-                    ->from(new Address(
-                        $this->getParameter('website_no_reply_email'),
-                        $this->getParameter('website_name'),
-                    ))
-                    ->to(new Address($order->getEmail(), $order->getFullName()))
-                    ->subject($this->translator->trans('Your orders bought from'). " " . $this->getParameter('website_name'))
-                    ->html($html)
-                ;
+                $stripe = new StripeApiService();
+                $stripe->createPaymentSession($cartService->getCart(), $shippingCost);
 
-                $this->mailer->send($email);
-                */
+                $redirectUrl = $stripe->getRedirectUrl();
 
-                $eventDispatcher->dispatch(new OrderConfirmationEmailEvent($order));
+                return $this->redirect($redirectUrl);
 
-                return $this->redirectToRoute('dashboard_customer_success', [], Response::HTTP_SEE_OTHER);
             } else {
                 $this->addFlash('danger', $this->translator->trans('The form contains invalid data'));
             }
@@ -115,6 +102,11 @@ class OrderController extends AbstractController
     #[Route(path: '/%website_dashboard_path%/customer/checkout/failure/{number}', name: 'dashboard_customer_checkout_failure', methods: ['GET'])]
     public function failure(Request $request, int $number): Response
     {
+        $referer = $request->headers->get('referer');
+        if (!\is_string($referer) || !$referer || $referer != "dashboard_customer_checkout_done") {
+            return $this->redirectToRoute('dashboard_customer_orders', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('dashboard/customer/order/failure.html.twig');
     }
 
@@ -131,6 +123,28 @@ class OrderController extends AbstractController
     public function details(Order $order): Response
     {
         return $this->render('dashboard/shared/shop/order/details.html.twig', compact('order'));
+    }
+
+    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/cancel', name: 'admin_dashboard_order_cancel', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[IsGranted(HasRoles::ADMINAPPLICATION)]
+    public function cancel(int $id): Response
+    {
+        $order = $this->settingService->getOrders(['id'=> $id, 'status' => 'all'])->getQuery()->getOneOrNullResult();
+        if (!$order) {
+            $this->addFlash('danger', $this->translator->trans('The order not be found'));
+
+            return $this->settingService->redirectToReferer('orders');
+        }
+
+        if ($order->getStatus() != 0 && $order->getStatus() != 1) {
+            $this->addFlash('danger', $this->translator->trans('The order status must be paid or awaiting payment'));
+
+            return $this->settingService->redirectToReferer('orders');
+        }
+
+        $this->addFlash('danger', $this->translator->trans('The order has been permanently canceled'));
+
+        return $this->settingService->redirectToReferer('orders');
     }
 
     #[Route(path: '/customer-invoice/{id}', name: 'dashboard_customer_invoice', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
@@ -172,9 +186,38 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/resend-confirmation-email', name: 'admin_dashboard_order_resend_confirmation_email', methods: ['GET'])]
-    public function resendConfirmationEmail(Request $request, int $id): void
+    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/resend-confirmation-email', name: 'admin_dashboard_order_resend_confirmation_email', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[IsGranted(HasRoles::ADMINAPPLICATION)]
+    public function resendConfirmationEmail(Request $request, int $id): Response
     {
+        $order = $this->settingService->getOrders(['id'=> $id, 'status' => 'all'])->getQuery()->getOneOrNullResult();
+        if (!$order) {
+            $this->addFlash('danger', $this->translator->trans('The order not be found'));
+
+            return $this->settingService->redirectToReferer('orders');
+        }
+
+        $this->settingService->sendOrderConfirmationEmail($order, $request->query->get('email'));
+
+        $this->addFlash('success', $this->translator->trans('The confirmation email has been resent to') . ' ' . $request->query->get('email'));
+
+        return $this->settingService->redirectToReferer('orders');
+    }
+
+    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/validate', name: 'admin_dashboard_order_validate', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[IsGranted(HasRoles::ADMINAPPLICATION)]
+    public function validate(int $id): Response
+    {
+        $order = $this->settingService->getOrders(['id'=> $id, 'status' => 0])->getQuery()->getOneOrNullResult();
+        if (!$order) {
+            $this->addFlash('danger', $this->translator->trans('The order not be found'));
+
+            return $this->settingService->redirectToReferer('orders');
+        }
+
+        $this->addFlash('success', $this->translator->trans('The order has been successfully validated'));
+
+        return $this->settingService->redirectToReferer('orders');
     }
 
     #[Route(path: '/%website_dashboard_path%/order-shipping-cost/{id}', name: 'dashboard_shipping_cost')]

@@ -8,17 +8,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use function Symfony\Component\Translation\t;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Controller\Admin\Field\OrderStateField;
 use App\Controller\Admin\Field\OrderDetailField;
 use App\Controller\Admin\Field\OrderStatusField;
 use App\Controller\Admin\Traits\DetailOnlyTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Symfony\Component\Workflow\WorkflowInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-
 use App\Controller\Admin\Field\OrderIsCompletedField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,6 +36,11 @@ class OrderCrudController extends AbstractCrudController
 {
     use DetailOnlyTrait;
 
+    public function __construct(
+        private readonly WorkflowInterface $orderStateMachine
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Order::class;
@@ -46,6 +53,7 @@ class OrderCrudController extends AbstractCrudController
         yield DateTimeField::new('createdAt', t('Order date'));
         yield IntegerField::new('totalPrice', t('Total price'));
         yield OrderStatusField::new('status', t('Status'));
+        yield OrderStateField::new('state', t('Status'))->hideOnForm();
 
         if (Crud::PAGE_INDEX === $pageName) {
             yield BooleanField::new('isCompleted', t('Completed'));
@@ -88,10 +96,18 @@ class OrderCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        /*
+        $orderStateMachine = $this->orderStateMachine;
+        $actionCallback = function (Action $action) use ($orderStateMachine) {
+            return $action->displayIf(
+                fn (Order $order) => $orderStateMachine->getMarking($order)->has("cart")
+            );
+        };*/
+
         $isCompleted = Action::new('isCompleted', t('Mark as delivered'))
-            ->addCssClass("text-success")
+            ->addCssClass("text-info")
             ->displayAsLink()
-            ->linkToRoute('admin_dashboard_order_completed', fn (Order $order) => ['order' => $order->getId()])
+            ->linkToRoute('admin_dashboard_order_completed', fn (Order $order) => ['id' => $order->getId()])
         ;
 
         return $actions
@@ -101,10 +117,15 @@ class OrderCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
+
+            //->update(Crud::PAGE_DETAIL, Action::DELETE, $actionCallback)
+            //->update(Crud::PAGE_INDEX, Action::DELETE, $actionCallback)
+            //->update(Crud::PAGE_DETAIL, Action::EDIT, $actionCallback)
+            //->update(Crud::PAGE_INDEX, Action::EDIT, $actionCallback)
         ;
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/order/{id}/completed/edit', name: 'admin_dashboard_order_completed', methods: ['GET'])]
+    #[Route(path: '/%website_admin_dashboard_path%/order/{id}/completed', name: 'admin_dashboard_order_completed', methods: ['GET'])]
     public function IsCompleted(
         int $id,
         TranslatorInterface $translator,

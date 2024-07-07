@@ -2,6 +2,7 @@
 
 namespace App\Entity\Shop;
 
+use App\Entity\Traits\HasDeletedAtTrait;
 use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,6 +24,7 @@ class Order
     use HasIdTrait;
     use HasIsPayOnDeliveryTrait;
     use HasTimestampableTrait;
+    //use HasDeletedAtTrait;
 
     #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
     private $ref = '';
