@@ -291,7 +291,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item {% if routename == "dashboard_main" or routename == "admin_dashboard_index" or routename == "dashboard_account_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
+                                    <a class="dropdown-item {% if routename == "dashboard_main" or routename == "admin_index" or routename == "dashboard_account_index" %}active{% endif %}" href="{{ path('dashboard_main') }}">
                                         {% if is_granted("ROLE_TEAM") %}
                                             {{ 'Dashboard'|trans }}
                                         {% else %}
@@ -304,6 +304,40 @@
                                         {{ 'My Profile'|trans }}
                                     </a>
                                 </li>
+                                {% if is_granted("ROLE_EDITOR") %}
+                                    <li class="dropdown dropend">
+                                        <a class="nav-link dropdown-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                            {{ 'Orders'|trans }}
+                                        </a>
+                                        <ul class="dropdown-menu" data-bs-popper="none">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path("admin_order_type", { type: 'isCompleted'}) }}">
+                                                    {{ 'Orders delivered'|trans }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path("admin_order_type", { type: 'payOnStripeNotDelivered'}) }}">
+                                                    {{ 'Orders paid online not delivered'|trans }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path("admin_order_type", { type: 'payOnStripeIsDelivered'}) }}">
+                                                    {{ 'Orders paid online delivered'|trans }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path("admin_order_type", { type: 'payOnNotDelivered'}) }}">
+                                                    {{ 'Orders paid on delivery not delivered'|trans }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path("admin_order_type", { type: 'payOnIsDelivered'}) }}">
+                                                    {{ 'Orders paid for on delivery'|trans }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endif %}
                                 {% if not is_granted('IS_IMPERSONATOR') %}
                                     <li>
                                         <a class="dropdown-item" href="{{ path('signout') }}">

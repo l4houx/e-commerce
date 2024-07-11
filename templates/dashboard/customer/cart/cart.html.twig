@@ -5,7 +5,7 @@
 
 {% block breadcrumb %}
     {% if items|length > 0 %}
-        {% set breadcrumb = [{ "dashboard_main": ("Dashboard"|trans), "shop": "All product"|trans, "current":(pagetitle) }] %}
+        {% set breadcrumb = [{ "shop": "All product"|trans, "dashboard_main": ("Dashboard"|trans), "current":(pagetitle) }] %}
         {% include "global/breadcrumb.html.twig" with breadcrumb %}
     {% endif %}
 {% endblock %}

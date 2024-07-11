@@ -30,9 +30,30 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="col-md-4 text-md-end ms-auto">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    {% if order.isCompleted != true %}
+                        {% if is_granted('ROLE_EDITOR') %}
+                            <a href="{{ path('admin_order_completed', {id: order.id }) }}" class="btn btn-sm btn-light border mb-3">
+                                <i class="fas fa-truck me-2"></i>{{ 'Mark as delivered'|trans }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    {% if order.isCompleted == true and order.status == 1 %}
+                        <p class="text-primary fw-semibold small mb-0">
+                            <i class="fas fa-circle-check me-1"></i>{{ 'Order delivered'|trans }}
+                        </p>
+                        <small class="text-body-secondary">
+                            {{ 'Expected at'|trans }} {{ order.city }} {{ order.countrycode.name }}
+                        </small>
+                    {% else %}
+                        <p class="text-danger fw-semibold small mb-0">
+                            <i class="fas fa-circle-xmark me-1"></i>{{ 'Order not delivered'|trans }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="col-md-3 ms-auto text-md-end">
                     <p class="text-{{ order.getStatusClass }} fw-semibold mb-1 mb-md-3">
-                        <i class="fas fa-check me-1"></i>{{ order.stringifyStatus|trans }}
+                        <i class="fas fa-circle-check me-1"></i>{{ order.stringifyStatus|trans }}
                     </p>
                     <small>{{ 'Total price'|trans }}</small>
                     <h5 class="mt-1 mb-0">
@@ -65,14 +86,14 @@
                         {% if is_granted('ROLE_ADMIN_APPLICATION') %}
                             {% if order.status == 1 %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ path("admin_dashboard_order_resend_confirmation_email", {id: order.id}) }}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'If you need to send the confirmation email to a different email address, you can change it before submitting'|trans }}" data-bs-original-title="{{ 'If you need to send the confirmation email to a different email address, you can change it before submitting'|trans }}">
+                                    <a class="dropdown-item" href="{{ path("admin_order_resend_confirmation_email", {id: order.id}) }}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'If you need to send the confirmation email to a different email address, you can change it before submitting'|trans }}" data-bs-original-title="{{ 'If you need to send the confirmation email to a different email address, you can change it before submitting'|trans }}">
                                         <i class="far fa-envelope fa-fw me-2"></i>{{ "Resend confirmation email"|trans }}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if order.status == 0 or order.status == 1 %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ path("admin_dashboard_order_cancel", {id: order.id}) }}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}" data-bs-original-title="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}">
+                                    <a class="dropdown-item" href="{{ path("admin_order_cancel", {id: order.id}) }}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}" data-bs-original-title="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}">
                                         <i class="fas fa-window-close fa-fw me-2"></i>{{ "Cancel"|trans }}
                                     </a>
                                 </li>
@@ -87,7 +108,7 @@
                                     </li>
                                 {% endif %}
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#order-{{ order.ref }}-contact">
                                         <i class="fas fa-envelope fa-fw me-2"></i>{{ "Contact"|trans }}
                                     </a>
                                 </li>
@@ -104,4 +125,67 @@
         </div>
     </div>
     <hr class="my-5">
+{% endfor %}
+
+{% for order in orders %}
+
+    {% if is_granted('ROLE_USER') %}
+        <div class="modal fade" id="order-{{ order.ref }}-contact" tabindex="-1" aria-labelledby="order-{{ order.ref }}-contact" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header px-4">
+                        <h5 class="modal-title" id="order-{{ order.ref }}-contact">
+                            {{ "Order"|trans }}
+                            {{ "#" ~ order.ref }}:
+                            {{ "Contact"|trans }}
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form class="row g-4" action="" method="POST">
+                            <div class="col-12">
+                                <label for="message" class="form-label required">{{ "Message"|trans }}</label>
+                                <textarea name="message" id="message" class="form-control" rows="10" required></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary mt-3">
+                                    <i class="fas fa-envelope"></i>
+                                    {{ "Send"|trans }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer px-4">
+                        <button type="button" class="btn btn-white border my-0" data-bs-dismiss="modal">{{ "Close"|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if order.status == -2 or order.status == 1 %}
+        <div class="modal fade" id="order-{{ order.ref }}-payment-details" tabindex="-1" aria-labelledby="order-{{ order.ref }}-payment-details" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header px-4">
+                        <h5 class="modal-title" id="order-{{ order.ref }}-payment-details">
+                            {{ "Order payment details"|trans }}
+                            {{ "#" ~ order.ref }}
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+
+                    </div>
+                    <div class="modal-footer px-4">
+                        <button type="button" class="btn btn-white border my-0" data-bs-dismiss="modal">{{ "Close"|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endfor %}

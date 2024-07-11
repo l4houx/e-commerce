@@ -29,7 +29,30 @@ class OrderRepository extends ServiceEntityRepository
             ->leftJoin('o.orderDetails', 'od')
             ->orderBy('o.id', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
-            ->where('o.updatedAt <= :now')
+            ->where('o.createdAt <= :now')
+        ;
+
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            HasLimit::ORDER_LIMIT,
+            [
+                'wrap-queries' => true,
+                'distinct' => false,
+                'sortFieldAllowList' => ['o.id', 'o.firstname', 'o.lastname', 'o.ref'],
+            ]
+        );
+    }
+
+    public function getOrderDeliveredPagination(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('o')
+            ->addSelect('od')
+            ->leftJoin('o.orderDetails', 'od')
+            ->orderBy('o.id', 'DESC')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->where('o.createdAt <= :now')
+            ->orWhere('o.isCompleted = true')
         ;
 
         return $this->paginator->paginate(

@@ -21,7 +21,7 @@ class AdminAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    final public const LOGIN_ROUTE = 'admin_dashboard_signin';
+    final public const LOGIN_ROUTE = 'admin_signin';
     private ?Passport $lastPassport = null;
 
     public function __construct(

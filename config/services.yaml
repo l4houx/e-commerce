@@ -31,7 +31,7 @@ parameters:
     website_root_url:        '%env(WEBSITE_ROOT_URL)%'
     website_url:             '%env(WEBSITE_URL)%'
     website_dashboard_path:  '%env(WEBSITE_DASHBOARD_PATH)%'
-    website_admin_dashboard_path: '%env(WEBSITE_ADMIN_DASHBOARD_PATH)%'
+    website_admin_path:      '%env(WEBSITE_ADMIN_PATH)%'
 
     # Social
     website_facebook_url:    '%env(WEBSITE_FACEBOOK_URL)%'
@@ -85,7 +85,7 @@ services:
             string $defaultLocale: '%locale%'
 
             # Website patch
-            $dashboardPath: '%website_admin_dashboard_path%'
+            $dashboardPath: '%website_admin_path%'
 
             # SuperAdministratorVoter (Administrator)
             string $appEnvironment: '%kernel.environment%'

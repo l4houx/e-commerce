@@ -16,6 +16,7 @@ use App\Repository\Shop\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Event\OrderConfirmationEmailEvent;
 use App\Repository\Shop\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,14 +29,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 #[IsGranted(HasRoles::SHOP)]
-// #[Route(path: '/%website_dashboard_path%')]
 class OrderController extends AbstractController
 {
     public function __construct(
+        private readonly PaginatorInterface $paginator,
         private readonly EntityManagerInterface $em,
         private readonly ProductRepository $productRepository,
         private readonly OrderRepository $orderRepository,
         private readonly SettingService $settingService,
+        private readonly UrlGeneratorInterface $generator,
         private readonly TranslatorInterface $translator
     ) {
     }
@@ -45,45 +47,59 @@ class OrderController extends AbstractController
     {
         $order = new Order();
         // $order->setUsers($this->getUser());
-        $order->setRef($this->settingService->generateReference(4));
+        // $order->setRef($this->settingService->generateReference(4));
 
         $form = $this->createForm(OrderFormType::class, $order)->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                if ($order->isPayOnDelivery()) {
-                    if (!empty($cartService->getTotal())) {
-                        $order->setCreatedAt(new \DateTimeImmutable());
-                        $order->setTotalPrice($cartService->getTotal());
-                        $this->em->persist($order);
-                        $this->em->flush();
+                $dateTimeImmutable = new \DateTimeImmutable('now');
+                $reference = $dateTimeImmutable->format('dmY').'-'.uniqid();
 
-                        foreach ($cartService->getCart() as $value) {
-                            $orderDetail = new OrderDetail();
-                            $orderDetail->setOrder($order);
-                            $orderDetail->setProduct($value['product']);
-                            $orderDetail->setQuantity($value['quantity']);
-                            $order->addOrderDetail($orderDetail);
-                            $this->em->persist($orderDetail);
-                            $this->em->flush();
-                        }
+                if (!empty($cartService->getTotal())) {
+                    $totalPrice = $cartService->getTotal() + $order->getCountrycode()->getShippingCost();
+                    $order->setCreatedAt($dateTimeImmutable);
+                    $order->setTotalPrice($totalPrice);
+                    $order->setRef($reference);
+                    $order->setIsPaid(false);
+                    $this->em->persist($order);
+
+                    foreach ($cartService->getCart() as $value) {
+                        $orderDetail = new OrderDetail();
+                        $orderDetail->setOrder($order);
+                        $orderDetail->setProduct($value['product']);
+                        $orderDetail->setQuantity($value['quantity']);
+                        $order->addOrderDetail($orderDetail);
+                        $this->em->persist($orderDetail);
                     }
 
-                    $cartService->removeCartAll();
+                    $this->em->flush();
 
-                    $eventDispatcher->dispatch(new OrderConfirmationEmailEvent($order));
+                    if ($order->isPayOnDelivery()) {
+                        $cartService->removeCartAll();
 
-                    return $this->redirectToRoute('dashboard_customer_success', [], Response::HTTP_SEE_OTHER);
+                        $eventDispatcher->dispatch(new OrderConfirmationEmailEvent($order));
+
+                        return $this->redirectToRoute('dashboard_customer_success', [], Response::HTTP_SEE_OTHER);
+                    }
+
+                    $shippingCost = $order->getCountrycode()->getShippingCost();
+
+                    $buySuccess = $this->generator->generate('buy_success', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $buyCancel = $this->generator->generate('buy_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                    $stripe = new StripeApiService();
+                    $stripe->createPaymentSession(
+                        $cartService->getCart(), 
+                        $shippingCost, 
+                        $order->getId(),
+                        $buySuccess,
+                        $buyCancel
+                    );
+
+                    $redirectUrl = $stripe->getRedirectUrl();
+
+                    return $this->redirect($redirectUrl);
                 }
-
-                $shippingCost = $order->getCountrycode()->getShippingCost();
-
-                $stripe = new StripeApiService();
-                $stripe->createPaymentSession($cartService->getCart(), $shippingCost);
-
-                $redirectUrl = $stripe->getRedirectUrl();
-
-                return $this->redirect($redirectUrl);
-
             } else {
                 $this->addFlash('danger', $this->translator->trans('The form contains invalid data'));
             }
@@ -119,13 +135,41 @@ class OrderController extends AbstractController
         return $this->render('dashboard/shared/shop/order/orders.html.twig', compact('orders'));
     }
 
+    #[Route(path: '/%website_admin_path%/manage-orders/{type}', name: 'admin_order_type', methods: ['GET'])]
+    #[IsGranted(HasRoles::EDITOR)]
+    public function ordersTypes(Request $request, $type): Response
+    {
+        if ($type == 'isCompleted') {
+            $data = $this->orderRepository->findBy(['isCompleted' => 1], ['id' => 'DESC']);
+        } elseif ($type == 'payOnStripeNotDelivered') {
+            $data = $this->orderRepository->findBy(['isCompleted' => 0, 'isPayOnDelivery' => 0, 'isPaid' => 1, 'status' => 1], ['id' => 'DESC']);
+        } elseif ($type == 'payOnStripeIsDelivered') {
+            $data = $this->orderRepository->findBy(['isCompleted' => 1, 'isPayOnDelivery' => 0, 'isPaid' => 1, 'status' => 1], ['id' => 'DESC']);
+        } elseif ($type == 'payOnIsDelivered') {
+            $data = $this->orderRepository->findBy(['isCompleted' => 1, 'isPayOnDelivery' => 1, 'isPaid' => 0, 'status' => 1], ['id' => 'DESC']);
+        } elseif ($type == 'payOnNotDelivered') {
+            $data = $this->orderRepository->findBy(['isCompleted' => 0, 'isPayOnDelivery' => 1, 'isPaid' => 0, 'status' => 1], ['id' => 'DESC']);
+        }
+
+        $orders = $this->paginator->paginate(
+            $data,
+            $request->query->getInt('page',1),
+            10
+        );
+
+        //$page = $request->query->getInt('page', 1);
+        //$orders = $this->orderRepository->findForPagination($page);
+
+        return $this->render('dashboard/editor/shop/order/orders.html.twig', compact('orders'));
+    }
+
     #[Route('/%website_dashboard_path%/customer/my-order/{id}', name: 'dashboard_customer_order_details', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     public function details(Order $order): Response
     {
         return $this->render('dashboard/shared/shop/order/details.html.twig', compact('order'));
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/cancel', name: 'admin_dashboard_order_cancel', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/cancel', name: 'admin_order_cancel', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     #[IsGranted(HasRoles::ADMINAPPLICATION)]
     public function cancel(int $id): Response
     {
@@ -145,6 +189,19 @@ class OrderController extends AbstractController
         $this->addFlash('danger', $this->translator->trans('The order has been permanently canceled'));
 
         return $this->settingService->redirectToReferer('orders');
+    }
+
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/delete', name: 'admin_order_delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
+    public function delete(Request $request, Order $order): Response
+    {
+        if ($this->isCsrfTokenValid('order_deletion_'.$order->getId(), $request->getPayload()->get('_token'))) {
+            $this->em->remove($order);
+            $this->em->flush();
+
+            $this->addFlash('danger', $this->translator->trans('The order has been deleted'));
+        }
+
+        return $this->redirectToRoute('dashboard_customer_orders', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route(path: '/customer-invoice/{id}', name: 'dashboard_customer_invoice', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
@@ -186,7 +243,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/resend-confirmation-email', name: 'admin_dashboard_order_resend_confirmation_email', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/resend-confirmation-email', name: 'admin_order_resend_confirmation_email', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     #[IsGranted(HasRoles::ADMINAPPLICATION)]
     public function resendConfirmationEmail(Request $request, int $id): Response
     {
@@ -204,7 +261,7 @@ class OrderController extends AbstractController
         return $this->settingService->redirectToReferer('orders');
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/manage-orders/{id}/validate', name: 'admin_dashboard_order_validate', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/validate', name: 'admin_order_validate', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     #[IsGranted(HasRoles::ADMINAPPLICATION)]
     public function validate(int $id): Response
     {
@@ -218,6 +275,19 @@ class OrderController extends AbstractController
         $this->addFlash('success', $this->translator->trans('The order has been successfully validated'));
 
         return $this->settingService->redirectToReferer('orders');
+    }
+
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/completed', name: 'admin_order_completed', methods: ['GET'])]
+    #[IsGranted(HasRoles::EDITOR)]
+    public function isCompleted(Request $request, int $id): Response
+    {
+        $order = $this->em->getRepository(Order::class)->find($id);
+        $order->setIsCompleted(true);
+        $this->em->flush();
+
+        $this->addFlash('success', $this->translator->trans('Modification made successfully.'));
+
+        return $this->redirect($request->headers->get('referer'));
     }
 
     #[Route(path: '/%website_dashboard_path%/order-shipping-cost/{id}', name: 'dashboard_shipping_cost')]

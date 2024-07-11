@@ -62,7 +62,7 @@ class DashboardController extends AbstractDashboardController
     ) {
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%', name: 'admin_dashboard_index')]
+    #[Route(path: '/%website_admin_path%', name: 'admin_index')]
     #[IsGranted(HasRoles::TEAM)]
     public function index(): Response
     {

@@ -14,7 +14,7 @@ class MainController extends BaseController
     public function main(AuthorizationCheckerInterface $authChecker): Response
     {
         if ($authChecker->isGranted(HasRoles::TEAM)) {
-            return $this->redirectToRoute('admin_dashboard_index');
+            return $this->redirectToRoute('admin_index');
         } elseif ($authChecker->isGranted(HasRoles::MANAGER)) {
             return $this->redirectToRoute('dashboard_member_access_index');
         } elseif ($authChecker->isGranted(HasRoles::CLIENTACCESS)) {

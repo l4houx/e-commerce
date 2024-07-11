@@ -107,7 +107,7 @@ class OrderCrudController extends AbstractCrudController
         $isCompleted = Action::new('isCompleted', t('Mark as delivered'))
             ->addCssClass("text-info")
             ->displayAsLink()
-            ->linkToRoute('admin_dashboard_order_completed', fn (Order $order) => ['id' => $order->getId()])
+            ->linkToRoute('admin_order_completed', fn (Order $order) => ['id' => $order->getId()])
         ;
 
         return $actions
@@ -125,16 +125,15 @@ class OrderCrudController extends AbstractCrudController
         ;
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/order/{id}/completed', name: 'admin_dashboard_order_completed', methods: ['GET'])]
-    public function IsCompleted(
+    #[Route(path: '/%website_admin_path%/manage-orders/{id}/completed', name: 'admin_order_completed', methods: ['GET'])]
+    public function isCompleted(
         int $id,
         TranslatorInterface $translator,
-        OrderRepository $orderRepository, 
         EntityManagerInterface $em,
         AdminUrlGenerator $adminUrlGenerator
     ): Response {
-        $order = $orderRepository->find($id);
-        $order->setCompleted(true);
+        $order = $em->getRepository(Order::class)->find($id);
+        $order->setIsCompleted(true);
         $em->flush();
 
         $this->addFlash('success', $translator->trans('Modification made successfully.'));

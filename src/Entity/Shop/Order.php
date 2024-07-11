@@ -12,7 +12,6 @@ use App\Repository\Shop\OrderRepository;
 use function Symfony\Component\String\u;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\HasTimestampableTrait;
-use App\Entity\Traits\HasIsPayOnDeliveryTrait;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,11 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Order
 {
     use HasIdTrait;
-    use HasIsPayOnDeliveryTrait;
     use HasTimestampableTrait;
     //use HasDeletedAtTrait;
 
-    #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 500, unique: true)]
     private $ref = '';
 
     #[ORM\Column(type: Types::FLOAT)]
@@ -34,12 +32,23 @@ class Order
     #[Assert\LessThan(1001)]
     private ?float $totalPrice = null;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull(groups: ['create', 'update'])]
+    private bool $isPayOnDelivery = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $isCompleted = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull(groups: ['create', 'update'])]
+    private bool $isPaid = false;
+
     /** -2: failed / -1: cancel / 0: waiting for payment / 1: paid */
     #[ORM\Column(type: Types::INTEGER)]
     private int $status;
 
-    #[ORM\Column(type: Types::STRING)]
-    private string $state = 'cart';
+    //#[ORM\Column(type: Types::STRING)]
+    //private string $state = 'cart';
 
     //#[ORM\ManyToOne]
     //#[ORM\JoinColumn(nullable: false)]
@@ -60,7 +69,7 @@ class Order
     #[Assert\NotBlank]
     private string $phone = '';
 
-    #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 180)]
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Assert\NotNull]
@@ -102,9 +111,6 @@ class Order
      */
     #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'order', orphanRemoval: true)]
     private Collection $orderDetails;
-
-    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-    private ?bool $isCompleted = false;
 
     public function __construct()
     {
@@ -199,7 +205,58 @@ class Order
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function isPayOnDelivery(): bool
+    {
+        return $this->isPayOnDelivery;
+    }
+
+    public function getIsPayOnDelivery(): bool
+    {
+        return $this->isPayOnDelivery;
+    }
+
+    public function setIsPayOnDelivery(bool $isPayOnDelivery): static
+    {
+        $this->isPayOnDelivery = $isPayOnDelivery;
+
+        return $this;
+    }
+
+    public function isCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function getIsCompleted(): bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function setIsCompleted(?bool $isCompleted): static
+    {
+        $this->isCompleted = $isCompleted;
+
+        return $this;
+    }
+
+    public function isPaid(): ?bool
+    {
+        return $this->isPaid;
+    }
+
+    public function getIsPaid(): ?bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): static
+    {
+        $this->isPaid = $isPaid;
+
+        return $this;
+    }
+
+    public function getStatus(): int
     {
         return $this->status;
     }
@@ -211,7 +268,7 @@ class Order
         return $this;
     }
 
-    public function getState(): string
+    /*public function getState(): string
     {
         return $this->state;
     }
@@ -221,7 +278,7 @@ class Order
         $this->state = $state;
 
         return $this;
-    }
+    }*/
 
     /*public function getUser(): User
     {
@@ -240,7 +297,7 @@ class Order
         return u(sprintf('%s %s', $this->firstname, $this->lastname))->upper()->toString();
     }
 
-    public function getFirstname(): ?string
+    public function getFirstname(): string
     {
         return u($this->firstname)->upper()->toString();
     }
@@ -252,7 +309,7 @@ class Order
         return $this;
     }
 
-    public function getLastname(): ?string
+    public function getLastname(): string
     {
         return u($this->lastname)->upper()->toString();
     }
@@ -453,17 +510,5 @@ class Order
     public function getNumberOfProducts(): int
     {
         return intval(array_sum($this->orderDetails->map(fn (OrderDetail $orderDetail) => $orderDetail->getQuantity())->toArray()));
-    }
-
-    public function isCompleted(): ?bool
-    {
-        return $this->isCompleted;
-    }
-
-    public function setCompleted(?bool $isCompleted): static
-    {
-        $this->isCompleted = $isCompleted;
-
-        return $this;
     }
 }

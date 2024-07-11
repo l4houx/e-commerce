@@ -141,7 +141,8 @@ class OrderFormType extends AbstractType
             // ->add('countrycode', CountryAutocompleteField::class)
             ->add('isPayOnDelivery', CheckboxType::class, [
                 'label' => t('Pay On Delivery'),
-                'required' => true,
+                'required' => false,
+                'help' => t('If you wish to pay on delivery check the box, otherwise click on "place order" for online payment.'),
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->timestamps())
         ;

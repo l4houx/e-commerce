@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/%website_admin_dashboard_path%', name: 'admin_dashboard_')]
+#[Route('/%website_admin_path%', name: 'admin_')]
 class SecurityController extends AbstractController
 {
     public function __construct(
@@ -22,7 +22,7 @@ class SecurityController extends AbstractController
         if ($this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('Already logged in'));
 
-            return $this->redirectToRoute('admin_dashboard_index');
+            return $this->redirectToRoute('admin_index');
         }
 
         // get the login error if there is one

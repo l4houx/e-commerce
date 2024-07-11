@@ -97,7 +97,7 @@ class UserCrudController extends AbstractCrudController
 
         $reset = Action::new('reset', t('Reset'))
             ->displayAsLink()
-            ->linkToRoute('admin_dashboard_user_reset', fn (User $user) => ['user' => $user->getId()])
+            ->linkToRoute('admin_user_reset', fn (User $user) => ['user' => $user->getId()])
         ;
 
         return $actions
@@ -180,7 +180,7 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new('deletedAt', t('Deleted At'))->hideOnForm()->hideOnIndex();
     }
 
-    #[Route(path: '/%website_admin_dashboard_path%/users/{id}/reset', name: 'admin_dashboard_user_reset', methods: ['GET'])]
+    #[Route(path: '/%website_admin_path%/users/{id}/reset', name: 'admin_user_reset', methods: ['GET'])]
     public function reset(
         User $user,
         TranslatorInterface $translator,

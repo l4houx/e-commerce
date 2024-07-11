@@ -1,0 +1,149 @@
+{% for order in orders %}
+    <div class="row g-3 align-items-center mb-5">
+        <div class="col-xl-7">
+            <h6 class="card-title mb-0">
+                {{ "Order No."|trans ~ order.id ~ " #" ~ order.ref ~ " " ~ ("placed on"|trans) ~ " " ~ order.createdAt|format_date('long') }}
+            </h6>
+        </div>
+        <div class="col-sm-6 col-xl-5 ms-auto">
+            {% if order.isCompleted == true and order.status == 1 %}
+                <p class="text-success fw-semibold small mb-0">
+                    <i class="fas fa-circle-check me-1"></i>
+                    {{ 'Order delivered'|trans }}
+                </p>
+                <small class="text-body-secondary">
+                    {{ 'Expected at'|trans }} {{ order.city }} {{ order.countrycode.name }}
+                </small>
+            {% else %}
+                <p class="text-danger fw-semibold small mb-0">
+                    <i class="fas fa-circle-xmark me-1"></i>
+                    {{ 'Order not delivered'|trans }}
+                </p>
+            {% endif %}
+        </div>
+        {#  
+        <div class="col-sm-6 col-xl-3">
+            {% if order.isCompleted != true %}
+                <a href="{{ path('admin_order_completed', { id: order.id }) }}" class="btn btn-sm btn-light border mb-0">
+                    <i class="fas fa-truck me-2"></i>{{ 'Mark as delivered'|trans }}
+                </a>
+            {% endif %}
+        </div>
+        #}
+    </div>
+    <h5 class="card-title mb-4">
+        {{ 'Customer information'|trans }}
+    </h5>
+    <div class="table-responsive border-0">
+        <table class="table align-middle p-4 mb-6 table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="border-0 text-white rounded-start">{{ 'Full name'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Phone / Email'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Delivery address'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ order.getFullName|lower|capitalize }}</td>
+                    <td>{{ order.phone }} <br> {{ order.email }}</td>
+                    <td>
+                        {{ order.street }}
+                        <br/>
+                        {% if order.street2 is not null %}
+                            {{ order.street2 }}
+                            <br/>
+                        {% endif %}
+                        {{ order.postalcode }} {{ order.city }} {{ order.countrycode.name }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h5 class="card-title mb-4">
+        {{ 'Order body'|trans }}
+    </h5>
+    <div class="table-responsive border-0">
+        <table class="table align-middle p-4 mb-6 table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="border-0 text-white rounded-start">#</th>
+                    <th scope="col" class="border-0 text-white">{{ "Picture"|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Name'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Content'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Unit price'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Quantity'|trans }}</th>
+                    <th scope="col" class="border-0 text-white">{{ 'Price total'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orderDetail in order.orderDetails %}
+                    <tr>
+                        <td>{{ "#" ~ orderDetail.id }}</td>
+                        <td>
+                            <img class="img-fluid w-80px rounded" src="{{ orderDetail.product.imageName ? (orderDetail.product.getImagePath) : orderDetail.product.getImagePlaceholder }}" alt="{{ orderDetail.product.brand.name }} - {{ orderDetail.product.name }}">
+                        </td>
+                        <td>
+                            <a href="{{ path('shop_product', {slug: orderDetail.product.slug }) }}" target="_blank">
+                                {{ orderDetail.product.name }} - {{ orderDetail.product.brand.name }}
+                            </a>
+                        </td>
+                        {% if orderDetail.product.content is not null %}
+                            <td>{{ orderDetail.product.content|html_markdown_excerpt(100) }}</td>
+                        {% else %}
+                            <td>{{ 'No content found'|trans }}</td>
+                        {% endif %}
+                        <td>
+                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                        </td>
+                        <td>{{ orderDetail.quantity }}</td>
+                        <td>
+                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ orderDetail.product.price * orderDetail.quantity ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-end" colspan="6">{{ 'Shipping cost'|trans }}</th>
+                    <td class="text-center">{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.countrycode.shippingCost ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}</td>
+                </tr>
+                <tr>
+                    <th class="text-end" colspan="6">{{ 'Total to pay'|trans }}</th>
+                    <td class="text-center">{{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ order.totalPrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}</td>
+                </tr>
+                <tr>
+                    <td class="text-end" colspan="7">
+                        {% if order.isCompleted != true %}
+                            <a href="{{ path('admin_order_completed', { id: order.id }) }}" class="btn btn-sm btn-light border me-1 mb-1 mb-md-0">
+                                <i class="fas fa-truck fa-fw me-2"></i>{{ 'Mark as delivered'|trans }}
+                            </a>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN_APPLICATION') %}
+                            {% if order.status == 1 %}
+                                <a href="{{ path("admin_order_resend_confirmation_email", { id: order.id}) }}" onclick="return confirm('{{ "If you need to send the confirmation email to a different email address, you can change it before submitting"|trans }}')" class="btn btn-sm btn-dark border me-1 mb-1 mb-md-0">
+                                    <i class="far fa-envelope fa-fw me-2"></i>{{ "Resend confirmation email"|trans }}
+                                </a>
+                            {% endif %}
+                            {% if order.status == 0 or order.status == 1 %}
+                                <a href="{{ path("admin_order_cancel", { id: order.id}) }}" onclick="return confirm('{{ "You are about to cancel this order (this action cannot be undone)"|trans }}')" class="btn btn-sm btn-light border me-1 mb-1 mb-md-0">
+                                    <i class="fas fa-window-close fa-fw me-2"></i>{{ "Cancel order"|trans }}
+                                </a>
+                            {% endif %}
+                            <a href="#" onclick="event.preventDefault(); confirm('{{ "Are you sure you want to delete this item?"|trans }}') && document.getElementById('js-order-delete-form').submit();" class="btn btn-sm btn-danger me-1 mb-1 mb-md-0">
+                                <i class="fas fa-trash fa-fw me-2"></i>{{ 'Delete order'|trans }}
+                            </a>
+                            <form id="js-order-delete-form" action="{{ path('admin_order_delete', { id: order.id }) }}" method="post" class="">
+                                <input type="hidden" name="_token" value="{{ csrf_token('order_deletion_' ~ order.id) }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endfor %}
+<div class="card-footer bg-transparent text-end p-0">
+    {{ knp_pagination_render(orders, null, {}, {'align': 'center'}) }}
+</div>
