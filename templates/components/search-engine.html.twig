@@ -1,0 +1,30 @@
+<div {{ attributes }}>
+    <div class="col-md-7 bg-light border rounded-2 mx-auto p-2 mt-4 mt-md-5">
+        <div class="input-group">
+            <input type="search"
+                class="form-control focus-shadow-none bg-light border-0 me-1"
+                placeholder="{{ 'Search for...'|trans }}"
+                autocomplete="off"
+                data-model="query"
+                autofocus
+            >
+        </div>
+    </div>
+    {% if this.products %}
+        <div class="row g-4 g-sm-5 g-xl-7 mt-0">
+            {% for product in this.products %}
+                {% include "global/product-card-item.html.twig" with {product: product, thumbnailsize: [241, 241]} %}
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if query is not empty %}
+            <div class="col-md-7 mx-auto mt-3 mt-md-3">
+                {% component alert with {type: 'light', closeButton: false, class: 'my-2'} %}
+                    {% block content %}
+                        {{ 'No products found'|trans }}
+                    {% endblock %}
+                {% endcomponent %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>

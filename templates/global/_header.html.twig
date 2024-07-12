@@ -358,14 +358,46 @@
             </div>
 			<ul class="nav align-items-center dropdown-hover ms-sm-2">
                 {% include "global/dropdown-item-bs-theme-text.html.twig" %}
+                <li class="nav nav-item dropdown nav-search px-1 px-lg-3">
+					<a class="btn btn-light border btn-round mb-0" role="button" href="{{ path("search_engine") }}">
+						<i class="fas fa-search"> </i>
+					</a>
+				</li>
+                {#<li class="nav nav-item dropdown nav-search px-1 px-lg-3">
+					<a class="btn btn-light border btn-round mb-0" role="button" href="#" id="navSearch" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-display="static">
+						<i class="fas fa-search"> </i>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end shadow rounded p-2" aria-labelledby="navSearch">
+                        {{ form_start(searchForm, {'method': 'get', 'action': 'search_engine', 'attr': {'class': 'input-group', 'data-turbo': 'false'} }) }}
+                            {{ form_widget(searchForm) }}
+							<button class="btn btn-primary m-0" type="submit">{{ 'Search'|trans }}</button>
+						{{ form_end(searchForm) }}
+					</div>
+				</li>
+                <li class="nav-item flex-nowrap align-items-center ms-3 d-none d-md-block">
+                    {# {{ form_start(searchForm, {'method': 'get', 'action': 'search_engine', 'attr': {'class': 'position-relative', 'data-turbo': 'false'} }) }}
+						{{ form_widget(searchForm) }}
+						<button class="bg-transparent p-2 position-absolute top-50 end-0 translate-middle-y border-0 text-primary-hover text-reset" type="submit">
+							<i class="fas fa-search"></i>
+						</button>
+					{{ form_end(searchForm) }}
+                    {# 
+					<form class="position-relative" role="search" action="{{ path('search_engine') }}" method="get" data-turbo="false">
+						<input class="form-control pe-5 bg-light" type="search" name="word" placeholder="{{ 'Search'|trans }}" aria-label="{{ 'Search'|trans }}">
+						<button class="bg-transparent p-2 position-absolute top-50 end-0 translate-middle-y border-0 text-primary-hover text-reset" type="submit">
+							<i class="fas fa-search"></i>
+						</button>
+					</form>
+                    }
+				</li>#}
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <li class="nav-item me-2">
+                    <li class="nav-item me-2 ms-2 ms-sm-3">
                         <a href="{{ path('signout') }}" class="btn btn-sm btn-danger mb-0">
                             <i class="fas fa-sign-out-alt me-1"></i>{{ 'Sign Out'|trans }}
                         </a>
                     </li>
                 {% else %}
-                    <li class="nav-item me-2">
+                    <li class="nav-item me-2 ms-2 ms-sm-3">
                         <a href="{{ path('signin', {redirect: app.request.pathInfo}) }}" class="btn btn-sm btn-light mb-0">
                             <i class="fas fa-user me-1"></i>{{ 'Sign In'|trans }}
                         </a>

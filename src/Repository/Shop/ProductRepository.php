@@ -13,6 +13,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Settings\HomepageHeroSetting;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use function Symfony\Component\String\u;
 
 /**
  * @extends ServiceEntityRepository<Product>
@@ -24,6 +25,31 @@ class ProductRepository extends ServiceEntityRepository
         private readonly PaginatorInterface $paginator
     ) {
         parent::__construct($registry, Product::class);
+    }
+
+    public function searchEngine(string $keyword): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('LOWER(p.name) LIKE :keyword OR LOWER(p.content) LIKE :keyword')
+            ->setParameter('keyword', '%'.mb_strtolower($keyword).'%')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+    * @return Product[] Returns an array of Product objects
+    */
+    public function findById($value): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.name > :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'DESC')
+            //->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /**
@@ -314,5 +340,49 @@ class ProductRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function findBySearchQuery(string $query, int $maxResults = HasLimit::PRODUCT_LIMIT): array
+    {
+        $search = $this->search($query);
+
+        if (0 === \count($search)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('p');
+
+        foreach ($search as $key => $value) {
+            $qb
+                ->orWhere('p.name LIKE :v_'.$key)
+                ->setParameter('v_'.$key, '%'.$value.'%')
+            ;
+        }
+
+        /** @var Product[] $result */
+        $result = $qb
+            ->orderBy('p.createdAt', 'DESC')
+            ->orWhere('p.isOnline = true')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $result;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function search(string $searchQuery): array
+    {
+        $values = array_unique(u($searchQuery)->replaceMatches('/[[:space:]]+/', ' ')->trim()->split(' '));
+
+        return array_filter($values, static function ($value) {
+            return 2 <= $value->length();
+        });
     }
 }
