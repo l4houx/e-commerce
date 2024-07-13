@@ -2,14 +2,18 @@
 
 namespace App\Form\Shop;
 
+use App\Entity\Shop\Category;
 use App\Entity\Shop\SubCategory;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ColorType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use App\Repository\Shop\CategoryRepository;
 use function Symfony\Component\Translation\t;
+use App\Repository\Shop\SubCategoryRepository;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 
 class SubCategoryFormType extends AbstractType
 {
@@ -29,7 +33,21 @@ class SubCategoryFormType extends AbstractType
                 // 'purify_html' => true,
                 'empty_data' => '',
             ])
-            ->add('category', CategoryAutocompleteField::class)
+            //->add('category', CategoryAutocompleteField::class)
+            ->add('category', EntityType::class, [
+                'label' => t('Categorie'),
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'placeholder' => t('Choose a category'),
+                'autocomplete' => true,
+                'required' => false,
+                'multiple' => false,
+                'attr' => ['data-limit' => 1],
+                'help' => t('Make sure to select right category to let the users find it quickly'),
+                'query_builder' => function (CategoryRepository $categoryRepository) {
+                    return $categoryRepository->createQueryBuilder('c');
+                },
+            ])
         ;
     }
 

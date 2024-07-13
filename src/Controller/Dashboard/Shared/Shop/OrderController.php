@@ -169,26 +169,26 @@ class OrderController extends AbstractController
         return $this->render('dashboard/shared/shop/order/details.html.twig', compact('order'));
     }
 
-    #[Route(path: '/%website_admin_path%/manage-orders/{id}/cancel', name: 'admin_order_cancel', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    //#[Route(path: '/%website_admin_path%/manage-orders/{id}/cancel', name: 'admin_order_cancel', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     #[IsGranted(HasRoles::ADMINAPPLICATION)]
-    public function cancel(int $id): Response
+    public function cancel(Request $request, int $id): Response
     {
         $order = $this->settingService->getOrders(['id'=> $id, 'status' => 'all'])->getQuery()->getOneOrNullResult();
         if (!$order) {
             $this->addFlash('danger', $this->translator->trans('The order not be found'));
 
-            return $this->settingService->redirectToReferer('orders');
+            return $this->redirect($request->headers->get('referer'));
         }
 
         if ($order->getStatus() != 0 && $order->getStatus() != 1) {
             $this->addFlash('danger', $this->translator->trans('The order status must be paid or awaiting payment'));
 
-            return $this->settingService->redirectToReferer('orders');
+            return $this->redirect($request->headers->get('referer'));
         }
 
         $this->addFlash('danger', $this->translator->trans('The order has been permanently canceled'));
 
-        return $this->settingService->redirectToReferer('orders');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     #[Route(path: '/%website_admin_path%/manage-orders/{id}/delete', name: 'admin_order_delete', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]

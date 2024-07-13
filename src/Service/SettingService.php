@@ -227,6 +227,46 @@ class SettingService
         }
     }
 
+    // Handles all the operations needed after a successful payment processing
+    public function handleSuccessfulPayment(string $orderReference): void
+    {
+        $order = $this->getOrders(['status' => 0, 'ref' => $orderReference])->getQuery()->getOneOrNullResult();
+        $order->setStatus(1);
+
+        $this->em->persist($order);
+        $this->em->flush();
+    }
+
+    // Handles all the operations needed after a failed payment processing
+    public function handleFailedPayment(string $orderReference, string $note = null): void
+    {
+        $order = $this->getOrders(['status' => 0, 'ref' => $orderReference])->getQuery()->getOneOrNullResult();
+        $order->setStatus(-2);
+        $order->setNote($note);
+
+        $this->em->persist($order);
+        $this->em->flush();
+    }
+
+    // Handles all the operations needed after a canceled payment processing
+    public function handleCanceledPayment(string $orderReference, string $note = null): void
+    {
+        $order = $this->getOrders(['status' => 'all', 'ref' => $orderReference])->getQuery()->getOneOrNullResult();
+
+        foreach ($order->getOrderDetails() as $orderDetail) {
+            foreach ($orderDetail->getProduct() as $product) {
+                $this->em->remove($product);
+                $this->em->flush();
+            }
+        }
+
+        $order->setStatus(-1);
+        $order->setNote($note);
+
+        $this->em->persist($order);
+        $this->em->flush();
+    }
+
     // Removes all the specified user cart elements
     public function emptyCart(User $user): void
     {

@@ -94,7 +94,7 @@
                             {% if order.status == 0 or order.status == 1 %}
                                 <li>
                                     <a class="dropdown-item" href="{{ path("admin_order_cancel", {id: order.id}) }}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}" data-bs-original-title="{{ 'You are about to cancel this order (this action cannot be undone)'|trans }}">
-                                        <i class="fas fa-window-close fa-fw me-2"></i>{{ "Cancel"|trans }}
+                                        <i class="fas fa-window-close fa-fw me-2"></i>{{ "Cancel order"|trans }}
                                     </a>
                                 </li>
                             {% endif %}

@@ -25,7 +25,11 @@ class Order
     //use HasDeletedAtTrait;
 
     #[ORM\Column(type: Types::STRING, length: 500, unique: true)]
-    private $ref = '';
+    private string $ref = '';
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(max: 1000)]
+    private ?string $note = null;
 
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\Positive()]
@@ -46,9 +50,6 @@ class Order
     /** -2: failed / -1: cancel / 0: waiting for payment / 1: paid */
     #[ORM\Column(type: Types::INTEGER)]
     private int $status;
-
-    //#[ORM\Column(type: Types::STRING)]
-    //private string $state = 'cart';
 
     //#[ORM\ManyToOne]
     //#[ORM\JoinColumn(nullable: false)]
@@ -193,6 +194,18 @@ class Order
         return $this;
     }
 
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
     public function getTotalPrice(): ?float
     {
         return $this->totalPrice;
@@ -267,18 +280,6 @@ class Order
 
         return $this;
     }
-
-    /*public function getState(): string
-    {
-        return $this->state;
-    }
-
-    public function setState(string $state): static
-    {
-        $this->state = $state;
-
-        return $this;
-    }*/
 
     /*public function getUser(): User
     {

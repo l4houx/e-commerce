@@ -12,15 +12,12 @@ trait HasIsFeaturedTrait
     #[Assert\NotNull]
     private bool $isFeatured = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $featuredorder = null;
-
-    public function isFeatured(): ?bool
+    public function isFeatured(): bool
     {
         return $this->isFeatured;
     }
 
-    public function getIsFeatured(): ?bool
+    public function getIsFeatured(): bool
     {
         return $this->isFeatured;
     }
@@ -28,18 +25,6 @@ trait HasIsFeaturedTrait
     public function setIsFeatured(bool $isFeatured): static
     {
         $this->isFeatured = $isFeatured;
-
-        return $this;
-    }
-
-    public function getFeaturedorder(): ?int
-    {
-        return $this->featuredorder;
-    }
-
-    public function setFeaturedorder(?int $featuredorder): static
-    {
-        $this->featuredorder = $featuredorder;
 
         return $this;
     }

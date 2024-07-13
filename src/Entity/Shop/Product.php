@@ -2,6 +2,7 @@
 
 namespace App\Entity\Shop;
 
+use App\Entity\Traits\HasIsFeaturedTrait;
 use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use App\Entity\Traits\HasLimit;
@@ -16,6 +17,7 @@ use App\Entity\Traits\HasIdNameSlugTrait;
 use App\Repository\Shop\ProductRepository;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Settings\HomepageHeroSetting;
+use App\Entity\Traits\HasShopDetailsTrait;
 use App\Entity\Traits\HasTimestampableTrait;
 use App\Entity\Traits\HasSocialNetworksTrait;
 use Symfony\Component\HttpFoundation\File\File;
@@ -34,13 +36,13 @@ class Product
     use HasIdNameSlugTrait;
     use HasMetaTrait;
     use HasIsOnlineTrait;
+    use HasIsFeaturedTrait;
     use HasViewsTrait;
     use HasTagTrait;
     use HasSocialNetworksTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
-
-    public const PRODUCT_LIMIT = HasLimit::PRODUCT_LIMIT;
+    //use HasShopDetailsTrait;
 
     // NOTE: This is not a mapped field of entity metadata, just a simple property.
     #[Vich\UploadableField(mapping: 'product_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'imageMimeType', originalName: 'imageOriginalName', dimensions: 'imageDimensions')]
@@ -71,7 +73,7 @@ class Product
     private ?string $content = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
-    private $ref = '';
+    private string $ref = '';
 
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\Positive()]
@@ -79,7 +81,8 @@ class Product
     private ?float $price = null;
 
     #[ORM\Column(type: Types::FLOAT)]
-    #[Assert\GreaterThan(0)]
+    #[Assert\Positive()]
+    #[Assert\LessThan(1001)]
     private ?float $salePrice = null;
 
     #[ORM\Column(type: Types::FLOAT, precision: 5, scale: 4)]
