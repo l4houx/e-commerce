@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -43,6 +44,7 @@ class CategoryCrudController extends AbstractCrudController
             ->onlyOnIndex()
         ;
         ArrayField::new('subCategories', t('Sub categories'))->onlyOnDetail();
+        yield BooleanField::new('isMegaMenu', t('Mega menu'));
     }
 
     public function configureCrud(Crud $crud): Crud

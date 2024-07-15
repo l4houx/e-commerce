@@ -3,6 +3,7 @@
 namespace App\Entity\Shop;
 
 use App\Entity\Traits\HasIdNameTrait;
+use App\Entity\Traits\HasIsMegaMenuTrait;
 use App\Repository\Shop\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Category
 {
     use HasIdNameTrait;
+    use HasIsMegaMenuTrait;
 
     /**
      * @var Collection<int, SubCategory>

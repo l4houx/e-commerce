@@ -51,7 +51,7 @@
                     <div class="badge mb-3" style="background-color: {{ product.subCategories[0].color }}">
                         {{ product.subCategories[0].name }}
                     </div>
-                    <h1 class="h2 mb-4">{{ product.brand.name }} - {{ product.name }}</h1>
+                    <h1 class="h2 mb-4">{{ product.name }}</h1>
                     <div class="d-flex align-items-center flex-wrap mb-4">
                         {% if product.enablereviews %}
                             <ul class="list-inline mb-0 rating-stars">
@@ -77,13 +77,16 @@
                             </span>
                             <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
                         {% endif %}
-                        <span>86 sold</span>
-                        <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
-                        <span>{{ "Reference"|trans }}: {{ product.ref }}</span>
+                        <span>{{ product.brand.name }}</span>
                     </div>
-                    <h4 class="text-success mb-4">
-                        {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
-                    </h4>
+                    <div class="d-flex gap-2">
+                        <h4 class="text-success mb-0">
+                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.salePrice ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                        </h4>
+                        <h4 class="text-decoration-line-through text-body">
+                            {{ (settings['currency_position']  == 'left' ? settings['currency_symbol'] : '') ~ product.price ~ (settings['currency_position'] == 'right' ? settings['currency_symbol'] : '') }}
+                        </h4>
+                    </div>
                     {% if product.content %}
                         <div class="mb-4">{{ product.content|html_markdown() }}</div>
                     {% endif %}

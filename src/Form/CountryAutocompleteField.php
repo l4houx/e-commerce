@@ -2,15 +2,15 @@
 
 namespace App\Form;
 
-use App\Entity\Shipping;
-use App\Repository\ShippingRepository;
+use App\Entity\Shop\Shipping;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Repository\Shop\ShippingRepository;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
 use Symfony\UX\Autocomplete\Form\BaseEntityAutocompleteType;
-
-use function Symfony\Component\Translation\t;
 
 #[AsEntityAutocompleteField]
 class CountryAutocompleteField extends AbstractType

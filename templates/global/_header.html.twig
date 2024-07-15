@@ -82,6 +82,20 @@
                             </ul>
                         </li>
                     {% endif %}
+                    {% if headerPages()|length > 0 %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if routename == "page" %}active{% endif %}" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">{{ 'Pages'|trans }}</a>
+                            <ul class="dropdown-menu">
+                                {% for page in headerPages() %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ path('page', { slug : page.slug }) }}">
+                                            {{ page.name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link {% if routename == "posts" or routename == "post" or routename == "post_searched" %}active{% endif %}" href="{{ path('posts') }}">
                             {{ 'Blog'|trans }}

@@ -6,7 +6,9 @@ use App\Controller\Admin\Traits\CreateReadDeleteTrait;
 use App\Entity\Settings\Page;
 use App\Entity\Traits\HasRoles;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -40,10 +42,7 @@ class PageCrudController extends AbstractCrudController
                 new Length(['min' => 4, 'max' => 128]),
             ])
         ;
-        yield SlugField::new('slug')
-            ->setTargetFieldName('name')
-            ->hideOnIndex()
-        ;
+        yield SlugField::new('slug', t('URL'))->setTargetFieldName('name');
 
         if (Crud::PAGE_NEW === $pageName) {
             yield TextEditorField::new('content', t('Content'))
@@ -69,6 +68,10 @@ class PageCrudController extends AbstractCrudController
         yield TextField::new('metaTitle', t('Title'))->hideOnIndex();
         yield TextareaField::new('metaDescription', t('Description'))->renderAsHtml()->hideOnIndex();
 
+        yield FormField::addPanel(t('Header and Footer'));
+        yield BooleanField::new('isHeader', t('Header'));
+        yield BooleanField::new('isFooter', t('Footer'));
+
         yield FormField::addPanel(t('Date'))->hideOnForm();
         yield DateTimeField::new('createdAt', t('Creation date'))->hideOnForm()->onlyOnDetail();
         yield DateTimeField::new('updatedAt', t('Last modification'))->hideOnForm()->onlyOnDetail();
@@ -81,6 +84,13 @@ class PageCrudController extends AbstractCrudController
             ->setEntityLabelInSingular(t('Page'))
             ->setEntityLabelInPlural(t('Pages'))
             ->setDefaultSort(['createdAt' => 'DESC', 'name' => 'ASC'])
+        ;
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('createdAt')
         ;
     }
 }

@@ -55,11 +55,11 @@ class AppOrderFixtures extends Fixture
         }
         */
 
-        // Create 20 Add Shipping
+        // Create 330 Add Shipping
         $shippings = [];
-        for ($i = 0; $i <= 330; ++$i) {
+        for ($i = 0; $i <= 100; ++$i) {
             $shipping = (new Shipping())
-                ->setName($this->faker()->country)
+                ->setName($this->faker()->unique()->country())
                 ->setShippingCost(rand(10, 100))
             ;
             $manager->persist($shipping);

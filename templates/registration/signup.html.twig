@@ -60,6 +60,9 @@
                             {% endif %}
                             {{ form_errors(registrationForm) }}
                             <div class="mb-3">
+                                {{ form_row(registrationForm.civility) }}
+                            </div>
+                            <div class="mb-3">
                                 {{ form_row(registrationForm.firstname) }}
                             </div>
                             <div class="mb-3">

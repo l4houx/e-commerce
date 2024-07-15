@@ -43,6 +43,9 @@ class AppCollaboratorFixtures extends Fixture implements DependentFixtureInterfa
         $genres = ['male', 'female'];
         $genre = $this->faker()->randomElement($genres);
 
+        $civilities = ['Mr', 'Mme', 'Mlle'];
+        $civility = $this->faker()->randomElement($civilities);
+
         /** @var Collaborator $user */
         //$avatar = $this->avatarService->createAvatar($user->getEmail());
         $user = (new Collaborator())
@@ -50,6 +53,7 @@ class AppCollaboratorFixtures extends Fixture implements DependentFixtureInterfa
             ->setIsVerified(true)
             ->setIsAgreeTerms(true)
             ->setRoles([HasRoles::COLLABORATOR])
+            ->setCivility($civility)
             ->setLastName($this->faker()->lastName)
             ->setFirstName($this->faker()->firstName($genre))
             ->setUsername(sprintf('collaborator+%d', $this->autoIncrement))

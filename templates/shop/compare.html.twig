@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% set pagetitle = 'Compare Product'|trans %}
+{% block title pagetitle %}
+
+{% block breadcrumb %}
+	{% set breadcrumb = [{ "shop": "Products"|trans, "current":(pagetitle) }] %}
+	{% include "global/breadcrumb.html.twig" with breadcrumb %}
+{% endblock %}
+
+{% block body %}
+    <section class="pt-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-12" data-compare="{{compareJson}}">
+                    <div class="card bg-transparent">
+                        <div class="card-body p-0 pt-5">
+                            <div class="table-responsive border-0">
+                                <table class="table align-middle p-4 mb-0 table-hover">
+                                    <tbody>
+                                        <tr scope="col" class="border-0 text-white rounded-start pr_image"></tr>
+                                        <tr scope="col" class="border-0 text-white pr_title"></tr>
+                                        <tr scope="col" class="border-0 text-white pr_price"></tr>
+                                        <tr scope="col" class="border-0 text-white pr_add_to_cart"></tr>
+                                        <tr scope="col" class="border-0 text-white pr_remove"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

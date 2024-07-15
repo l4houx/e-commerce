@@ -118,6 +118,11 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('avatar', t('Avatar'))->hideOnForm();
 
         yield FormField::addPanel(t('User'));
+        yield ChoiceField::new('civility')->setChoices([
+            'Sir' => 'Mr', 
+            'Madam' => 'Mme', 
+            'Miss' => 'Mlle'
+        ]);
         yield TextField::new('firstname', t('Firstname'))
             ->setFormTypeOption('constraints', [
                 new NotBlank(),
@@ -156,17 +161,17 @@ class UserCrudController extends AbstractCrudController
         ;
 
         yield FormField::addPanel(t('Team'));
-        yield BooleanField::new('isTeam', t('Team'))->hideOnIndex();
+        yield BooleanField::new('isTeam', t('Team'));
         yield TextareaField::new('about', t('About'))->hideOnIndex();
         yield TextareaField::new('designation', t('Designation'))->hideOnIndex();
 
         yield FormField::addPanel(t('Details'));
         yield BooleanField::new('isVerified', t('Verified'));
-        yield BooleanField::new('isAgreeTerms', t('Agree terms'))->hideOnIndex();
-        yield BooleanField::new('isSuspended', t('Suspended'))->hideOnIndex();
-        yield DateTimeField::new('bannedAt', t('Banner'))->hideOnForm();
-        yield DateTimeField::new('lastLogin', t('Last connection'))->hideOnForm();
-        yield TextField::new('lastLoginIp', t('IP'))->hideOnForm();
+        yield BooleanField::new('isAgreeTerms', t('Agree terms'))->renderAsSwitch(false)->hideOnIndex();
+        yield BooleanField::new('isSuspended', t('Suspended'));
+        yield DateTimeField::new('bannedAt', t('Banner'))->hideOnIndex()->hideOnForm();
+        yield DateTimeField::new('lastLogin', t('Last connection'))->hideOnIndex()->hideOnForm();
+        yield TextField::new('lastLoginIp', t('IP'))->hideOnIndex()->hideOnForm();
 
         yield RulesAgreementField::new('lastRulesAgreement', t('Rule'))->hideOnForm();
         yield AssociationField::new('rulesAgreements', t('Rule'))

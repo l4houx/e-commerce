@@ -4,6 +4,7 @@ namespace App\Entity\Shop;
 
 use App\Entity\Traits\HasBackgroundColorTrait;
 use App\Entity\Traits\HasIdNameTrait;
+use App\Entity\Traits\HasIsMegaMenuTrait;
 use App\Repository\Shop\SubCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +17,7 @@ class SubCategory
 {
     use HasIdNameTrait;
     use HasBackgroundColorTrait;
+    use HasIsMegaMenuTrait;
 
     #[ORM\ManyToOne(inversedBy: 'subCategories')]
     #[ORM\JoinColumn(nullable: false)]

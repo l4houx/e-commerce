@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Data\Account;
+use App\Entity\Shop\AddressCustoner;
 use App\Entity\Shop\Product;
 use App\Entity\Shop\Review;
 use App\Entity\Tickets\Ticket;
@@ -51,6 +52,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     use HasIsTeamTrait;
     use HasTimestampableTrait;
     use HasDeletedAtTrait;
+
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    #[Assert\Length(min: 2, max: 20)]
+    private ?string $civility = null;
 
     #[Assert\Length(min: 2, max: 20)]
     #[Assert\NotBlank]
@@ -134,6 +139,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', orphanRemoval: true, cascade: ['remove'])]
     private Collection $tickets;
 
+    /**
+     * @var Collection<int, AddressCustoner>
+     */
+    #[ORM\OneToMany(targetEntity: AddressCustoner::class, mappedBy: 'user')]
+    private Collection $addressCustoners;
+
     public function __construct()
     {
         $this->isVerified = false;
@@ -145,11 +156,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         $this->account = new Account();
         $this->tickets = new ArrayCollection();
         $this->rulesAgreements = new ArrayCollection();
+        $this->addressCustoners = new ArrayCollection();
     }
 
     public function __toString(): string
     {
         return (string) $this->getFullName();
+    }
+
+    public function getCivility(): ?string
+    {
+        return $this->civility;
+    }
+
+    public function setCivility(?string $civility): static
+    {
+        $this->civility = $civility;
+
+        return $this;
     }
 
     public function getFullName(): string
@@ -581,6 +605,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
             // set the owning side to null (unless already changed)
             if ($ticket->getUser() === $this) {
                 $ticket->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AddressCustoner>
+     */
+    public function getAddressCustoners(): Collection
+    {
+        return $this->addressCustoners;
+    }
+
+    public function addAddressCustoner(AddressCustoner $addressCustoner): static
+    {
+        if (!$this->addressCustoners->contains($addressCustoner)) {
+            $this->addressCustoners->add($addressCustoner);
+            $addressCustoner->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddressCustoner(AddressCustoner $addressCustoner): static
+    {
+        if ($this->addressCustoners->removeElement($addressCustoner)) {
+            // set the owning side to null (unless already changed)
+            if ($addressCustoner->getUser() === $this) {
+                $addressCustoner->setUser(null);
             }
         }
 

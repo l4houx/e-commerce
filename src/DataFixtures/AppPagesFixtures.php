@@ -28,6 +28,8 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'Terms',
                 'meta-description' => 'Terms',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
             2 => [
                 'name' => 'Privacy',
@@ -36,6 +38,8 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'Privacy',
                 'meta-description' => 'Privacy',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
             3 => [
                 'name' => 'Cookie',
@@ -44,14 +48,18 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'Cookie',
                 'meta-description' => 'Cookie',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
             4 => [
-                'name' => 'GDPR compliance',
-                'slug' => 'gdpr-compliance',
+                'name' => 'Legal Notice',
+                'slug' => 'legal-notice',
                 'content' => $content,
                 'views' => $views,
-                'meta-title' => 'GDPR compliance',
-                'meta-description' => 'GDPR compliance',
+                'meta-title' => 'Legal Notice',
+                'meta-description' => 'Legal Notice',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
             5 => [
                 'name' => 'About',
@@ -60,6 +68,8 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'About',
                 'meta-description' => 'About',
+                'isHeader' => true,
+                'isFooter' => true,
             ],
             6 => [
                 'name' => 'Feedback',
@@ -68,6 +78,8 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'Feedback',
                 'meta-description' => 'Feedback',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
             7 => [
                 'name' => 'Support',
@@ -76,30 +88,38 @@ class AppPagesFixtures extends Fixture
                 'views' => $views,
                 'meta-title' => 'Support',
                 'meta-description' => 'Support',
+                'isHeader' => true,
+                'isFooter' => true,
             ],
             8 => [
-                'name' => 'Affiliates',
-                'slug' => 'affiliates',
+                'name' => 'Our services',
+                'slug' => 'our-services',
                 'content' => $content,
                 'views' => $views,
-                'meta-title' => 'Affiliates',
-                'meta-description' => 'Affiliates',
+                'meta-title' => 'Our services',
+                'meta-description' => 'Our services',
+                'isHeader' => true,
+                'isFooter' => true,
             ],
             9 => [
-                'name' => 'Free Exchanges',
-                'slug' => 'free_exchanges',
+                'name' => 'Contact us',
+                'slug' => 'contact-us',
                 'content' => $content,
                 'views' => $views,
-                'meta-title' => 'Free Exchanges',
-                'meta-description' => 'Free Exchanges',
+                'meta-title' => 'Contact us',
+                'meta-description' => 'Contact us',
+                'isHeader' => true,
+                'isFooter' => true,
             ],
             10 => [
-                'name' => 'Pricing and fees',
-                'slug' => 'pricing-and-fees',
+                'name' => 'Our partners',
+                'slug' => 'our-partners',
                 'content' => $content,
                 'views' => $views,
-                'meta-title' => 'Pricing and fees',
-                'meta-description' => 'Pricing and fees',
+                'meta-title' => 'Our partners',
+                'meta-description' => 'Our partners',
+                'isHeader' => false,
+                'isFooter' => true,
             ],
         ];
 
@@ -111,6 +131,8 @@ class AppPagesFixtures extends Fixture
                 ->setViews($page['views'])
                 ->setMetaTitle($page['meta-title'])
                 ->setMetaDescription($page['meta-description'])
+                ->setIsHeader($page['isHeader'])
+                ->setIsFooter($page['isFooter'])
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
             ;

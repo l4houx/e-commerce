@@ -32,7 +32,7 @@ class AppReviewsFixtures extends Fixture implements DependentFixtureInterface
             $testimonial
                 ->setAuthor($this->faker()->randomElement($users))
                 ->setIsOnline($this->faker()->numberBetween(0, 1))
-                ->setRating($this->faker()->numberBetween(1, 5))
+                ->setRating(mt_rand(1, 5))
                 ->setName($this->faker()->unique()->sentence(5, true))
                 ->setSlug($this->slugger->slug($testimonial->getName())->lower())
                 ->setContent($this->faker()->paragraph())
@@ -62,7 +62,7 @@ class AppReviewsFixtures extends Fixture implements DependentFixtureInterface
                 ->setAuthor($this->faker()->randomElement($users))
                 ->setProduct($this->faker()->randomElement($products))
                 ->setIsVisible($this->faker()->numberBetween(0, 1))
-                ->setRating($this->faker()->numberBetween(1, 5))
+                ->setRating(mt_rand(1, 5))
                 ->setName($this->faker()->unique()->sentence(5, true))
                 ->setSlug($this->slugger->slug($review->getName())->lower())
                 ->setContent($this->faker()->paragraph())

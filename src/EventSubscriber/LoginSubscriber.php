@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Service\AvatarService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 class LoginSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private readonly AvatarService $avatarService,
         private readonly EntityManagerInterface $em
     ) {
     }
@@ -26,6 +28,8 @@ class LoginSubscriber implements EventSubscriberInterface
                 $user->setLastLoginIp($ip);
             }
             $user->setLastLogin(new \DateTimeImmutable());
+            $avatar = $this->avatarService->createAvatar($user->getEmail());
+            $user->setAvatar($avatar);
             $this->em->flush();
         }
     }

@@ -34,6 +34,9 @@ class AppUserFixtures extends Fixture implements DependentFixtureInterface
             $genres = ['male', 'female'];
             $genre = $this->faker()->randomElement($genres);
 
+            $civilities = ['Mr', 'Mme', 'Mlle'];
+            $civility = $this->faker()->randomElement($civilities);
+
             /** @var User $user */
             //$avatar = $this->avatarService->createAvatar($user->getEmail());
             $user = (new User())
@@ -41,6 +44,7 @@ class AppUserFixtures extends Fixture implements DependentFixtureInterface
                 ->setIsVerified(true)
                 ->setIsAgreeTerms(true)
                 ->setRoles([HasRoles::DEFAULT])
+                ->setCivility($civility)
                 ->setLastName($this->faker()->lastName)
                 ->setFirstName($this->faker()->firstName($genre))
                 ->setUsername(sprintf('user+%d', $this->autoIncrement))

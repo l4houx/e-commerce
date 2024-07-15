@@ -15,6 +15,7 @@ use App\Entity\Shop\SubCategory;
 use App\Entity\Shop\FeatureValue;
 use App\Entity\Shop\ProductImage;
 use App\Entity\Shop\AddProductHistory;
+use App\Entity\Shop\ProductCollection;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -98,6 +99,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
             $category
                 ->setId($this->categoryId)
                 ->setName($this->faker()->unique()->sentence(1, true))
+                ->setIsMegaMenu($this->faker()->numberBetween(0, 1))
             ;
             $this->categories[] = $category;
             $manager->persist($category);
@@ -109,6 +111,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 $sub
                     ->setId($this->categoryId)
                     ->setName($this->faker()->unique()->sentence(1, true))
+                    ->setIsMegaMenu($this->faker()->numberBetween(0, 1))
                 ;
                 $this->categories[] = $sub;
                 $manager->persist($sub);
@@ -127,6 +130,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($this->faker()->unique()->sentence(1, true))
                 ->setColor($this->faker()->hexColor())
                 ->setCategory($this->categories[$i % count($this->categories)])
+                ->setIsMegaMenu($this->faker()->numberBetween(0, 1))
             ;
             $this->subCategories[$i] = $subCategory;
             $manager->persist($subCategory);
@@ -507,6 +511,39 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         }
     }
 
+    private function createProductCollection(ObjectManager $manager): void
+    {
+        // Create 1 Product Collection
+        $collections = [
+            [
+                'imageUrl' => '145f6db952f3849123b4e18a8513d6e4c7a41579.jpg',
+                'name' => 'New Arrival',
+                'description' => 'Powerful performance. Versatile design.',
+                'buttonText' => 'Shop now',
+                'buttonLink' => 'https://127.0.0.1:8001/fr',
+                'isMegaMenu' => false
+            ],
+        ];
+
+        foreach($collections as $collection) {   
+            $newcollection = (new ProductCollection())
+                ->setImageUrl($collection['imageUrl'])
+                ->setName($collection['name'])
+                ->setDescription($collection['description'])
+                ->setButtonText($collection['buttonText'])
+                ->setButtonLink($collection['buttonLink'])
+                ->setIsMegaMenu($collection['isMegaMenu'])
+                ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+                ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
+            ;
+
+            $this->setReference($collection['name'], $newcollection);
+
+            $manager->persist($newcollection);
+            $collections[] = $collection;
+        }
+    }
+
     /**
      * @param EntityManagerInterface $manager
      */
@@ -525,6 +562,7 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
         $this->createCoupons($manager);
         $this->createProductColor($manager);
         $this->createProductSize($manager);
+        $this->createProductCollection($manager);
         $manager->flush();
 
         // Create 20 Products by User and admin
@@ -535,12 +573,14 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setId($p)
                 ->setName($this->faker()->unique()->sentence(5, true))
                 ->setSlug($this->slugger->slug($product->getName())->lower())
-                ->setContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
+                ->setContent($this->faker()->realText(200))
+                ->setMoreContent(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
+                //->setAdditionalInformation(1 === mt_rand(0, 1) ? $this->faker()->paragraphs(10, true) : null)
                 ->setRef(sprintf("REF_%d", $p))
-                ->setPrice(intval(ceil(rand(10, 1600) / 5) * 5))
-                ->setSalePrice(rand(10, 1600))
-                ->setTax(0.2)
-                ->setStock(rand(10, 1600))
+                ->setPrice((rand(50,200) - 0.1) * 100)
+                ->setSalePrice((rand(20,29) - 0.1) * 100)
+                //->setTax(0.2)
+                ->setStock(rand(400,890))
                 ->setViews(rand(10, 1600))
                 ->setMetaTitle($product->getName())
                 ->setMetaDescription($this->faker()->realText(100))
@@ -556,8 +596,10 @@ class AppShopFixtures extends Fixture implements DependentFixtureInterface
                 ->setLinkedinUrl(1 === mt_rand(0, 1) ? $this->faker()->url() : null)
                 ->setIsOnline($this->faker()->numberBetween(0, 1))
                 ->setIsFeaturedProduct($this->faker()->numberBetween(0, 1))
-                ->setIsOnSale($this->faker()->numberBetween(0, 1))
-                ->setEnablereviews($this->faker()->numberBetween(0, 1))
+                ->setIsBestSelling($this->faker()->numberBetween(0, 1))
+                ->setIsNewArrival($this->faker()->numberBetween(0, 1))
+                ->setIsSpecialOffer($this->faker()->numberBetween(0, 1))
+                ->setIsEnablereviews($this->faker()->numberBetween(0, 1))
                 ->setCreatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->setUpdatedAt(\DateTimeImmutable::createFromInterface($this->faker()->dateTimeBetween('-50 days', '+10 days')))
                 ->addSubCategory($this->faker()->randomElement($this->subCategories))

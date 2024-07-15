@@ -60,25 +60,29 @@ trait HasShopDetailsTrait
     #[Assert\LessThan(1001)]
     private ?float $salePrice = null;
 
-    #[ORM\Column(type: Types::FLOAT, precision: 5, scale: 4)]
-    #[Assert\GreaterThan(0)]
-    private float $tax;
-
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\PositiveOrZero(message: 'Stock cannot be negative')]
     private ?int $stock = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    #[Assert\NotNull]
+    #[Assert\NotNull(groups: ['create', 'update'])]
     private bool $isFeaturedProduct = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    #[Assert\NotNull]
+    #[Assert\NotNull(groups: ['create', 'update'])]
     private bool $isBestSelling = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    #[Assert\NotNull]
+    #[Assert\NotNull(groups: ['create', 'update'])]
     private bool $isNewArrival = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull(groups: ['create', 'update'])]
+    private bool $isSpecialOffer = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Assert\NotNull(groups: ['create', 'update'])]
+    private bool $isAvailable = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
     #[Assert\NotNull(groups: ['create', 'update'])]
@@ -174,17 +178,6 @@ trait HasShopDetailsTrait
         return $this;
     }
 
-    public function getFormattedPrice(): string
-    {
-        // return number_format(($this->price / 100), 2, '.', ',');
-        return number_format($this->price / 100, 0, '', ' ');
-    }
-
-    public function getFormattedSalePrice(): string
-    {
-        return number_format($this->salePrice / 100, 0, '', ' ');
-    }
-
     public function getPrice(): ?float
     {
         return $this->price;
@@ -205,18 +198,6 @@ trait HasShopDetailsTrait
     public function setSalePrice(float $salePrice): static
     {
         $this->salePrice = $salePrice;
-
-        return $this;
-    }
-
-    public function getTax(): ?float
-    {
-        return $this->tax;
-    }
-
-    public function setTax(float $tax): static
-    {
-        $this->tax = $tax;
 
         return $this;
     }
@@ -284,17 +265,51 @@ trait HasShopDetailsTrait
         return $this;
     }
 
+    public function isSpecialOffer(): bool
+    {
+        return $this->isSpecialOffer;
+    }
+
+    public function getIsSpecialOffer(): bool
+    {
+        return $this->isSpecialOffer;
+    }
+
+    public function setIsSpecialOffer(bool $isSpecialOffer): static
+    {
+        $this->isSpecialOffer = $isSpecialOffer;
+
+        return $this;
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->isAvailable;
+    }
+
+    public function getIsAvailable(): bool
+    {
+        return $this->isAvailable;
+    }
+
+    public function setIsAvailable(bool $isAvailable): static
+    {
+        $this->isAvailable = $isAvailable;
+
+        return $this;
+    }
+
     public function isEnablereviews(): bool
     {
         return $this->enablereviews;
     }
 
-    public function getEnablereviews(): bool
+    public function getIsEnablereviews(): bool
     {
         return $this->enablereviews;
     }
 
-    public function setEnablereviews(bool $enablereviews): static
+    public function setIsEnablereviews(bool $enablereviews): static
     {
         $this->enablereviews = $enablereviews;
 

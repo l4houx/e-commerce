@@ -2,58 +2,60 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Comment;
-use App\Entity\Company\Client;
-use App\Entity\Company\Member;
-use App\Entity\Company\Organization;
-use App\Entity\HelpCenterArticle;
-use App\Entity\HelpCenterCategory;
-use App\Entity\HelpCenterFaq;
 use App\Entity\Post;
-use App\Entity\PostCategory;
+use App\Entity\User;
+use App\Entity\Rules;
+use App\Entity\Comment;
 use App\Entity\PostType;
 use App\Entity\Question;
-use App\Entity\Rules;
-use App\Entity\Settings\AppLayoutSetting;
-use App\Entity\Settings\Currency;
-use App\Entity\Settings\HomepageHeroSetting;
-use App\Entity\Settings\Page;
-use App\Entity\Settings\Setting;
-use App\Entity\Shop\Brand;
-use App\Entity\Shop\Category;
-use App\Entity\Shop\Color;
-use App\Entity\Shop\Coupon;
-use App\Entity\Shop\Feature;
-use App\Entity\Shop\Order;
-use App\Entity\Shop\Product;
-use App\Entity\Shop\Review;
-use App\Entity\Shop\Shipping;
 use App\Entity\Shop\Size;
-use App\Entity\Shop\SubCategory;
-use App\Entity\SuperAdministrator;
+use App\Entity\Shop\Brand;
+use App\Entity\Shop\Color;
+use App\Entity\Shop\Order;
+use App\Entity\Shop\Coupon;
+use App\Entity\Shop\Review;
 use App\Entity\Testimonial;
+use App\Entity\PostCategory;
+use App\Entity\Shop\Feature;
+use App\Entity\Shop\Product;
+use App\Entity\User\Manager;
+use App\Entity\HelpCenterFaq;
+use App\Entity\Settings\Page;
+use App\Entity\Shop\Category;
+use App\Entity\Shop\Shipping;
 use App\Entity\Tickets\Level;
-use App\Entity\Tickets\Response as TicketsResponse;
+use App\Entity\User\Customer;
+use App\Entity\Company\Client;
+use App\Entity\Company\Member;
 use App\Entity\Tickets\Status;
 use App\Entity\Tickets\Ticket;
 use App\Entity\Traits\HasRoles;
-use App\Entity\User;
-use App\Entity\User\Collaborator;
-use App\Entity\User\Customer;
-use App\Entity\User\Manager;
+use App\Entity\Settings\Setting;
+use App\Entity\Shop\SubCategory;
 use App\Entity\User\SalesPerson;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use App\Entity\HelpCenterArticle;
+use App\Entity\Settings\Currency;
+use App\Entity\User\Collaborator;
+use App\Entity\HelpCenterCategory;
+use App\Entity\SuperAdministrator;
+use App\Entity\Company\Organization;
+use App\Entity\Shop\AddressCustoner;
+use App\Entity\Shop\ProductCollection;
+use App\Entity\Settings\AppLayoutSetting;
+use App\Entity\Settings\HomepageHeroSetting;
+use function Symfony\Component\Translation\t;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use App\Entity\Tickets\Response as TicketsResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-use function Symfony\Component\Translation\t;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -109,17 +111,21 @@ class DashboardController extends AbstractDashboardController
 
             yield MenuItem::section(t('Shoppings Settings'));
             yield MenuItem::subMenu(t('Shoppings'), 'fas fa-shop')->setSubItems([
-                MenuItem::linkToCrud(t('Products'), 'fa fa-shopping-cart', Product::class),
+                MenuItem::linkToCrud(t('Products'), 'fas fa-list', Product::class),
+                MenuItem::linkToCrud(t('Collections'), 'fas fa-panorama', ProductCollection::class),
+                //MenuItem::linkToCrud(t('Sliders'), 'fas fa-image', Sliders::class),
+                //MenuItem::linkToCrud(t('Carriers'), 'fas fa-car', Carrier::class),
                 MenuItem::linkToCrud(t('Features'), 'fa fa-bookmark', Feature::class),
                 MenuItem::linkToCrud(t('Brands'), 'fas fa-b', Brand::class),
                 MenuItem::linkToCrud(t('Sub Categories'), 'fab fa-delicious', SubCategory::class),
-                MenuItem::linkToCrud(t('Category'), 'fab fa-delicious', Category::class),
+                MenuItem::linkToCrud(t('Categories'), 'fab fa-delicious', Category::class),
                 MenuItem::linkToCrud(t('Sizes'), 'fas fa-file', Size::class),
                 MenuItem::linkToCrud(t('Colors'), 'fas fa-file', Color::class),
                 MenuItem::linkToCrud(t('Shippings'), 'fas fa-truck', Shipping::class),
                 MenuItem::linkToCrud(t('Coupons'), 'fas fa-copy', Coupon::class),
-                MenuItem::linkToCrud(t('Orders'), 'fa fa-bell', Order::class),
+                MenuItem::linkToCrud(t('Orders'), 'fas fa-shopping-cart', Order::class),
                 MenuItem::linkToCrud(t('Review'), 'fas fa-star', Review::class),
+                MenuItem::linkToCrud(t('Address Custoner'), 'fas fa-list', AddressCustoner::class),
             ]);
 
             yield MenuItem::section(t('Review Settings'));

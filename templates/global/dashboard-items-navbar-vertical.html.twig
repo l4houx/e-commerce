@@ -42,6 +42,11 @@
                             </a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link {% if activerd == 'address_index' or activerd == 'address_new'  or activerd == 'address_edit' %}active{% endif %}" href="{{ path('dashboard_account_address_index') }}">
+								<i class="fas fa-address-book fa-fw me-2"></i>{{ 'My address'|trans }}
+                            </a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link {% if activerd == 'testimonial_index' or activerd == 'testimonial_new' %}active{% endif %}" href="{{ path('dashboard_account_testimonial_index') }}">
 								<i class="fas fa-star fa-fw me-2"></i>{{ 'Testimonial'|trans }}
                             </a>
@@ -67,10 +72,17 @@
                             </a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link {% if activerd == 'wishlist_index' %}active{% endif %}" href="{{ path('dashboard_account_wishlist_index') }}">
+								<i class="fas fa-heart fa-fw me-2"></i>{{ 'Wishlist'|trans }}
+                            </a>
+						</li>
+						{#  
+						<li class="nav-item">
 							<a class="nav-link {% if activerd == 'favorites_index' or activerd == 'favorites_new' %}active{% endif %}" href="{{ path('dashboard_account_favorites_index') }}">
 								<i class="fas fa-heart fa-fw me-2"></i>{{ 'Wishlist'|trans }}
                             </a>
 						</li>
+						#}
 						<li class="nav-item">
 							<a class="nav-link text-danger" href="{{ path('signout') }}">
 								<i class="fas fa-sign-out-alt fa-fw me-2"></i>{{ 'Sign Out'|trans }}
